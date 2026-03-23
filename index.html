@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Most Useless Page Ever</title>
+    <style>
+        body {
+            background-color: #ff00ff; /* Eye-searing pink */
+            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            cursor: help; /* Makes the cursor confusing */
+        }
+        h1 {
+            color: yellow;
+            text-shadow: 4px 4px red;
+            font-size: 60px;
+            text-transform: uppercase;
+        }
+        .useless-button {
+            padding: 30px 60px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            background: lime;
+            color: blue;
+            border: 10px dashed white;
+            animation: shake 0.5s infinite;
+        }
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            50% { transform: rotate(0eg); }
+            75% { transform: rotate(-5deg); }
+            100% { transform: rotate(0deg); }
+        }
+        marquee {
+            width: 100%;
+            position: absolute;
+            bottom: 20px;
+            font-size: 40px;
+            background: black;
+            color: cyan;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>WARNING: DO NOTHING</h1>
+    
+    <button class="useless-button" id="btn">
+        DO NOT CLICK
+    </button>
+
+    <p id="counter" style="color: white; font-size: 24px; margin-top: 30px; background: black;">
+        You have achieved nothing 0 times.
+    </p>
+
+    <marquee scrollamount="25">CONGRATULATIONS! YOU ARE VISITING A SITE FROM 1996! BUY A DUCK! WOW! MUCH HTML!</marquee>
+
+    <script>
+        let count = 0;
+        const btn = document.getElementById('btn');
+        const text = document.getElementById('counter');
+
+        btn.addEventListener('click', () => {
+            count++;
+            // A useless alert to annoy the user
+            alert("I told you NOT to click it! Now look what you've done.");
+            text.innerText = `You have wasted your time ${count} times.`;
+            
+            // Randomly change background color on click for extra chaos
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
+            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        });
+    </script>
+</body>
+</html>
