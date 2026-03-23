@@ -3,81 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Most Useless Page Ever</title>
+    <title>Educational JS Interaction Lab</title>
     <style>
+        /* Keeping it ugly but "educational" */
         body {
-            background-color: #ff00ff; /* Eye-searing pink */
-            font-family: "Comic Sans MS", "Comic Sans", cursive;
+            background-color: #e0f7fa; 
+            font-family: "Courier New", monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
-            cursor: help; /* Makes the cursor confusing */
+            text-align: center;
         }
-        h1 {
-            color: yellow;
-            text-shadow: 4px 4px red;
-            font-size: 60px;
-            text-transform: uppercase;
+        .container {
+            border: 5px solid #546e7a;
+            padding: 20px;
+            background: #ffffff;
         }
-        .useless-button {
-            padding: 30px 60px;
-            font-size: 30px;
-            font-weight: bold;
+        h1 { color: #263238; }
+        
+        /* The button that moves or changes */
+        #logic-btn {
+            padding: 20px;
+            font-size: 1.5rem;
+            background-color: #ff5722;
+            color: white;
+            border: none;
             cursor: pointer;
-            background: lime;
-            color: blue;
-            border: 10px dashed white;
-            animation: shake 0.5s infinite;
+            border-radius: 50%; /* It's a circle for no reason */
+            width: 200px;
+            height: 200px;
         }
-        @keyframes shake {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            50% { transform: rotate(0eg); }
-            75% { transform: rotate(-5deg); }
-            100% { transform: rotate(0deg); }
-        }
-        marquee {
+
+        /* Moving text for that old-school feel */
+        .scrolling-info {
             width: 100%;
-            position: absolute;
-            bottom: 20px;
-            font-size: 40px;
-            background: black;
-            color: cyan;
+            background: #263238;
+            color: #81c784;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
         }
     </style>
 </head>
 <body>
 
-    <h1>WARNING: DO NOTHING</h1>
-    
-    <button class="useless-button" id="btn">
-        DO NOT CLICK
-    </button>
+    <div class="container">
+        <h1>Interaction Study #1</h1>
+        <p>This experiment measures user patience.</p>
+        
+        <button id="logic-btn">OBSERVE BUTTON</button>
+        
+        <h2 id="status-report">Patience Level: 100%</h2>
+    </div>
 
-    <p id="counter" style="color: white; font-size: 24px; margin-top: 30px; background: black;">
-        You have achieved nothing 0 times.
-    </p>
-
-    <marquee scrollamount="25">CONGRATULATIONS! YOU ARE VISITING A SITE FROM 1996! BUY A DUCK! WOW! MUCH HTML!</marquee>
+    <div class="scrolling-info">
+        <marquee scrollamount="10">LEARNING PROGRESS: 0% ... PROCESSING VACUUM ... DATA IS IRRELEVANT ...</marquee>
+    </div>
 
     <script>
-        let count = 0;
-        const btn = document.getElementById('btn');
-        const text = document.getElementById('counter');
+        const btn = document.getElementById('logic-btn');
+        const status = document.getElementById('status-report');
+        let clicks = 0;
 
         btn.addEventListener('click', () => {
-            count++;
-            // A useless alert to annoy the user
-            alert("I told you NOT to click it! Now look what you've done.");
-            text.innerText = `You have wasted your time ${count} times.`;
+            clicks++;
             
-            // Randomly change background color on click for extra chaos
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00'];
-            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            // Stupid logic: button gets smaller every click
+            let size = 200 - (clicks * 5);
+            btn.style.width = size + 'px';
+            btn.style.height = size + 'px';
+            btn.style.fontSize = (1.5 - (clicks * 0.05)) + 'rem';
+
+            if (size <= 10) {
+                btn.innerText = "GONE";
+                status.innerText = "Patience Level: 0%. You deleted the button.";
+                btn.style.display = 'none';
+            } else {
+                status.innerText = `Patience Level: ${100 - clicks}%`;
+                btn.innerText = "CLICKED";
+                
+                // Change color to something annoying
+                btn.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+            }
+
+            console.log("Blocksi-friendly: Logic execution confirmed.");
         });
     </script>
 </body>
