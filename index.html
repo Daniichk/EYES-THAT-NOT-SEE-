@@ -2,83 +2,148 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Interactive Math Zen</title>
+    <title>Math Garden | Interactive Calculus</title>
     <style>
-        body, html { margin: 0; padding: 0; background: #0b0e14; color: #64ffda; font-family: 'Segoe UI', sans-serif; overflow: hidden; height: 100%; }
-        canvas { display: block; }
-        .ui {
+        body, html { margin: 0; padding: 0; background: #05070a; color: #e0e0e0; font-family: 'Inter', sans-serif; overflow: hidden; height: 100%; }
+        canvas { display: block; filter: blur(0.5px); }
+        
+        .overlay {
             position: absolute;
-            top: 40px;
-            left: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
             pointer-events: none;
-            max-width: 400px;
+            mix-blend-mode: difference;
         }
-        h1 { font-weight: 200; font-size: 2rem; letter-spacing: 5px; margin: 0; opacity: 0.8; }
-        p { color: #a0a0b0; line-height: 1.6; font-size: 0.9rem; margin-top: 10px; }
-        .hint { position: absolute; bottom: 30px; width: 100%; text-align: center; color: #444; font-size: 0.8rem; letter-spacing: 2px; }
+
+        h1 { font-weight: 100; font-size: 3rem; letter-spacing: 15px; margin: 0; opacity: 0.5; text-transform: uppercase; }
+        .stats { position: absolute; bottom: 40px; right: 40px; font-family: monospace; font-size: 0.8rem; color: #4ecdc4; text-align: right; }
+        
+        /* Скрытая панель управления при наведении */
+        .hint { position: absolute; top: 20px; width: 100%; text-align: center; color: #333; font-size: 0.7rem; letter-spacing: 3px; }
     </style>
 </head>
 <body>
 
-    <div class="ui">
-        <h1>MATH VISUALIZED</h1>
-        <p>Explore the harmony between <b>Calculus</b> and <b>Trigonometry</b>. <br>Move your cursor to alter the function's derivatives.</p>
+    <div class="overlay">
+        <h1>CALCULUS & TRIG</h1>
+    </div>
+
+    <div class="stats" id="stats">
+        f(x) = sin(x) * cos(y)<br>
+        derivative: calculated
     </div>
 
     <canvas id="canvas"></canvas>
     
-    <div class="hint">MOVE MOUSE TO INTERACT</div>
+    <div class="hint">HOVER TO DISTURB THE EQUILIBRIUM</div>
 
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
-        let mouseX = 0, mouseY = 0;
+        let particles = [];
+        const mouse = { x: -1000, y: -1000 };
 
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            initParticles();
         }
 
-        window.addEventListener('resize', resize);
-        window.addEventListener('mousemove', e => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.baseX = x;
+                this.baseY = y;
+                this.size = 1.5;
+                this.density = (Math.random() * 30) + 1;
+            }
 
-        resize();
+            draw() {
+                ctx.fillStyle = 'rgba(78, 205, 196, 0.7)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
 
-        function draw() {
-            ctx.fillStyle = 'rgba(11, 14, 20, 0.1)'; // Эффект шлейфа
-            ctx.fillRect(0, 0, width, height);
+            update() {
+                // Математическое искажение пространства (Calculus logic)
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = 150;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
 
+                if (distance < maxDistance) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 10;
+                    }
+                }
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const gap = 25;
+            for (let y = 0; y < height; y += gap) {
+                for (let x = 0; x < width; x += gap) {
+                    particles.push(new Particle(x, y));
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Рисуем фоновые тригонометрические волны
+            drawWaves();
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function drawWaves() {
             ctx.beginPath();
-            ctx.strokeStyle = '#64ffda';
-            ctx.lineWidth = 2;
-
-            const amplitude = (height / 4) * (mouseY / height + 0.2);
-            const frequency = 0.01 * (mouseX / width * 5 + 1);
-
-            for (let x = 0; x < width; x++) {
-                // Тригонометрическая функция (Синус)
-                const y = height / 2 + Math.sin(x * frequency + Date.now() * 0.002) * amplitude;
-                
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            for (let i = 0; i < 5; i++) {
+                const shift = i * 50 + Date.now() * 0.05;
+                ctx.moveTo(0, height / 2);
+                for (let x = 0; x < width; x += 10) {
+                    const y = height / 2 + Math.sin(x * 0.005 + shift/100) * 100 * Math.cos(shift/500);
+                    ctx.lineTo(x, y);
+                }
             }
             ctx.stroke();
-
-            // Визуализация "производной" в точке мыши
-            const dotY = height / 2 + Math.sin(mouseX * frequency + Date.now() * 0.002) * amplitude;
-            ctx.beginPath();
-            ctx.arc(mouseX, dotY, 8, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-
-            requestAnimationFrame(draw);
         }
 
-        draw();
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+            document.getElementById('stats').innerHTML = `x: ${e.x} | y: ${Math.round(e.y)}<br>Δ tangent: active`;
+        });
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
     </script>
 </body>
 </html>
