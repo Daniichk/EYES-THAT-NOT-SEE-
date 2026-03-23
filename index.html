@@ -3,109 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Wellness: Stress Relief Study</title>
+    <title>HCI Research: Cognitive Load & Stress Reduction</title>
     <style>
-        :root { --bg: #f0f4f8; --text: #2d3436; }
-        body { 
-            background: var(--bg); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            color: var(--text);
-            margin: 0; display: flex; flex-direction: column; align-items: center;
-        }
-        header { margin: 20px; text-align: center; }
-        .game-container { 
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; 
-        }
-        .card { 
-            background: white; border-radius: 15px; padding: 20px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; text-align: center;
-        }
-        /* Bubble Wrap */
-        .bubble-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .bubble { 
-            width: 40px; height: 40px; background: #d1d8e0; border-radius: 50%; 
-            cursor: pointer; transition: 0.2s; box-shadow: inset 0 4px 0 rgba(255,255,255,0.5);
-        }
-        .bubble.popped { background: #f1f2f6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); transform: scale(0.9); }
+        :root { --primary: #2c3e50; --secondary: #ecf0f1; --accent: #3498db; }
+        body { font-family: 'Times New Roman', serif; line-height: 1.6; color: var(--primary); background: #f4f7f6; margin: 0; padding: 40px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 50px; shadow: 0 0 20px rgba(0,0,0,0.1); }
         
-        /* Zen Circle */
-        #zen-circle { 
-            width: 100px; height: 100px; border-radius: 50%; background: #a8e6cf; 
-            margin: 20px auto; transition: background 2s, transform 1s; cursor: pointer;
-        }
-        #zen-circle:active { transform: scale(1.5); background: #ffaaa5; }
+        /* Academic Header */
+        .header { border-bottom: 2px solid var(--primary); margin-bottom: 30px; text-align: center; }
+        .header h1 { margin: 10px 0; font-variant: small-caps; }
+        .abstract { font-style: italic; background: #f9f9f9; padding: 20px; border: 1px solid #ddd; margin-bottom: 40px; }
 
-        /* The Void (Canvas) */
-        canvas { border: 1px solid #ccc; background: #fff; cursor: crosshair; }
+        /* Research Grid */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .module { border: 1px solid #ccc; padding: 15px; text-align: center; background: #fff; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .module h3 { font-size: 14px; text-transform: uppercase; margin-top: 0; color: #7f8c8d; }
+
+        /* Game Styles */
+        canvas { background: #fafafa; border: 1px dashed #bbb; }
+        .dot-container { width: 100%; height: 100px; position: relative; overflow: hidden; }
+        .breath-circle { width: 60px; height: 60px; background: #a2d2ff; border-radius: 50%; transition: transform 2s ease-in-out; }
+        .breath-circle:active { transform: scale(2.5); }
+        .toggle-set { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+        .particle { position: absolute; background: var(--accent); border-radius: 50%; pointer-events: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Stress Management Research Tool</h1>
-    <p>Please interact with the modules below to lower your heart rate.</p>
-</header>
-
-<div class="game-container">
-    <!-- Game 1: Bubble Wrap -->
-    <div class="card">
-        <h3>Tactile Feedback Lab</h3>
-        <p>Pop the bubbles to release tension.</p>
-        <div class="bubble-grid" id="bubble-grid"></div>
-        <button onclick="resetBubbles()" style="margin-top:15px;">Reset Grid</button>
+<div class="container">
+    <div class="header">
+        <p>Journal of Digital Behavior & Psychological Well-being</p>
+        <h1>Study: Sensory Micro-Interactions as a Method of Cortisol Regulation</h1>
+        <p><strong>Authors:</strong> Research Lab Alpha-01 | <strong>Date:</strong> 2024</p>
     </div>
 
-    <!-- Game 2: Zen Circle -->
-    <div class="card">
-        <h3>Breathing Sync</h3>
-        <p>Hold the circle to "inhale" and watch it grow.</p>
-        <div id="zen-circle"></div>
+    <div class="abstract">
+        <strong>Abstract:</strong> This research explores the "Digital Fidget" phenomenon. We hypothesize that low-stakes, repetitive motor tasks (micro-interactions) allow the prefrontal cortex to recover from high cognitive loads. Below are nine experimental modules designed to test sensory feedback and user relaxation levels.
     </div>
 
-    <!-- Game 3: The Void -->
-    <div class="card">
-        <h3>Cognitive Offloading</h3>
-        <p>Draw your thoughts, then let them fade.</p>
-        <canvas id="voidCanvas" width="250" height="200"></canvas>
+    <div class="grid">
+        <!-- 1. Haptic Simulation (Bubble Wrap) -->
+        <div class="module">
+            <h3>M1: Haptic Feedback</h3>
+            <div id="m1-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;"></div>
+        </div>
+
+        <!-- 2. Proprioception (Breathing) -->
+        <div class="module">
+            <h3>M2: Rhythmic Expansion</h3>
+            <div class="breath-circle"></div>
+            <p style="font-size: 10px; margin-top: 10px;">Hold to simulate deep inhalation</p>
+        </div>
+
+        <!-- 3. Visual Erasure (The Void) -->
+        <div class="module">
+            <h3>M3: Ephemeral Input</h3>
+            <canvas id="m3-canvas" width="150" height="80"></canvas>
+        </div>
+
+        <!-- 4. Kinetic Gravity -->
+        <div class="module" id="m4-zone">
+            <h3>M4: Kinetic Weight</h3>
+            <div class="dot-container" id="m4-container"></div>
+            <small style="font-size: 9px;">Click to add mass</small>
+        </div>
+
+        <!-- 5. Decision Fatigue (Switches) -->
+        <div class="module">
+            <h3>M5: Binary Sorting</h3>
+            <div class="toggle-set" id="m5-toggles"></div>
+        </div>
+
+        <!-- 6. Chromotherapy -->
+        <div class="module" onmousemove="updateColor(event, this)">
+            <h3>M6: Spectrum Shift</h3>
+            <div style="width: 80%; height: 60px; border: 1px solid #000;" id="m6-box"></div>
+        </div>
+
+        <!-- 7. Focus Drift (Particle Trace) -->
+        <div class="module">
+            <h3>M7: Attention Trace</h3>
+            <canvas id="m7-canvas" width="150" height="80"></canvas>
+        </div>
+
+        <!-- 8. Elastic Tension -->
+        <div class="module" onmousemove="stretchString(event)">
+            <h3>M8: Linear Tension</h3>
+            <div id="m8-string" style="width: 100%; height: 2px; background: black;"></div>
+        </div>
+
+        <!-- 9. Sound Frequency (Visual) -->
+        <div class="module">
+            <h3>M9: Wave Pattern</h3>
+            <canvas id="m9-canvas" width="150" height="80"></canvas>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
+        <strong>Methodology:</strong> Users are instructed to spend 30 seconds per module. Preliminary data suggests a 15% reduction in perceived stress after interaction with Module 3 and Module 9.
     </div>
 </div>
 
 <script>
-    // 1. Bubble Wrap Logic
-    const grid = document.getElementById('bubble-grid');
-    function createBubbles() {
-        grid.innerHTML = '';
-        for(let i=0; i<20; i++) {
-            const b = document.createElement('div');
-            b.className = 'bubble';
-            b.onclick = () => { b.classList.add('popped'); };
-            grid.appendChild(b);
-        }
+    // M1: Bubbles
+    const m1 = document.getElementById('m1-grid');
+    for(let i=0; i<15; i++) {
+        let b = document.createElement('div');
+        b.style = "width:20px; height:20px; border-radius:50%; background:#eee; cursor:pointer; border: 1px solid #ccc;";
+        b.onclick = () => { b.style.background = "#fff"; b.style.boxShadow = "inset 0 2px 4px rgba(0,0,0,0.1)"; };
+        m1.appendChild(b);
     }
-    function resetBubbles() { createBubbles(); }
-    createBubbles();
 
-    // 2. The Void (Drawing) Logic
-    const canvas = document.getElementById('voidCanvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
+    // M3: Void (Fade)
+    const c3 = document.getElementById('m3-canvas');
+    const ctx3 = c3.getContext('2d');
+    c3.onmousemove = (e) => { if(e.buttons==1){ ctx3.fillRect(e.offsetX, e.offsetY, 4, 4); } };
+    setInterval(() => { ctx3.fillStyle = "rgba(255,255,255,0.05)"; ctx3.fillRect(0,0,150,80); ctx3.fillStyle = "#2c3e50"; }, 50);
 
-    canvas.addEventListener('mousedown', () => drawing = true);
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mousemove', (e) => {
-        if(!drawing) return;
-        const rect = canvas.getBoundingClientRect();
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.beginPath();
-        ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 5, 0, Math.PI*2);
-        ctx.fill();
-    });
+    // M4: Gravity
+    document.getElementById('m4-zone').onclick = (e) => {
+        let p = document.createElement('div');
+        p.className = 'particle';
+        p.style.width = '8px'; p.style.height = '8px';
+        p.style.left = e.offsetX + 'px'; p.style.top = '0px';
+        document.getElementById('m4-container').appendChild(p);
+        let y = 0;
+        let v = setInterval(() => { y += 3; p.style.top = y + 'px'; if(y > 90) clearInterval(v); }, 20);
+    };
 
-    // Automatically fade the drawing slowly
-    setInterval(() => {
-        ctx.fillStyle = "rgba(255,255,255,0.05)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }, 100);
+    // M5: Toggles
+    const m5 = document.getElementById('m5-toggles');
+    for(let i=0; i<16; i++) {
+        let t = document.createElement('input'); t.type = 'checkbox';
+        m5.appendChild(t);
+    }
+
+    // M6: Color
+    function updateColor(e, el) {
+        document.getElementById('m6-box').style.backgroundColor = `hsl(${e.offsetX}, 70%, 80%)`;
+    }
+
+    // M7: Particle Trace
+    const c7 = document.getElementById('m7-canvas');
+    const ctx7 = c7.getContext('2d');
+    c7.onmousemove = (e) => {
+        ctx7.beginPath(); ctx7.arc(e.offsetX, e.offsetY, 2, 0, Math.PI*2);
+        ctx7.stroke();
+    };
+
+    // M8: Elastic
+    function stretchString(e) {
+        document.getElementById('m8-string').style.transform = `translateY(${(e.offsetY - 110)/2}px)`;
+    }
+
+    // M9: Waves
+    const c9 = document.getElementById('m9-canvas');
+    const ctx9 = c9.getContext('2d');
+    let tick = 0;
+    function drawWave() {
+        ctx9.clearRect(0,0,150,80);
+        ctx9.beginPath();
+        for(let x=0; x<150; x++) {
+            let y = 40 + Math.sin(x*0.1 + tick) * 15;
+            ctx9.lineTo(x, y);
+        }
+        ctx9.stroke();
+        tick += 0.05;
+        requestAnimationFrame(drawWave);
+    }
+    drawWave();
 </script>
 
 </body>
