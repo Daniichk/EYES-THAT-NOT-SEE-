@@ -3,212 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Pro Clicker</title>
+    <title>Math & Cookies | Pro Experience</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --darker: #0a0a12; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
-        section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
-        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        
-        /* ГЕЙМПЛЕЙНЫЙ ОВЕРЛЕЙ */
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* ОСНОВНОЙ ГЕЙМПЛЕЙНЫЙ ОВЕРЛЕЙ */
         #game-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 10, 20, 0.98); z-index: 2000;
-            display: none; grid-template-columns: 1fr 1.5fr 1fr;
+            background: #000; z-index: 9999; display: none;
+            grid-template-columns: 300px 1fr 300px;
+            border: 5px solid #444; box-sizing: border-box;
         }
 
-        /* ЛЕВАЯ ПАНЕЛЬ (ПЕЧЕНЬКА) */
-        .cookie-side { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-right: 2px solid #333; }
-        #big-cookie { 
-            width: 220px; height: 220px; font-size: 8rem; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.05s; user-select: none;
-            filter: drop-shadow(0 0 30px var(--accent));
+        /* КОЛОНКА 1: ПЕЧЕНЬКА */
+        .left-panel {
+            background: radial-gradient(circle, #444 0%, #000 100%);
+            display: flex; flex-direction: column; align-items: center; padding: 20px;
+            border-right: 4px solid #555; text-align: center;
         }
-        #big-cookie:active { transform: scale(0.9); }
-        #score-container { text-align: center; margin-bottom: 30px; }
-        #cookies-count { font-size: 2.5rem; font-weight: bold; color: var(--accent); }
-
-        /* ЦЕНТРАЛЬНАЯ ПАНЕЛЬ (ВИЗУАЛ) */
-        .visual-side { display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .log-entry { font-size: 0.8rem; opacity: 0.5; margin-bottom: 5px; font-family: monospace; }
-
-        /* ПРАВАЯ ПАНЕЛЬ (МАГАЗИН) */
-        .store-side { background: #111; padding: 20px; border-left: 2px solid #333; }
-        .store-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; letter-spacing: 5px; }
-        .upgrade-item {
-            background: #1a1a25; padding: 15px; margin-bottom: 10px; border-radius: 4px;
-            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        #big-cookie {
+            width: 200px; height: 200px; font-size: 100px;
+            background: #6d4c41; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8); transition: transform 0.05s;
+            user-select: none; margin-top: 50px; border: 8px solid #4e342e;
         }
-        .upgrade-item:hover { border-color: var(--accent); background: #222; }
-        .upgrade-item.disabled { opacity: 0.4; cursor: not-allowed; }
-        .upgrade-name { font-weight: bold; display: block; }
-        .upgrade-cost { font-size: 0.8rem; color: var(--accent); }
+        #big-cookie:active { transform: scale(0.95); }
+        .score-box { background: rgba(0,0,0,0.5); padding: 10px; width: 100%; margin-top: 20px; border-radius: 5px; }
+        #cookies-count { font-size: 1.4rem; font-weight: bold; color: #fff; }
 
-        .close-btn { position: absolute; top: 15px; right: 15px; cursor: pointer; color: #555; font-size: 0.7rem; }
+        /* КОЛОНКА 2: ИНФО */
+        .mid-panel {
+            background: #111; overflow-y: auto; display: flex; flex-direction: column;
+            border-right: 4px solid #555;
+        }
+        .news-ticker { background: #000; padding: 10px; text-align: center; font-size: 0.8rem; border-bottom: 2px solid #333; color: #aaa; }
+        .game-canvas-area { flex-grow: 1; position: relative; background: #0a0a0a; border: 10px solid #222; margin: 10px; }
 
-        /* МАТЕМАТИЧЕСКИЙ КОНТЕНТ */
-        .content { z-index: 10; text-align: center; background: rgba(5, 5, 8, 0.8); padding: 25px; border-radius: 10px; border: 1px solid rgba(0,255,204,0.2); }
-        h2 { font-weight: 100; letter-spacing: 12px; color: var(--accent); margin: 0; }
-        .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
-        .dot { width: 4px; height: 20px; background: rgba(0,255,204,0.2); margin: 8px 0; transition: 0.5s; }
+        /* КОЛОНКА 3: МАГАЗИН (BUILDINGS) */
+        .right-panel { background: #222; overflow-y: auto; padding: 0; }
+        .store-header { background: #000; padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .building {
+            display: flex; align-items: center; padding: 10px;
+            background: #333; border-bottom: 1px solid #444; cursor: pointer;
+            transition: 0.2s; position: relative;
+        }
+        .building:hover { background: #444; }
+        .building.locked { opacity: 0.5; filter: grayscale(1); }
+        .b-icon { font-size: 1.5rem; margin-right: 15px; width: 40px; text-align: center; }
+        .b-info { display: flex; flex-direction: column; }
+        .b-name { font-weight: bold; font-size: 0.9rem; }
+        .b-cost { color: #64ffda; font-size: 0.8rem; }
+        .b-count { position: absolute; right: 15px; font-size: 1.2rem; opacity: 0.3; font-weight: bold; }
+
+        /* МАТЕМАТИЧЕСКИЕ СЕКЦИИ */
+        section { height: 100vh; display: flex; justify-content: center; align-items: center; position: relative; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .content { z-index: 10; text-align: center; background: rgba(5,5,8,0.8); padding: 20px; border: 1px solid var(--accent); }
     </style>
 </head>
 <body>
 
-    <!-- ИГРА -->
+    <!-- CLICKER OVERLAY -->
     <div id="game-overlay">
-        <div class="close-btn" onclick="toggleGame()">[ ESC TO EXIT ]</div>
-        
-        <div class="cookie-side">
-            <div id="score-container">
-                <div id="cookies-count">0</div>
-                <div style="font-size: 0.8rem; opacity: 0.5;">cookies</div>
-                <div id="cps-display" style="color: #888; font-size: 0.7rem;">per second: 0</div>
+        <!-- Лево -->
+        <div class="left-panel">
+            <div style="font-size: 0.7rem; opacity: 0.5;">Bakery Name</div>
+            <div class="score-box">
+                <div id="cookies-count">0 cookies</div>
+                <div id="cps-display" style="font-size: 0.7rem; color: #888;">per second: 0</div>
             </div>
             <div id="big-cookie">🍪</div>
         </div>
 
-        <div class="visual-side" id="game-log">
-            <div class="log-entry">> Initializing math backup...</div>
+        <!-- Центр -->
+        <div class="mid-panel">
+            <div class="news-ticker">News: Mathematical chocolate found in 4th dimension!</div>
+            <div class="game-canvas-area" id="visual-effects">
+                <p style="padding: 20px; color: #444;">[ Visual Production Area ]</p>
+            </div>
         </div>
 
-        <div class="store-side">
-            <div class="store-header">STORE</div>
-            <div class="upgrade-item" onclick="buyUpgrade('cursor')">
-                <span class="upgrade-name">Cursor</span>
-                <span class="upgrade-cost" id="cost-cursor">Cost: 15</span>
-            </div>
-            <div class="upgrade-item" onclick="buyUpgrade('grandma')">
-                <span class="upgrade-name">Grandma</span>
-                <span class="upgrade-cost" id="cost-grandma">Cost: 100</span>
-            </div>
-            <div class="upgrade-item" onclick="buyUpgrade('factory')">
-                <span class="upgrade-name">Math Factory</span>
-                <span class="upgrade-cost" id="cost-factory">Cost: 1100</span>
-            </div>
+        <!-- Право (Магазин) -->
+        <div class="right-panel">
+            <div class="store-header">Store</div>
+            <div id="store-container"></div>
+            <div style="padding: 10px; font-size: 0.6rem; color: #555; text-align: center;">Press ESC to return to Math</div>
         </div>
     </div>
 
-    <div class="nav" id="nav"></div>
-
-    <!-- ТВОИ 10 СЕКЦИЙ -->
+    <!-- MATH CONTENT (Твои 10 секций) -->
     <section id="s1"><canvas id="c1"></canvas><div class="content"><h2>01. Sine</h2><p>Trig oscillation</p></div></section>
-    <section id="s2"><canvas id="c2"></canvas><div class="content"><h2>02. Vectors</h2><p>Gradient flow</p></div></section>
-    <section id="s3"><canvas id="c3"></canvas><div class="content"><h2>03. Kinetic</h2><p>Acceleration</p></div></section>
-    <section id="s4"><canvas id="c4"></canvas><div class="content"><h2>04. Geometry</h2><p>Rotation</p></div></section>
-    <section id="s5"><canvas id="c5"></canvas><div class="content"><h2>05. Probability</h2><p>Stochastic cloud</p></div></section>
-    <section id="s6"><canvas id="c6"></canvas><div class="content"><h2>06. Spiral</h2><p>Phi growth</p></div></section>
-    <section id="s7"><canvas id="c7"></canvas><div class="content"><h2>07. Spacetime</h2><p>Grid warp</p></div></section>
-    <section id="s8"><canvas id="c8"></canvas><div class="content"><h2>08. Chaos</h2><p>Lorenz trail</p></div></section>
-    <section id="s9"><canvas id="c9"></canvas><div class="content"><h2>09. Fractal</h2><p>Recursive tree</p></div></section>
-    <section id="s10"><canvas id="c10"></canvas><div class="content"><h2>10. Quantum</h2><p>Euler Equilibrium</p></div></section>
+    <section id="s10" style="height: 900vh;"></section> <!-- Заглушка для прокрутки -->
 
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
-        // --- COOKIE CLICKER ENGINE ---
+        // --- GAME LOGIC ---
         let cookies = 0;
         let cps = 0;
-        const upgrades = {
-            cursor: { cost: 15, power: 0.1, count: 0 },
-            grandma: { cost: 100, power: 1, count: 0 },
-            factory: { cost: 1100, power: 8, count: 0 }
-        };
+        const buildings = [
+            { id: 'cursor', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', count: 0 },
+            { id: 'grandma', name: 'Grandma', cost: 100, power: 1, icon: '👵', count: 0 },
+            { id: 'farm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', count: 0 },
+            { id: 'mine', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', count: 0 },
+            { id: 'factory', name: 'Factory', cost: 130000, power: 260, icon: '🏭', count: 0 }
+        ];
 
-        function buyUpgrade(id) {
-            const up = upgrades[id];
-            if (cookies >= up.cost) {
-                cookies -= up.cost;
-                up.count++;
-                up.cost = Math.floor(up.cost * 1.15);
+        function initStore() {
+            const container = document.getElementById('store-container');
+            container.innerHTML = buildings.map(b => `
+                <div class="building" onclick="buyBuilding('${b.id}')">
+                    <div class="b-icon">${b.icon}</div>
+                    <div class="b-info">
+                        <span class="b-name">${b.name}</span>
+                        <span class="b-cost" id="cost-${b.id}">${b.cost}</span>
+                    </div>
+                    <div class="b-count" id="count-${b.id}">0</div>
+                </div>
+            `).join('');
+        }
+
+        function buyBuilding(id) {
+            const b = buildings.find(x => x.id === id);
+            if (cookies >= b.cost) {
+                cookies -= b.cost;
+                b.count++;
+                b.cost = Math.floor(b.cost * 1.15);
                 updateUI();
-                recalculateCPS();
-                addLog(`Bought ${id}. Total: ${up.count}`);
+                calculateCPS();
             }
         }
 
-        function recalculateCPS() {
-            cps = (upgrades.cursor.count * upgrades.cursor.power) + 
-                  (upgrades.grandma.count * upgrades.grandma.power) +
-                  (upgrades.factory.count * upgrades.factory.power);
+        function calculateCPS() {
+            cps = buildings.reduce((acc, b) => acc + (b.count * b.power), 0);
         }
 
         function updateUI() {
-            document.getElementById('cookies-count').innerText = Math.floor(cookies);
-            document.getElementById('cps-display').innerText = `per second: ${cps.toFixed(1)}`;
-            for (let id in upgrades) {
-                document.getElementById(`cost-${id}`).innerText = `Cost: ${upgrades[id].cost}`;
-            }
+            document.getElementById('cookies-count').innerText = Math.floor(cookies) + " cookies";
+            document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
+            buildings.forEach(b => {
+                document.getElementById(`cost-${b.id}`).innerText = b.cost;
+                document.getElementById(`count-${b.id}`).innerText = b.count;
+            });
         }
 
-        function addLog(msg) {
-            const log = document.getElementById('game-log');
-            log.innerHTML = `<div class="log-entry">> ${msg}</div>` + log.innerHTML;
-        }
-
-        // Game Loop (Auto-click)
+        // Таймер авто-кликов
         setInterval(() => {
-            if (cps > 0) {
-                cookies += cps / 10;
-                updateUI();
-            }
+            cookies += cps / 10;
+            updateUI();
         }, 100);
 
-        document.getElementById('big-cookie').onclick = () => { 
-            cookies++; 
-            updateUI(); 
-        };
+        document.getElementById('big-cookie').onclick = () => { cookies++; updateUI(); };
 
+        // Управление оверлеем
         window.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') toggleGame();
+            if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') {
+                document.getElementById('game-overlay').style.display = 'grid';
+            }
             if (e.key === 'Escape') document.getElementById('game-overlay').style.display = 'none';
         });
 
-        function toggleGame() {
-            const ov = document.getElementById('game-overlay');
-            ov.style.display = (ov.style.display === 'grid') ? 'none' : 'grid';
+        initStore();
+
+        // --- ТВОЯ МАТЕМАТИЧЕСКАЯ АНИМАЦИЯ (Пример для секции 1) ---
+        const c1 = document.getElementById('c1');
+        const ctx1 = c1.getContext('2d');
+        function draw() {
+            c1.width = window.innerWidth; c1.height = window.innerHeight;
+            ctx1.fillStyle = 'rgba(5,5,8,0.1)'; ctx1.fillRect(0,0,c1.width,c1.height);
+            ctx1.strokeStyle = '#00ffcc'; ctx1.beginPath();
+            for(let x=0; x<c1.width; x+=5) ctx1.lineTo(x, c1.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*100);
+            ctx1.stroke();
+            requestAnimationFrame(draw);
         }
-
-        // --- MATH ANIMATIONS (Core) ---
-        const mouse = { x: 0, y: 0 };
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-        function init(id, draw) {
-            const c = document.getElementById(id);
-            const ctx = c.getContext('2d');
-            const res = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-            window.addEventListener('resize', res); res();
-            const loop = () => { 
-                const rect = c.getBoundingClientRect();
-                draw(ctx, c, mouse.y - rect.top); 
-                requestAnimationFrame(loop); 
-            };
-            loop();
-        }
-
-        // 10 Animations
-        init('c1', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.beginPath(); for(let x=0; x<c.width; x+=5) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.3); ctx.stroke(); });
-        init('c2', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='rgba(0,255,204,0.3)'; for(let x=50; x<c.width; x+=50) for(let y=50; y<c.height; y+=50) { let a=Math.atan2(ry-y, mouse.x-x); ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+Math.cos(a)*20, y+Math.sin(a)*20); ctx.stroke(); } });
-        let p3 = Array(50).fill().map(()=>({x:Math.random()*1000, y:Math.random()*1000}));
-        init('c3', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle='#00ffcc'; p3.forEach(p=>{ p.x+=(mouse.x-p.x)*0.02; p.y+=(ry-p.y)*0.02; ctx.fillRect(p.x,p.y,3,3); }); });
-        init('c4', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.save(); ctx.translate(c.width/2, c.height/2); ctx.rotate(Date.now()*0.001); for(let i=0; i<5; i++){ ctx.rotate(mouse.x*0.0001); ctx.strokeRect(-50-i*20,-50-i*20,100+i*40,100+i*40); } ctx.restore(); });
-        init('c5', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.05)'; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle='#fff'; for(let i=0; i<20; i++) ctx.fillRect(mouse.x+(Math.random()-0.5)*500, ry+(Math.random()-0.5)*500, 1.5, 1.5); });
-        init('c6', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.beginPath(); ctx.save(); ctx.translate(c.width/2, c.height/2); for(let i=0; i<200; i++) { let r=2*Math.sqrt(i)*(mouse.x*0.02); let a=i*0.1+Date.now()*0.001; ctx.lineTo(r*Math.cos(a), r*Math.sin(a)); } ctx.stroke(); ctx.restore(); });
-        init('c7', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='rgba(0,255,204,0.3)'; for(let x=0; x<c.width; x+=40) { ctx.beginPath(); for(let y=0; y<c.height; y+=15) { let dx=mouse.x-x, dy=ry-y, d=Math.sqrt(dx*dx+dy*dy), f=Math.max(0,(250-d)/250); ctx.lineTo(x+dx*f*0.8, y+dy*f*0.8); } ctx.stroke(); } });
-        let trail=[]; init('c8', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.05)'; ctx.fillRect(0,0,c.width,c.height); trail.push({x:mouse.x, y:ry, age:0}); ctx.beginPath(); ctx.strokeStyle='#00ffcc'; trail.forEach((p,i) => { p.age++; if(i==0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); if(p.age > 100) trail.shift(); }); ctx.stroke(); });
-        function drawTree(ctx, len, angle) { ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-len); ctx.stroke(); if(len<10) return; ctx.save(); ctx.translate(0,-len); ctx.rotate(angle); drawTree(ctx, len*0.7, angle); ctx.restore(); ctx.save(); ctx.translate(0,-len); ctx.rotate(-angle); drawTree(ctx, len*0.7, angle); ctx.restore(); }
-        init('c9', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.save(); ctx.translate(c.width/2, c.height-50); drawTree(ctx, 120, mouse.x*0.001); ctx.restore(); });
-        let qP = Array(200).fill().map(() => ({ x:Math.random(), y:Math.random(), r:Math.random()*Math.PI*2 }));
-        init('c10', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height); qP.forEach(p => { let tx=p.x*c.width, ty=p.y*c.height, dx=mouse.x-tx, dy=ry-ty, d=Math.sqrt(dx*dx+dy*dy); if(d<150){tx-=dx*0.1;ty-=dy*0.1;} ctx.fillStyle=`rgba(0,255,204,${0.4+Math.sin(Date.now()*0.002+p.r)*0.2})`; ctx.beginPath(); ctx.arc(tx,ty,1.2,0,Math.PI*2); ctx.fill(); }); ctx.font="200 2rem Inter"; ctx.fillStyle="white"; ctx.textAlign="center"; ctx.fillText("e^iπ + 1 = 0", c.width/2, c.height/2); });
-
-        // Nav
-        const nav = document.getElementById('nav');
-        for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
-        window.addEventListener('scroll', () => {
-            let idx = Math.floor((window.scrollY + window.innerHeight/2) / window.innerHeight);
-            document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.2)');
-        });
+        draw();
     </script>
 </body>
 </html>
