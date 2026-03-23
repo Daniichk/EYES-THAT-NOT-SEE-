@@ -3,94 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Educational JS Interaction Lab</title>
+    <title>Digital Wellness: Stress Relief Study</title>
     <style>
-        /* Keeping it ugly but "educational" */
-        body {
-            background-color: #e0f7fa; 
-            font-family: "Courier New", monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
+        :root { --bg: #f0f4f8; --text: #2d3436; }
+        body { 
+            background: var(--bg); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            color: var(--text);
+            margin: 0; display: flex; flex-direction: column; align-items: center;
         }
-        .container {
-            border: 5px solid #546e7a;
-            padding: 20px;
-            background: #ffffff;
+        header { margin: 20px; text-align: center; }
+        .game-container { 
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; 
         }
-        h1 { color: #263238; }
+        .card { 
+            background: white; border-radius: 15px; padding: 20px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; text-align: center;
+        }
+        /* Bubble Wrap */
+        .bubble-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .bubble { 
+            width: 40px; height: 40px; background: #d1d8e0; border-radius: 50%; 
+            cursor: pointer; transition: 0.2s; box-shadow: inset 0 4px 0 rgba(255,255,255,0.5);
+        }
+        .bubble.popped { background: #f1f2f6; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); transform: scale(0.9); }
         
-        /* The button that moves or changes */
-        #logic-btn {
-            padding: 20px;
-            font-size: 1.5rem;
-            background-color: #ff5722;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 50%; /* It's a circle for no reason */
-            width: 200px;
-            height: 200px;
+        /* Zen Circle */
+        #zen-circle { 
+            width: 100px; height: 100px; border-radius: 50%; background: #a8e6cf; 
+            margin: 20px auto; transition: background 2s, transform 1s; cursor: pointer;
         }
+        #zen-circle:active { transform: scale(1.5); background: #ffaaa5; }
 
-        /* Moving text for that old-school feel */
-        .scrolling-info {
-            width: 100%;
-            background: #263238;
-            color: #81c784;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-        }
+        /* The Void (Canvas) */
+        canvas { border: 1px solid #ccc; background: #fff; cursor: crosshair; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Interaction Study #1</h1>
-        <p>This experiment measures user patience.</p>
-        
-        <button id="logic-btn">OBSERVE BUTTON</button>
-        
-        <h2 id="status-report">Patience Level: 100%</h2>
+<header>
+    <h1>Stress Management Research Tool</h1>
+    <p>Please interact with the modules below to lower your heart rate.</p>
+</header>
+
+<div class="game-container">
+    <!-- Game 1: Bubble Wrap -->
+    <div class="card">
+        <h3>Tactile Feedback Lab</h3>
+        <p>Pop the bubbles to release tension.</p>
+        <div class="bubble-grid" id="bubble-grid"></div>
+        <button onclick="resetBubbles()" style="margin-top:15px;">Reset Grid</button>
     </div>
 
-    <div class="scrolling-info">
-        <marquee scrollamount="10">LEARNING PROGRESS: 0% ... PROCESSING VACUUM ... DATA IS IRRELEVANT ...</marquee>
+    <!-- Game 2: Zen Circle -->
+    <div class="card">
+        <h3>Breathing Sync</h3>
+        <p>Hold the circle to "inhale" and watch it grow.</p>
+        <div id="zen-circle"></div>
     </div>
 
-    <script>
-        const btn = document.getElementById('logic-btn');
-        const status = document.getElementById('status-report');
-        let clicks = 0;
+    <!-- Game 3: The Void -->
+    <div class="card">
+        <h3>Cognitive Offloading</h3>
+        <p>Draw your thoughts, then let them fade.</p>
+        <canvas id="voidCanvas" width="250" height="200"></canvas>
+    </div>
+</div>
 
-        btn.addEventListener('click', () => {
-            clicks++;
-            
-            // Stupid logic: button gets smaller every click
-            let size = 200 - (clicks * 5);
-            btn.style.width = size + 'px';
-            btn.style.height = size + 'px';
-            btn.style.fontSize = (1.5 - (clicks * 0.05)) + 'rem';
+<script>
+    // 1. Bubble Wrap Logic
+    const grid = document.getElementById('bubble-grid');
+    function createBubbles() {
+        grid.innerHTML = '';
+        for(let i=0; i<20; i++) {
+            const b = document.createElement('div');
+            b.className = 'bubble';
+            b.onclick = () => { b.classList.add('popped'); };
+            grid.appendChild(b);
+        }
+    }
+    function resetBubbles() { createBubbles(); }
+    createBubbles();
 
-            if (size <= 10) {
-                btn.innerText = "GONE";
-                status.innerText = "Patience Level: 0%. You deleted the button.";
-                btn.style.display = 'none';
-            } else {
-                status.innerText = `Patience Level: ${100 - clicks}%`;
-                btn.innerText = "CLICKED";
-                
-                // Change color to something annoying
-                btn.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-            }
+    // 2. The Void (Drawing) Logic
+    const canvas = document.getElementById('voidCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
 
-            console.log("Blocksi-friendly: Logic execution confirmed.");
-        });
-    </script>
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mousemove', (e) => {
+        if(!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
+        ctx.beginPath();
+        ctx.arc(e.clientX - rect.left, e.clientY - rect.top, 5, 0, Math.PI*2);
+        ctx.fill();
+    });
+
+    // Automatically fade the drawing slowly
+    setInterval(() => {
+        ctx.fillStyle = "rgba(255,255,255,0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }, 100);
+</script>
+
 </body>
 </html>
