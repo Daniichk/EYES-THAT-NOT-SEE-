@@ -3,173 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Pro Clicker Edition</title>
+    <title>Math & Cookie Universe | Persistence</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --text: #e0e0e0; --panel: rgba(10, 10, 15, 0.95); }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
-        
-        /* --- MATH SECTIONS STYLES --- */
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --red: #ff4d4d; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- MATH SECTIONS --- */
         section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        
-        .content { 
-            z-index: 10; text-align: center; cursor: help;
-            background: rgba(5, 5, 8, 0.85); padding: 30px; border-radius: 12px; 
-            backdrop-filter: blur(12px); border: 1px solid rgba(0,255,204,0.2);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .content:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,255,204,0.2); transform: scale(1.02); }
-        h2 { font-weight: 100; font-size: 2.2rem; letter-spacing: 12px; margin: 0; color: var(--accent); text-transform: uppercase; }
-        p { opacity: 0.6; margin-top: 10px; font-size: 0.9rem; letter-spacing: 3px; }
+        .content { z-index: 10; text-align: center; background: rgba(5,5,8,0.85); padding: 30px; border-radius: 12px; border: 1px solid rgba(0,255,204,0.2); backdrop-filter: blur(10px); }
+        h2 { font-weight: 100; font-size: 2rem; letter-spacing: 10px; color: var(--accent); margin: 0; }
 
-        .formula-hint {
-            position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: #000; padding: 6px 18px;
-            font-family: 'Courier New', monospace; font-size: 0.85rem; font-weight: bold;
-            border-radius: 4px; opacity: 0; transition: 0.3s; pointer-events: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .content:hover .formula-hint { opacity: 1; bottom: -55px; }
-
-        .nav { position: fixed; left: 25px; top: 50%; transform: translateY(-50%); z-index: 100; }
-        .dot { width: 5px; height: 25px; background: rgba(0,255,204,0.15); margin: 10px 0; transition: 0.5s; border-radius: 2px; }
-
-        /* --- COOKIE CLICKER GAME (IMAGE STYLE) --- */
+        /* --- COOKIE CLICKER OVERLAY --- */
         #game-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none;
-            grid-template-columns: 320px 1fr 320px;
-            border: 4px solid #333; box-sizing: border-box;
+            grid-template-columns: 350px 1fr 350px;
         }
-        .left-panel { background: radial-gradient(circle, #333 0%, #000 100%); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .mid-panel { background: #111; border-right: 3px solid #444; display: flex; flex-direction: column; }
-        .right-panel { background: #1a1a1a; overflow-y: auto; }
 
-        #big-cookie { width: 220px; height: 220px; font-size: 110px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.05s; user-select: none; margin-top: 40px; border-radius: 50%; filter: drop-shadow(0 0 40px rgba(0,0,0,0.8)); }
-        #big-cookie:active { transform: scale(0.92); }
-        .score-display { text-align: center; background: rgba(0,0,0,0.6); padding: 15px; width: 100%; border-radius: 4px; margin-top: 20px; border: 1px solid #333; }
+        .left-panel { background: radial-gradient(circle, #333 0%, #000 100%); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; position: relative; }
+        #cookie-container { position: relative; width: 250px; height: 250px; margin-top: 80px; display: flex; align-items: center; justify-content: center; }
+        #big-cookie { font-size: 100px; cursor: pointer; user-select: none; z-index: 5; transition: 0.05s; }
+        #big-cookie:active { transform: scale(0.9); }
         
-        .building { display: flex; align-items: center; padding: 12px; background: #222; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; position: relative; }
-        .building:hover { background: #2a2a2a; }
-        .b-icon { font-size: 1.8rem; margin-right: 15px; width: 45px; text-align: center; }
-        .b-cost { color: #00ffcc; font-size: 0.85rem; font-weight: bold; }
-        .b-count { position: absolute; right: 15px; font-size: 1.5rem; opacity: 0.15; font-weight: 900; }
+        .orbit-cursor { position: absolute; font-size: 20px; pointer-events: none; animation: click-pulse 1s infinite; }
+        @keyframes click-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
 
-        .news { background: #000; color: #777; padding: 10px; text-align: center; font-size: 0.8rem; border-bottom: 2px solid #222; }
+        /* CONTROL BUTTONS */
+        .controls { margin-top: auto; padding-bottom: 30px; display: flex; gap: 10px; }
+        .btn { padding: 8px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; font-size: 0.7rem; letter-spacing: 2px; transition: 0.3s; }
+        .btn:hover { background: var(--accent); color: #000; }
+        .btn-red { border-color: var(--red); color: var(--red); }
+        .btn-red:hover { background: var(--red); color: #fff; }
+
+        /* RIGHT: STORE */
+        .right-panel { background: #1a1a1a; overflow-y: auto; border-left: 3px solid #444; }
+        .building { display: flex; align-items: center; padding: 12px; background: #222; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; }
+        .building:hover { background: #2a2a2a; }
+        .b-icon { font-size: 1.5rem; margin-right: 15px; width: 40px; text-align: center; }
+        .b-cost { color: #00ffcc; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <div class="nav" id="nav"></div>
+    <!-- MATH SECTIONS -->
+    <section id="s1"><canvas id="c1"></canvas><div class="content"><h2>01. SINE</h2><p>Trig oscillation</p></div></section>
+    <section id="s2"><canvas id="c2"></canvas><div class="content"><h2>02. VECTORS</h2><p>Gradient flow</p></div></section>
 
-    <!-- 10 MATH SECTIONS -->
-    <section id="s1"><canvas id="c1"></canvas><div class="content"><h2>01. Sine</h2><p>Trig oscillation</p><div class="formula-hint">y = sin(x)</div></div></section>
-    <section id="s2"><canvas id="c2"></canvas><div class="content"><h2>02. Vectors</h2><p>Gradient flow</p><div class="formula-hint">∇f(x,y)</div></div></section>
-    <section id="s3"><canvas id="c3"></canvas><div class="content"><h2>03. Kinetic</h2><p>Acceleration</p><div class="formula-hint">F = ma</div></div></section>
-    <section id="s4"><canvas id="c4"></canvas><div class="content"><h2>04. Geometry</h2><p>Rotation</p><div class="formula-hint">x' = x cosθ - y sinθ</div></div></section>
-    <section id="s5"><canvas id="c5"></canvas><div class="content"><h2>05. Probability</h2><p>Stochastic cloud</p><div class="formula-hint">P(A|B)</div></div></section>
-    <section id="s6"><canvas id="c6"></canvas><div class="content"><h2>06. Spiral</h2><p>Phi growth</p><div class="formula-hint">r = a + bθ</div></div></section>
-    <section id="s7"><canvas id="c7"></canvas><div class="content"><h2>07. Spacetime</h2><p>Grid warp</p><div class="formula-hint">Gμν = 8πGTμν</div></div></section>
-    <section id="s8"><canvas id="c8"></canvas><div class="content"><h2>08. Chaos</h2><p>Lorenz trail</p><div class="formula-hint">dy/dt = x(ρ - z) - y</div></div></section>
-    <section id="s9"><canvas id="c9"></canvas><div class="content"><h2>09. Fractal</h2><p>Recursive tree</p><div class="formula-hint">f(z) = z² + c</div></div></section>
-    <section id="s10"><canvas id="c10"></canvas><div class="content"><h2>10. Quantum Zen</h2><p>Euler Equilibrium</p><div class="formula-hint">e^iπ + 1 = 0</div></div></section>
-
-    <!-- THE GAME OVERLAY (3 COLUMNS) -->
     <div id="game-overlay">
         <div class="left-panel">
-            <div style="font-size: 0.8rem; color: #555;">Math Bakery</div>
-            <div class="score-display">
-                <div id="cookies-count" style="font-size: 1.5rem; font-weight: bold;">0 cookies</div>
-                <div id="cps-display" style="font-size: 0.8rem; color: #00ffcc;">per second: 0</div>
+            <div style="margin-top: 20px; text-align: center;">
+                <div id="cookies-count" style="font-size: 1.8rem; font-weight: bold;">0 cookies</div>
+                <div id="cps-display" style="color: #00ffcc;">per second: 0</div>
             </div>
-            <div id="big-cookie">🍪</div>
+            <div id="cookie-container">
+                <div id="big-cookie">🍪</div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="saveGame()">SAVE PROGRESS</button>
+                <button class="btn btn-red" onclick="resetGame()">RESET</button>
+            </div>
+            <p style="font-size: 0.6rem; color: #444; margin-bottom: 10px;">Progress is stored in your browser</p>
         </div>
-        <div class="mid-panel">
-            <div class="news">News: Students prefer cookies over homework.</div>
-            <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center; color: #222; font-size: 0.8rem; letter-spacing: 5px;">VISUALS AREA</div>
+
+        <div style="background: #111; border-right: 3px solid #444; padding: 20px;">
+            <div style="padding: 10px; background: #000; text-align: center; font-size: 0.8rem; color: #666; border: 1px solid #222;">SYSTEM LOG: Memory initialized.</div>
         </div>
+
         <div class="right-panel">
-            <div style="padding: 15px; text-align: center; background: #000; border-bottom: 2px solid #333;">STORE</div>
+            <div style="padding: 15px; text-align: center; font-weight: bold; border-bottom: 2px solid #333; background: #000;">STORE</div>
             <div id="store-items"></div>
-            <div style="padding: 20px; text-align: center; color: #444; font-size: 0.6rem;">Ctrl + Shift + 6 to toggle | ESC to exit</div>
+            <p style="text-align: center; color: #444; font-size: 0.6rem; padding: 10px;">SPACE to Click | ESC to Exit</p>
         </div>
     </div>
 
-    <!-- Vercel Analytics -->
-    <script defer src="/_vercel/insights/script.js"></script>
-
     <script>
-        const mouse = { x: 0, y: 0 };
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-
-        // --- MATH ENGINE ---
-        function init(id, draw) {
-            const c = document.getElementById(id); const ctx = c.getContext('2d');
-            const res = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-            window.addEventListener('resize', res); res();
-            const loop = () => { const r = c.getBoundingClientRect(); draw(ctx, c, mouse.y - r.top); requestAnimationFrame(loop); };
-            loop();
-        }
-
-        // 10 UNIQUE ANIMATIONS (Optimized with ry correction)
-        init('c1', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.beginPath(); for(let x=0; x<c.width; x+=5) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2); ctx.stroke(); });
-        init('c2', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='rgba(0,255,204,0.3)'; for(let x=50; x<c.width; x+=50) for(let y=50; y<c.height; y+=50) { let a=Math.atan2(ry-y, mouse.x-x); ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+Math.cos(a)*15, y+Math.sin(a)*15); ctx.stroke(); } });
-        let p3 = Array(50).fill().map(()=>({x:Math.random()*1000, y:Math.random()*1000}));
-        init('c3', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle='#00ffcc'; p3.forEach(p=>{ p.x+=(mouse.x-p.x)*0.02; p.y+=(ry-p.y)*0.02; ctx.fillRect(p.x,p.y,2,2); }); });
-        init('c4', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.save(); ctx.translate(c.width/2, c.height/2); ctx.rotate(Date.now()*0.001); for(let i=0; i<5; i++){ ctx.rotate(mouse.x*0.0001); ctx.strokeRect(-40-i*20,-40-i*20,80+i*40,80+i*40); } ctx.restore(); });
-        init('c5', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.05)'; ctx.fillRect(0,0,c.width,c.height); ctx.fillStyle='#fff'; for(let i=0; i<15; i++) ctx.fillRect(mouse.x+(Math.random()-0.5)*400, ry+(Math.random()-0.5)*400, 1.2, 1.2); });
-        init('c6', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.beginPath(); ctx.save(); ctx.translate(c.width/2, c.height/2); for(let i=0; i<200; i++) { let r=2*Math.sqrt(i)*(mouse.x*0.02); let a=i*0.1+Date.now()*0.001; ctx.lineTo(r*Math.cos(a), r*Math.sin(a)); } ctx.stroke(); ctx.restore(); });
-        init('c7', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='rgba(0,255,204,0.3)'; for(let x=0; x<c.width; x+=40) { ctx.beginPath(); for(let y=0; y<c.height; y+=15) { let dx=mouse.x-x, dy=ry-y, d=Math.sqrt(dx*dx+dy*dy), f=Math.max(0,(250-d)/250); ctx.lineTo(x+dx*f*0.8, y+dy*f*0.8); } ctx.stroke(); } });
-        let trail=[]; init('c8', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.05)'; ctx.fillRect(0,0,c.width,c.height); trail.push({x:mouse.x, y:ry, age:0}); ctx.beginPath(); ctx.strokeStyle='#00ffcc'; trail.forEach((p,i) => { p.age++; if(i==0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); if(p.age > 80) trail.shift(); }); ctx.stroke(); });
-        function drwTr(ctx, len, ang) { ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,-len); ctx.stroke(); if(len<10) return; ctx.save(); ctx.translate(0,-len); ctx.rotate(ang); drwTr(ctx, len*0.7, ang); ctx.restore(); ctx.save(); ctx.translate(0,-len); ctx.rotate(-ang); drwTr(ctx, len*0.7, ang); ctx.restore(); }
-        init('c9', (ctx, c, ry) => { ctx.clearRect(0,0,c.width,c.height); ctx.strokeStyle='#00ffcc'; ctx.save(); ctx.translate(c.width/2, c.height-50); drwTr(ctx, 110, mouse.x*0.001); ctx.restore(); });
-        let qP = Array(200).fill().map(() => ({ x:Math.random(), y:Math.random(), r:Math.random()*Math.PI*2 }));
-        init('c10', (ctx, c, ry) => { ctx.fillStyle='rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height); qP.forEach(p => { let tx=p.x*c.width, ty=p.y*c.height, dx=mouse.x-tx, dy=ry-ty, d=Math.sqrt(dx*dx+dy*dy); if(d<150){tx-=dx*0.1;ty-=dy*0.1;} ctx.fillStyle=`rgba(0,255,204,${0.3+Math.sin(Date.now()*0.002+p.r)*0.2})`; ctx.beginPath(); ctx.arc(tx,ty,1,0,Math.PI*2); ctx.fill(); }); ctx.font="100 2rem Inter"; ctx.fillStyle="white"; ctx.textAlign="center"; ctx.fillText("e^iπ + 1 = 0", c.width/2, c.height/2); });
-
-        // --- COOKIE CLICKER GAME LOGIC ---
-        let cookies = 0; let cps = 0;
-        const bld = [
-            { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', count: 0 },
-            { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', count: 0 },
-            { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', count: 0 },
-            { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', count: 0 }
+        // --- GAME STATE ---
+        let cookies = 0; 
+        let cps = 0;
+        let buildings = [
+            { id: 'cur', name: 'Cursor', baseCost: 15, cost: 15, power: 0.1, icon: '🖱️', count: 0 },
+            { id: 'grm', name: 'Grandma', baseCost: 100, cost: 100, power: 1, icon: '👵', count: 0 },
+            { id: 'frm', name: 'Farm', baseCost: 1100, cost: 1100, power: 8, icon: '🌾', count: 0 },
+            { id: 'mne', name: 'Mine', baseCost: 12000, cost: 12000, power: 47, icon: '⛏️', count: 0 },
+            { id: 'fac', name: 'Factory', baseCost: 130000, cost: 130000, power: 260, icon: '🏭', count: 0 },
+            { id: 'bnk', name: 'Bank', baseCost: 1400000, cost: 1400000, power: 1400, icon: '🏦', count: 0 }
         ];
 
-        function buy(id) {
-            const b = bld.find(x => x.id === id);
-            if (cookies >= b.cost) {
-                cookies -= b.cost; b.count++; b.cost = Math.floor(b.cost * 1.15);
-                updateG();
+        // --- SAVE/LOAD SYSTEM ---
+        function saveGame() {
+            const gameData = {
+                cookies: cookies,
+                buildings: buildings
+            };
+            localStorage.setItem('mathCookieSave', JSON.stringify(gameData));
+            alert("Progress Saved!");
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('mathCookieSave');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                cookies = data.cookies;
+                // Синхронизируем здания
+                data.buildings.forEach((savedB, index) => {
+                    if(buildings[index]) {
+                        buildings[index].count = savedB.count;
+                        buildings[index].cost = savedB.cost;
+                    }
+                });
+                // Восстанавливаем визуальные курсоры
+                const cursorCount = buildings.find(b => b.id === 'cur').count;
+                for(let i=0; i<cursorCount; i++) addVisualCursor(true);
+                
+                calculateCPS();
+                updateUI();
             }
         }
 
-        function updateG() {
-            cps = bld.reduce((a, b) => a + (b.count * b.power), 0);
+        function resetGame() {
+            if(confirm("Delete all cookies and progress?")) {
+                localStorage.removeItem('mathCookieSave');
+                location.reload();
+            }
+        }
+
+        // --- CORE ENGINE ---
+        function updateUI() {
             document.getElementById('cookies-count').innerText = Math.floor(cookies) + " cookies";
             document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
-            document.getElementById('store-items').innerHTML = bld.map(b => `
+            document.getElementById('store-items').innerHTML = buildings.map(b => `
                 <div class="building" onclick="buy('${b.id}')">
                     <div class="b-icon">${b.icon}</div>
-                    <div class="b-info"><span style="font-weight:bold">${b.name}</span><br><span class="b-cost">${b.cost}</span></div>
-                    <div class="b-count">${b.count}</div>
+                    <div><b>${b.name}</b><br><span class="b-cost">${Math.floor(b.cost)}</span></div>
+                    <div style="margin-left:auto; opacity: 0.3; font-weight: bold;">${b.count}</div>
                 </div>`).join('');
         }
 
-        setInterval(() => { cookies += cps / 10; updateG(); }, 100);
-        document.getElementById('big-cookie').onclick = () => { cookies++; updateG(); };
+        function buy(id) {
+            const b = buildings.find(x => x.id === id);
+            if (cookies >= b.cost) {
+                cookies -= b.cost; 
+                b.count++; 
+                b.cost = Math.floor(b.cost * 1.15);
+                if(id === 'cur') addVisualCursor();
+                calculateCPS(); 
+                updateUI();
+            }
+        }
+
+        function addVisualCursor(isLoading = false) {
+            const c = document.createElement('div');
+            c.className = 'orbit-cursor';
+            c.innerText = '🖱️';
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 130;
+            c.style.left = (125 + Math.cos(angle) * radius - 10) + 'px';
+            c.style.top = (125 + Math.sin(angle) * radius - 10) + 'px';
+            c.style.transform = `rotate(${angle + Math.PI/2}rad)`;
+            document.getElementById('cookie-container').appendChild(c);
+        }
+
+        function calculateCPS() { 
+            cps = buildings.reduce((a, b) => a + (b.count * b.power), 0); 
+        }
+
+        // Controls
         window.addEventListener('keydown', e => {
+            if (e.code === 'Space' && document.getElementById('game-overlay').style.display === 'grid') {
+                e.preventDefault(); cookies++; updateUI();
+            }
             if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') document.getElementById('game-overlay').style.display = 'grid';
             if (e.key === 'Escape') document.getElementById('game-overlay').style.display = 'none';
         });
 
-        // Navigation Dots
-        const nav = document.getElementById('nav');
-        for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
-        window.addEventListener('scroll', () => {
-            let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
-            document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.15)');
-        });
-        updateG();
+        document.getElementById('big-cookie').onclick = () => { cookies++; updateUI(); };
+        setInterval(() => { cookies += cps / 10; updateUI(); }, 100);
+
+        // Init
+        loadGame();
+        updateUI();
+
+        // Simple Math BG
+        const c1 = document.getElementById('c1'); const ctx1 = c1.getContext('2d');
+        function draw() {
+            c1.width = window.innerWidth; c1.height = window.innerHeight;
+            ctx1.fillStyle = 'rgba(5,5,8,0.1)'; ctx1.fillRect(0,0,c1.width,c1.height);
+            ctx1.strokeStyle = '#00ffcc'; ctx1.beginPath();
+            for(let x=0; x<c1.width; x+=5) ctx1.lineTo(x, c1.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*100);
+            ctx1.stroke(); requestAnimationFrame(draw);
+        }
+        draw();
     </script>
 </body>
 </html>
