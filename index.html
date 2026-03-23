@@ -3,211 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive Research Tool</title>
+    <title>HCI: Neural & Physical Interaction Study</title>
     <style>
         :root {
-            --apple-bg: #f5f5f7;
-            --apple-card: #ffffff;
-            --apple-text: #1d1d1f;
-            --apple-accent: #0071e3;
-            --apple-gray: #86868b;
+            --bg: #f5f5f7;
+            --card: #ffffff;
+            --text: #1d1d1f;
+            --accent: #0071e3;
+            --gray: #86868b;
         }
         body {
-            background-color: var(--apple-bg);
-            color: var(--apple-text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, sans-serif;
+            margin: 0; padding: 40px 20px;
+            display: flex; justify-content: center;
         }
-        .container {
-            max-width: 1100px;
-            width: 100%;
-        }
-        header {
-            text-align: left;
-            margin-bottom: 50px;
-            padding-left: 20px;
-        }
-        header h1 { font-size: 40px; font-weight: 600; margin: 0; letter-spacing: -0.5px; }
-        header p { color: var(--apple-gray); font-size: 19px; margin-top: 10px; }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
+        .container { max-width: 1000px; width: 100%; }
+        header { margin-bottom: 40px; border-left: 4px solid var(--accent); padding-left: 20px; }
+        h1 { font-size: 32px; margin: 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        
         .card {
-            background: var(--apple-card);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background: var(--card);
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            display: flex; flex-direction: column;
         }
-        .card:hover { transform: translateY(-5px); }
-        .card h3 {
-            font-size: 14px;
-            text-transform: uppercase;
-            color: var(--apple-gray);
-            letter-spacing: 1px;
-            margin: 0 0 20px 0;
-        }
-
-        /* M4 Physics Styles */
-        #m4-canvas { width: 100%; height: 180px; background: #fafafa; border-radius: 12px; cursor: pointer; }
+        .card h3 { font-size: 13px; color: var(--gray); text-transform: uppercase; margin: 0 0 15px 0; }
+        canvas { background: #fbfbfd; border-radius: 12px; cursor: crosshair; width: 100%; height: 200px; }
         
-        /* M9 Wave Styles */
-        #m9-canvas { width: 100%; height: 180px; background: #fafafa; border-radius: 12px; }
-
-        /* Other Modules Styles */
-        .breath-circle {
-            width: 80px; height: 80px; background: linear-gradient(135deg, #a2d2ff, #0071e3);
-            border-radius: 50%; margin: auto; transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+        .wiki-link {
+            margin-top: 15px;
+            font-size: 12px;
+            color: var(--accent);
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 500;
         }
-        .breath-circle:active { transform: scale(2.2); }
-        
-        .toggle-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-        input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--apple-accent); }
+        .wiki-link:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Neural Interface Study</h1>
-        <p>Interactive diagnostics for sensory processing and motor-control recovery.</p>
+        <h1>Cognitive Ergonomics Research</h1>
+        <p>Analyzing sensory feedback and physical interaction models.</p>
     </header>
 
     <div class="grid">
-        <!-- M4: Real Physics Balls -->
+        <!-- M4: Rigid Body Physics -->
         <div class="card">
-            <h3>M4: Gravitational Mass</h3>
+            <h3>M4: Collision & Mass Physics</h3>
             <canvas id="m4-canvas"></canvas>
-            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px;">Click canvas to inject particles.</p>
+            <a href="https://en.wikipedia.org" target="_blank" class="wiki-link">Theory: Rigid Body Dynamics →</a>
         </div>
 
         <!-- M9: Gravitational Wave -->
         <div class="card">
             <h3>M9: Wave Attenuation</h3>
             <canvas id="m9-canvas"></canvas>
-            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px;">Hover to disrupt wave geometry.</p>
+            <a href="https://en.wikipedia.org" target="_blank" class="wiki-link">Theory: Superposition Principle →</a>
         </div>
 
         <!-- M2: Breathing -->
         <div class="card">
-            <h3>M2: Lung Expansion</h3>
-            <div class="breath-circle"></div>
-            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px; text-align: center;">Long-press to calibrate breath.</p>
+            <h3>M2: Pulse Synchronization</h3>
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                <div id="breath-circle" style="width: 60px; height: 60px; background: var(--accent); border-radius: 50%; transition: 3s transform ease-in-out;"></div>
+            </div>
+            <a href="https://en.wikipedia.org" target="_blank" class="wiki-link">Theory: Temporal Coherence →</a>
         </div>
-
-        <!-- M5: Binary Decision -->
-        <div class="card">
-            <h3>M5: Tactical Response</h3>
-            <div class="toggle-group" id="m5-toggles"></div>
-        </div>
-        
-        <!-- Добавь остальные 5 карточек по аналогии -->
     </div>
 </div>
 
 <script>
-    // --- M4: Physics Engine (Simplified) ---
+    // --- M4: Physics with Collisions ---
     const c4 = document.getElementById('m4-canvas');
     const ctx4 = c4.getContext('2d');
-    c4.width = 300; c4.height = 180;
+    c4.width = 300; c4.height = 200;
     let balls = [];
 
     class Ball {
         constructor(x, y) {
             this.x = x; this.y = y;
-            this.radius = 8;
-            this.vx = (Math.random() - 0.5) * 4;
+            this.r = 10;
+            this.vx = (Math.random() - 0.5) * 2;
             this.vy = 2;
-            this.gravity = 0.2;
-            this.friction = 0.7;
+            this.m = 1; // mass
         }
         draw() {
             ctx4.beginPath();
-            ctx4.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx4.arc(this.x, this.y, this.r, 0, Math.PI*2);
             ctx4.fillStyle = '#0071e3';
             ctx4.fill();
         }
         update() {
-            this.vy += this.gravity;
+            this.vy += 0.2; // gravity
             this.x += this.vx;
             this.y += this.vy;
 
-            if (this.y + this.radius > c4.height) {
-                this.y = c4.height - this.radius;
-                this.vy *= -this.friction;
-            }
-            if (this.x + this.radius > c4.width || this.x - this.radius < 0) {
-                this.vx *= -1;
-            }
+            // Wall collisions
+            if (this.y + this.r > c4.height) { this.y = c4.height - this.r; this.vy *= -0.5; }
+            if (this.x + this.r > c4.width || this.x - this.r < 0) { this.vx *= -0.8; }
+
+            // Ball to Ball collisions
+            balls.forEach(other => {
+                if (other === this) return;
+                let dx = other.x - this.x;
+                let dy = other.y - this.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < this.r + other.r) {
+                    // Simple "stacking" logic: push them apart
+                    let angle = Math.atan2(dy, dx);
+                    let targetX = this.x + Math.cos(angle) * (this.r + other.r);
+                    let targetY = this.y + Math.sin(angle) * (this.r + other.r);
+                    other.x = targetX;
+                    other.y = targetY;
+                    other.vy *= 0.5;
+                    this.vy *= 0.5;
+                }
+            });
         }
     }
 
     c4.onclick = (e) => {
-        const rect = c4.getBoundingClientRect();
-        balls.push(new Ball(e.clientX - rect.left, e.clientY - rect.top));
+        const r = c4.getBoundingClientRect();
+        balls.push(new Ball(e.clientX - r.left, e.clientY - r.top));
     };
 
-    function animateM4() {
-        ctx4.clearRect(0, 0, c4.width, c4.height);
+    function loopM4() {
+        ctx4.clearRect(0,0,300,200);
         balls.forEach(b => { b.update(); b.draw(); });
-        requestAnimationFrame(animateM4);
+        requestAnimationFrame(loopM4);
     }
-    animateM4();
+    loopM4();
 
-    // --- M9: Interactive Wave ---
+    // --- M9: Wave + Cursor Gravitation ---
     const c9 = document.getElementById('m9-canvas');
     const ctx9 = c9.getContext('2d');
-    c9.width = 300; c9.height = 180;
-    let mouseX = -100, mouseY = -100;
+    c9.width = 300; c9.height = 200;
+    let mx = -100, my = -100;
 
     c9.onmousemove = (e) => {
-        const rect = c9.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
+        const r = c9.getBoundingClientRect();
+        mx = e.clientX - r.left; my = e.clientY - r.top;
     };
 
-    let offset = 0;
-    function animateM9() {
-        ctx9.clearRect(0, 0, c9.width, c9.height);
+    let time = 0;
+    function loopM9() {
+        ctx9.clearRect(0,0,300,200);
         ctx9.beginPath();
-        ctx9.strokeStyle = '#86868b';
+        ctx9.strokeStyle = "#0071e3";
         ctx9.lineWidth = 2;
-
-        for (let x = 0; x <= c9.width; x += 2) {
-            let base_y = 90 + Math.sin(x * 0.05 + offset) * 20;
-            
-            // Гравитация курсора к волне
-            let dist = Math.abs(x - mouseX);
-            if (dist < 60) {
-                let force = (60 - dist) / 60;
-                base_y += (mouseY - base_y) * force;
+        for(let x=0; x<=300; x+=2) {
+            let y = 100 + Math.sin(x*0.05 + time) * 20;
+            let d = Math.abs(x - mx);
+            if(d < 50) {
+                let force = (50 - d) / 50;
+                y += (my - y) * force;
             }
-
-            if (x === 0) ctx9.moveTo(x, base_y);
-            else ctx9.lineTo(x, base_y);
+            if(x===0) ctx9.moveTo(x, y); else ctx9.lineTo(x, y);
         }
         ctx9.stroke();
-        offset += 0.04;
-        requestAnimationFrame(animateM9);
+        time += 0.05;
+        requestAnimationFrame(loopM9);
     }
-    animateM9();
+    loopM9();
 
-    // M5: Toggles
-    const m5 = document.getElementById('m5-toggles');
-    for(let i=0; i<30; i++) {
-        let t = document.createElement('input'); t.type = 'checkbox';
-        m5.appendChild(t);
-    }
+    // M2: Breath circle interaction
+    const circle = document.getElementById('breath-circle');
+    circle.onmousedown = () => circle.style.transform = "scale(2.5)";
+    circle.onmouseup = () => circle.style.transform = "scale(1)";
 </script>
+
 </body>
 </html>
