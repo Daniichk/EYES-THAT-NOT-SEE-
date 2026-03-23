@@ -3,176 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HCI Research: Cognitive Load & Stress Reduction</title>
+    <title>Cognitive Research Tool</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #ecf0f1; --accent: #3498db; }
-        body { font-family: 'Times New Roman', serif; line-height: 1.6; color: var(--primary); background: #f4f7f6; margin: 0; padding: 40px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 50px; shadow: 0 0 20px rgba(0,0,0,0.1); }
+        :root {
+            --apple-bg: #f5f5f7;
+            --apple-card: #ffffff;
+            --apple-text: #1d1d1f;
+            --apple-accent: #0071e3;
+            --apple-gray: #86868b;
+        }
+        body {
+            background-color: var(--apple-bg);
+            color: var(--apple-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+        }
+        header {
+            text-align: left;
+            margin-bottom: 50px;
+            padding-left: 20px;
+        }
+        header h1 { font-size: 40px; font-weight: 600; margin: 0; letter-spacing: -0.5px; }
+        header p { color: var(--apple-gray); font-size: 19px; margin-top: 10px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            background: var(--apple-card);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--apple-gray);
+            letter-spacing: 1px;
+            margin: 0 0 20px 0;
+        }
+
+        /* M4 Physics Styles */
+        #m4-canvas { width: 100%; height: 180px; background: #fafafa; border-radius: 12px; cursor: pointer; }
         
-        /* Academic Header */
-        .header { border-bottom: 2px solid var(--primary); margin-bottom: 30px; text-align: center; }
-        .header h1 { margin: 10px 0; font-variant: small-caps; }
-        .abstract { font-style: italic; background: #f9f9f9; padding: 20px; border: 1px solid #ddd; margin-bottom: 40px; }
+        /* M9 Wave Styles */
+        #m9-canvas { width: 100%; height: 180px; background: #fafafa; border-radius: 12px; }
 
-        /* Research Grid */
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
-        .module { border: 1px solid #ccc; padding: 15px; text-align: center; background: #fff; min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .module h3 { font-size: 14px; text-transform: uppercase; margin-top: 0; color: #7f8c8d; }
-
-        /* Game Styles */
-        canvas { background: #fafafa; border: 1px dashed #bbb; }
-        .dot-container { width: 100%; height: 100px; position: relative; overflow: hidden; }
-        .breath-circle { width: 60px; height: 60px; background: #a2d2ff; border-radius: 50%; transition: transform 2s ease-in-out; }
-        .breath-circle:active { transform: scale(2.5); }
-        .toggle-set { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
-        .particle { position: absolute; background: var(--accent); border-radius: 50%; pointer-events: none; }
+        /* Other Modules Styles */
+        .breath-circle {
+            width: 80px; height: 80px; background: linear-gradient(135deg, #a2d2ff, #0071e3);
+            border-radius: 50%; margin: auto; transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .breath-circle:active { transform: scale(2.2); }
+        
+        .toggle-group { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--apple-accent); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <p>Journal of Digital Behavior & Psychological Well-being</p>
-        <h1>Study: Sensory Micro-Interactions as a Method of Cortisol Regulation</h1>
-        <p><strong>Authors:</strong> Research Lab Alpha-01 | <strong>Date:</strong> 2024</p>
-    </div>
-
-    <div class="abstract">
-        <strong>Abstract:</strong> This research explores the "Digital Fidget" phenomenon. We hypothesize that low-stakes, repetitive motor tasks (micro-interactions) allow the prefrontal cortex to recover from high cognitive loads. Below are nine experimental modules designed to test sensory feedback and user relaxation levels.
-    </div>
+    <header>
+        <h1>Neural Interface Study</h1>
+        <p>Interactive diagnostics for sensory processing and motor-control recovery.</p>
+    </header>
 
     <div class="grid">
-        <!-- 1. Haptic Simulation (Bubble Wrap) -->
-        <div class="module">
-            <h3>M1: Haptic Feedback</h3>
-            <div id="m1-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;"></div>
+        <!-- M4: Real Physics Balls -->
+        <div class="card">
+            <h3>M4: Gravitational Mass</h3>
+            <canvas id="m4-canvas"></canvas>
+            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px;">Click canvas to inject particles.</p>
         </div>
 
-        <!-- 2. Proprioception (Breathing) -->
-        <div class="module">
-            <h3>M2: Rhythmic Expansion</h3>
+        <!-- M9: Gravitational Wave -->
+        <div class="card">
+            <h3>M9: Wave Attenuation</h3>
+            <canvas id="m9-canvas"></canvas>
+            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px;">Hover to disrupt wave geometry.</p>
+        </div>
+
+        <!-- M2: Breathing -->
+        <div class="card">
+            <h3>M2: Lung Expansion</h3>
             <div class="breath-circle"></div>
-            <p style="font-size: 10px; margin-top: 10px;">Hold to simulate deep inhalation</p>
+            <p style="font-size: 12px; color: var(--apple-gray); margin-top: 10px; text-align: center;">Long-press to calibrate breath.</p>
         </div>
 
-        <!-- 3. Visual Erasure (The Void) -->
-        <div class="module">
-            <h3>M3: Ephemeral Input</h3>
-            <canvas id="m3-canvas" width="150" height="80"></canvas>
+        <!-- M5: Binary Decision -->
+        <div class="card">
+            <h3>M5: Tactical Response</h3>
+            <div class="toggle-group" id="m5-toggles"></div>
         </div>
-
-        <!-- 4. Kinetic Gravity -->
-        <div class="module" id="m4-zone">
-            <h3>M4: Kinetic Weight</h3>
-            <div class="dot-container" id="m4-container"></div>
-            <small style="font-size: 9px;">Click to add mass</small>
-        </div>
-
-        <!-- 5. Decision Fatigue (Switches) -->
-        <div class="module">
-            <h3>M5: Binary Sorting</h3>
-            <div class="toggle-set" id="m5-toggles"></div>
-        </div>
-
-        <!-- 6. Chromotherapy -->
-        <div class="module" onmousemove="updateColor(event, this)">
-            <h3>M6: Spectrum Shift</h3>
-            <div style="width: 80%; height: 60px; border: 1px solid #000;" id="m6-box"></div>
-        </div>
-
-        <!-- 7. Focus Drift (Particle Trace) -->
-        <div class="module">
-            <h3>M7: Attention Trace</h3>
-            <canvas id="m7-canvas" width="150" height="80"></canvas>
-        </div>
-
-        <!-- 8. Elastic Tension -->
-        <div class="module" onmousemove="stretchString(event)">
-            <h3>M8: Linear Tension</h3>
-            <div id="m8-string" style="width: 100%; height: 2px; background: black;"></div>
-        </div>
-
-        <!-- 9. Sound Frequency (Visual) -->
-        <div class="module">
-            <h3>M9: Wave Pattern</h3>
-            <canvas id="m9-canvas" width="150" height="80"></canvas>
-        </div>
-    </div>
-
-    <div style="margin-top: 40px; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 20px;">
-        <strong>Methodology:</strong> Users are instructed to spend 30 seconds per module. Preliminary data suggests a 15% reduction in perceived stress after interaction with Module 3 and Module 9.
+        
+        <!-- Добавь остальные 5 карточек по аналогии -->
     </div>
 </div>
 
 <script>
-    // M1: Bubbles
-    const m1 = document.getElementById('m1-grid');
-    for(let i=0; i<15; i++) {
-        let b = document.createElement('div');
-        b.style = "width:20px; height:20px; border-radius:50%; background:#eee; cursor:pointer; border: 1px solid #ccc;";
-        b.onclick = () => { b.style.background = "#fff"; b.style.boxShadow = "inset 0 2px 4px rgba(0,0,0,0.1)"; };
-        m1.appendChild(b);
+    // --- M4: Physics Engine (Simplified) ---
+    const c4 = document.getElementById('m4-canvas');
+    const ctx4 = c4.getContext('2d');
+    c4.width = 300; c4.height = 180;
+    let balls = [];
+
+    class Ball {
+        constructor(x, y) {
+            this.x = x; this.y = y;
+            this.radius = 8;
+            this.vx = (Math.random() - 0.5) * 4;
+            this.vy = 2;
+            this.gravity = 0.2;
+            this.friction = 0.7;
+        }
+        draw() {
+            ctx4.beginPath();
+            ctx4.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx4.fillStyle = '#0071e3';
+            ctx4.fill();
+        }
+        update() {
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+
+            if (this.y + this.radius > c4.height) {
+                this.y = c4.height - this.radius;
+                this.vy *= -this.friction;
+            }
+            if (this.x + this.radius > c4.width || this.x - this.radius < 0) {
+                this.vx *= -1;
+            }
+        }
     }
 
-    // M3: Void (Fade)
-    const c3 = document.getElementById('m3-canvas');
-    const ctx3 = c3.getContext('2d');
-    c3.onmousemove = (e) => { if(e.buttons==1){ ctx3.fillRect(e.offsetX, e.offsetY, 4, 4); } };
-    setInterval(() => { ctx3.fillStyle = "rgba(255,255,255,0.05)"; ctx3.fillRect(0,0,150,80); ctx3.fillStyle = "#2c3e50"; }, 50);
-
-    // M4: Gravity
-    document.getElementById('m4-zone').onclick = (e) => {
-        let p = document.createElement('div');
-        p.className = 'particle';
-        p.style.width = '8px'; p.style.height = '8px';
-        p.style.left = e.offsetX + 'px'; p.style.top = '0px';
-        document.getElementById('m4-container').appendChild(p);
-        let y = 0;
-        let v = setInterval(() => { y += 3; p.style.top = y + 'px'; if(y > 90) clearInterval(v); }, 20);
+    c4.onclick = (e) => {
+        const rect = c4.getBoundingClientRect();
+        balls.push(new Ball(e.clientX - rect.left, e.clientY - rect.top));
     };
+
+    function animateM4() {
+        ctx4.clearRect(0, 0, c4.width, c4.height);
+        balls.forEach(b => { b.update(); b.draw(); });
+        requestAnimationFrame(animateM4);
+    }
+    animateM4();
+
+    // --- M9: Interactive Wave ---
+    const c9 = document.getElementById('m9-canvas');
+    const ctx9 = c9.getContext('2d');
+    c9.width = 300; c9.height = 180;
+    let mouseX = -100, mouseY = -100;
+
+    c9.onmousemove = (e) => {
+        const rect = c9.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    };
+
+    let offset = 0;
+    function animateM9() {
+        ctx9.clearRect(0, 0, c9.width, c9.height);
+        ctx9.beginPath();
+        ctx9.strokeStyle = '#86868b';
+        ctx9.lineWidth = 2;
+
+        for (let x = 0; x <= c9.width; x += 2) {
+            let base_y = 90 + Math.sin(x * 0.05 + offset) * 20;
+            
+            // Гравитация курсора к волне
+            let dist = Math.abs(x - mouseX);
+            if (dist < 60) {
+                let force = (60 - dist) / 60;
+                base_y += (mouseY - base_y) * force;
+            }
+
+            if (x === 0) ctx9.moveTo(x, base_y);
+            else ctx9.lineTo(x, base_y);
+        }
+        ctx9.stroke();
+        offset += 0.04;
+        requestAnimationFrame(animateM9);
+    }
+    animateM9();
 
     // M5: Toggles
     const m5 = document.getElementById('m5-toggles');
-    for(let i=0; i<16; i++) {
+    for(let i=0; i<30; i++) {
         let t = document.createElement('input'); t.type = 'checkbox';
         m5.appendChild(t);
     }
-
-    // M6: Color
-    function updateColor(e, el) {
-        document.getElementById('m6-box').style.backgroundColor = `hsl(${e.offsetX}, 70%, 80%)`;
-    }
-
-    // M7: Particle Trace
-    const c7 = document.getElementById('m7-canvas');
-    const ctx7 = c7.getContext('2d');
-    c7.onmousemove = (e) => {
-        ctx7.beginPath(); ctx7.arc(e.offsetX, e.offsetY, 2, 0, Math.PI*2);
-        ctx7.stroke();
-    };
-
-    // M8: Elastic
-    function stretchString(e) {
-        document.getElementById('m8-string').style.transform = `translateY(${(e.offsetY - 110)/2}px)`;
-    }
-
-    // M9: Waves
-    const c9 = document.getElementById('m9-canvas');
-    const ctx9 = c9.getContext('2d');
-    let tick = 0;
-    function drawWave() {
-        ctx9.clearRect(0,0,150,80);
-        ctx9.beginPath();
-        for(let x=0; x<150; x++) {
-            let y = 40 + Math.sin(x*0.1 + tick) * 15;
-            ctx9.lineTo(x, y);
-        }
-        ctx9.stroke();
-        tick += 0.05;
-        requestAnimationFrame(drawWave);
-    }
-    drawWave();
 </script>
-
 </body>
 </html>
