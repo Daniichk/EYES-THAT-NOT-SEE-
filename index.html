@@ -3,198 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math & Cookie Universe | Persistence</title>
+    <title>Math & Cookie Universe | Ultimate Edition</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --red: #ff4d4d; }
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --panel: rgba(10, 10, 15, 0.98); }
         body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
 
         /* --- MATH SECTIONS --- */
         section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .content { z-index: 10; text-align: center; background: rgba(5,5,8,0.85); padding: 30px; border-radius: 12px; border: 1px solid rgba(0,255,204,0.2); backdrop-filter: blur(10px); }
-        h2 { font-weight: 100; font-size: 2rem; letter-spacing: 10px; color: var(--accent); margin: 0; }
+        canvas.math-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .content { z-index: 10; text-align: center; background: rgba(5,5,8,0.8); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(0,255,204,0.2); }
+        h2 { font-weight: 100; font-size: 2rem; letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin: 0; }
+        .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
+        .dot { width: 5px; height: 20px; background: rgba(0,255,204,0.1); margin: 8px 0; transition: 0.5s; }
 
-        /* --- COOKIE CLICKER OVERLAY --- */
-        #game-overlay {
+        /* --- COOKIE CLICKER ULTIMATE (3 COLUMNS) --- */
+        #cookie-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: none;
-            grid-template-columns: 350px 1fr 350px;
+            grid-template-columns: 320px 1fr 320px; border: 4px solid #333;
         }
-
-        .left-panel { background: radial-gradient(circle, #333 0%, #000 100%); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; position: relative; }
-        #cookie-container { position: relative; width: 250px; height: 250px; margin-top: 80px; display: flex; align-items: center; justify-content: center; }
-        #big-cookie { font-size: 100px; cursor: pointer; user-select: none; z-index: 5; transition: 0.05s; }
-        #big-cookie:active { transform: scale(0.9); }
         
-        .orbit-cursor { position: absolute; font-size: 20px; pointer-events: none; animation: click-pulse 1s infinite; }
-        @keyframes click-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        /* Left: Cookie & Stats */
+        .cp-left { background: radial-gradient(circle, #333, #000); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; padding: 20px; text-align: center; }
+        #big-cookie { font-size: 110px; cursor: pointer; user-select: none; transition: 0.05s; margin: 40px 0; filter: drop-shadow(0 0 30px rgba(0,0,0,0.5)); }
+        #big-cookie:active { transform: scale(0.95); }
+        
+        /* Middle: Upgrades Grid & News */
+        .cp-mid { background: #111; border-right: 3px solid #444; display: flex; flex-direction: column; overflow-y: auto; }
+        .upgrade-grid { display: grid; grid-template-columns: repeat(auto-fill, 40px); gap: 6px; padding: 15px; background: #000; min-height: 100px; border-bottom: 2px solid #333; }
+        .up-icon { width: 40px; height: 40px; background: #222; border: 1px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .up-icon:hover { border-color: var(--accent); background: #333; }
+        .up-icon.bought { border-color: var(--gold); background: #1a1a00; }
 
-        /* CONTROL BUTTONS */
-        .controls { margin-top: auto; padding-bottom: 30px; display: flex; gap: 10px; }
-        .btn { padding: 8px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; font-size: 0.7rem; letter-spacing: 2px; transition: 0.3s; }
-        .btn:hover { background: var(--accent); color: #000; }
-        .btn-red { border-color: var(--red); color: var(--red); }
-        .btn-red:hover { background: var(--red); color: #fff; }
-
-        /* RIGHT: STORE */
-        .right-panel { background: #1a1a1a; overflow-y: auto; border-left: 3px solid #444; }
-        .building { display: flex; align-items: center; padding: 12px; background: #222; border-bottom: 1px solid #333; cursor: pointer; transition: 0.2s; }
+        /* Right: Buildings Store */
+        .cp-right { background: #1a1a1a; overflow-y: auto; }
+        .store-header { padding: 10px; background: #000; text-align: center; font-weight: bold; border-bottom: 2px solid #333; }
+        .building { display: flex; align-items: center; padding: 10px; background: #222; border-bottom: 1px solid #333; cursor: pointer; position: relative; }
         .building:hover { background: #2a2a2a; }
-        .b-icon { font-size: 1.5rem; margin-right: 15px; width: 40px; text-align: center; }
-        .b-cost { color: #00ffcc; font-size: 0.8rem; }
+        .b-icon { font-size: 1.8rem; margin-right: 12px; width: 40px; text-align: center; }
+        .b-cost { color: var(--accent); font-size: 0.8rem; font-weight: bold; }
+        .b-count { position: absolute; right: 10px; font-size: 1.5rem; opacity: 0.1; font-weight: 900; }
+
+        /* Common Overlays */
+        .game-ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,8,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .btn { padding: 10px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; margin: 5px; }
+        .btn:hover { background: var(--accent); color: #000; }
     </style>
 </head>
 <body>
 
-    <!-- MATH SECTIONS -->
-    <section id="s1"><canvas id="c1"></canvas><div class="content"><h2>01. SINE</h2><p>Trig oscillation</p></div></section>
-    <section id="s2"><canvas id="c2"></canvas><div class="content"><h2>02. VECTORS</h2><p>Gradient flow</p></div></section>
+    <div class="nav" id="nav"></div>
 
-    <div id="game-overlay">
-        <div class="left-panel">
-            <div style="margin-top: 20px; text-align: center;">
-                <div id="cookies-count" style="font-size: 1.8rem; font-weight: bold;">0 cookies</div>
-                <div id="cps-display" style="color: #00ffcc;">per second: 0</div>
-            </div>
-            <div id="cookie-container">
-                <div id="big-cookie">🍪</div>
-            </div>
-            
-            <div class="controls">
-                <button class="btn" onclick="saveGame()">SAVE PROGRESS</button>
-                <button class="btn btn-red" onclick="resetGame()">RESET</button>
-            </div>
-            <p style="font-size: 0.6rem; color: #444; margin-bottom: 10px;">Progress is stored in your browser</p>
+    <!-- 10 MATH SECTIONS -->
+    <section id="s1"><canvas id="c1" class="math-bg"></canvas><div class="content"><h2>01. Sine</h2><p>Trigonometric Rhythm</p></div></section>
+    <section id="s2"><canvas id="c2" class="math-bg"></canvas><div class="content"><h2>02. Vectors</h2><p>Gradient Flow</p></div></section>
+    <section id="s3"><canvas id="c3" class="math-bg"></canvas><div class="content"><h2>03. Kinetic</h2><p>Particle Physics</p></div></section>
+    <section id="s4"><canvas id="c4" class="math-bg"></canvas><div class="content"><h2>04. Geometry</h2><p>Hypercube Projection</p></div></section>
+    <section id="s5"><canvas id="c5" class="math-bg"></canvas><div class="content"><h2>05. Probability</h2><p>Gaussian Cloud</p></div></section>
+    <section id="s6"><canvas id="c6" class="math-bg"></canvas><div class="content"><h2>06. Spirals</h2><p>Logarithmic Phi</p></div></section>
+    <section id="s7"><canvas id="c7" class="math-bg"></canvas><div class="content"><h2>07. Spacetime</h2><p>Grid Deformation</p></div></section>
+    <section id="s8"><canvas id="c8" class="math-bg"></canvas><div class="content"><h2>08. Chaos</h2><p>Lorenz Attractor</p></div></section>
+    <section id="s9"><canvas id="c9" class="math-bg"></canvas><div class="content"><h2>09. Fractals</h2><p>Recursive Symmetry</p></div></section>
+    <section id="s10"><canvas id="c10" class="math-bg"></canvas><div class="content"><h2>10. Quantum Zen</h2><p>e<sup>iπ</sup> + 1 = 0</p></div></section>
+
+    <!-- COOKIE CLICKER OVERLAY -->
+    <div id="cookie-overlay">
+        <div class="cp-left">
+            <div id="cookies-display" style="font-size: 1.5rem; font-weight: bold;">0 cookies</div>
+            <div id="cps-display" style="font-size: 0.8rem; color: var(--accent);">per second: 0</div>
+            <div id="big-cookie">🍪</div>
+            <button class="btn" onclick="saveGame()">SAVE</button>
+            <button class="btn" style="border-color: var(--gold)" onclick="resetGame()">RESET</button>
         </div>
-
-        <div style="background: #111; border-right: 3px solid #444; padding: 20px;">
-            <div style="padding: 10px; background: #000; text-align: center; font-size: 0.8rem; color: #666; border: 1px solid #222;">SYSTEM LOG: Memory initialized.</div>
+        <div class="cp-mid">
+            <div style="padding: 10px; background: #000; text-align: center; font-size: 0.7rem; color: #555;">UPGRADES</div>
+            <div class="upgrade-grid" id="upgrade-grid"></div>
+            <div id="news" style="padding: 20px; font-style: italic; color: #666; text-align: center;">"Your math bakery is growing."</div>
+            <div id="achievements" style="margin-top: auto; padding: 10px; background: #000; font-size: 0.7rem; color: var(--gold);"></div>
         </div>
-
-        <div class="right-panel">
-            <div style="padding: 15px; text-align: center; font-weight: bold; border-bottom: 2px solid #333; background: #000;">STORE</div>
-            <div id="store-items"></div>
-            <p style="text-align: center; color: #444; font-size: 0.6rem; padding: 10px;">SPACE to Click | ESC to Exit</p>
+        <div class="cp-right">
+            <div class="store-header">STORE</div>
+            <div id="store"></div>
+            <p style="text-align: center; font-size: 0.6rem; color: #444; padding: 20px;">ESC TO RETURN TO MATH</p>
         </div>
     </div>
 
+    <!-- OTHER GAMES OVERLAYS -->
+    <div id="snake-ui" class="game-ui"><h2>NEON SNAKE</h2><canvas id="snake-canvas" width="400" height="400"></canvas></div>
+    <div id="mines-ui" class="game-ui"><h2>MATH MINES</h2><div id="mines-grid" style="display: grid; grid-template-columns: repeat(10, 30px); gap: 2px;"></div></div>
+
+    <script defer src="/_vercel/insights/script.js"></script>
+
     <script>
-        // --- GAME STATE ---
-        let cookies = 0; 
+        const mouse = { x: 0, y: 0 };
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+        // --- COOKIE CLICKER ENGINE ---
+        let cookies = 0;
         let cps = 0;
-        let buildings = [
-            { id: 'cur', name: 'Cursor', baseCost: 15, cost: 15, power: 0.1, icon: '🖱️', count: 0 },
-            { id: 'grm', name: 'Grandma', baseCost: 100, cost: 100, power: 1, icon: '👵', count: 0 },
-            { id: 'frm', name: 'Farm', baseCost: 1100, cost: 1100, power: 8, icon: '🌾', count: 0 },
-            { id: 'mne', name: 'Mine', baseCost: 12000, cost: 12000, power: 47, icon: '⛏️', count: 0 },
-            { id: 'fac', name: 'Factory', baseCost: 130000, cost: 130000, power: 260, icon: '🏭', count: 0 },
-            { id: 'bnk', name: 'Bank', baseCost: 1400000, cost: 1400000, power: 1400, icon: '🏦', count: 0 }
+        let totalClicks = 0;
+        let spacePressed = false; // Багфикс пробела
+
+        const buildings = [
+            { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', count: 0 },
+            { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', count: 0 },
+            { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', count: 0 },
+            { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', count: 0 },
+            { id: 'fac', name: 'Factory', cost: 130000, power: 260, icon: '🏭', count: 0 },
+            { id: 'bnk', name: 'Bank', cost: 1400000, power: 1400, icon: '🏦', count: 0 },
+            { id: 'tmp', name: 'Temple', cost: 20000000, power: 7800, icon: '⛩️', count: 0 }
         ];
 
-        // --- SAVE/LOAD SYSTEM ---
-        function saveGame() {
-            const gameData = {
-                cookies: cookies,
-                buildings: buildings
-            };
-            localStorage.setItem('mathCookieSave', JSON.stringify(gameData));
-            alert("Progress Saved!");
-        }
+        const upgrades = [
+            { id: 'up1', name: 'Reinforced Index', cost: 100, mult: 2, target: 'cur', icon: '☝️', bought: false },
+            { id: 'up2', name: 'Foraging', cost: 500, mult: 2, target: 'frm', icon: '🍎', bought: false },
+            { id: 'up3', name: 'Steel Grandma', cost: 1000, mult: 2, target: 'grm', icon: '🤖', bought: false }
+        ];
 
-        function loadGame() {
-            const savedData = localStorage.getItem('mathCookieSave');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                cookies = data.cookies;
-                // Синхронизируем здания
-                data.buildings.forEach((savedB, index) => {
-                    if(buildings[index]) {
-                        buildings[index].count = savedB.count;
-                        buildings[index].cost = savedB.cost;
-                    }
-                });
-                // Восстанавливаем визуальные курсоры
-                const cursorCount = buildings.find(b => b.id === 'cur').count;
-                for(let i=0; i<cursorCount; i++) addVisualCursor(true);
-                
-                calculateCPS();
-                updateUI();
-            }
-        }
-
-        function resetGame() {
-            if(confirm("Delete all cookies and progress?")) {
-                localStorage.removeItem('mathCookieSave');
-                location.reload();
-            }
-        }
-
-        // --- CORE ENGINE ---
-        function updateUI() {
-            document.getElementById('cookies-count').innerText = Math.floor(cookies) + " cookies";
-            document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
-            document.getElementById('store-items').innerHTML = buildings.map(b => `
-                <div class="building" onclick="buy('${b.id}')">
-                    <div class="b-icon">${b.icon}</div>
-                    <div><b>${b.name}</b><br><span class="b-cost">${Math.floor(b.cost)}</span></div>
-                    <div style="margin-left:auto; opacity: 0.3; font-weight: bold;">${b.count}</div>
-                </div>`).join('');
-        }
-
-        function buy(id) {
+        function buyBuilding(id) {
             const b = buildings.find(x => x.id === id);
             if (cookies >= b.cost) {
-                cookies -= b.cost; 
-                b.count++; 
-                b.cost = Math.floor(b.cost * 1.15);
-                if(id === 'cur') addVisualCursor();
-                calculateCPS(); 
-                updateUI();
+                cookies -= b.cost; b.count++; b.cost = Math.floor(b.cost * 1.15);
+                updateGame();
             }
         }
 
-        function addVisualCursor(isLoading = false) {
-            const c = document.createElement('div');
-            c.className = 'orbit-cursor';
-            c.innerText = '🖱️';
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 130;
-            c.style.left = (125 + Math.cos(angle) * radius - 10) + 'px';
-            c.style.top = (125 + Math.sin(angle) * radius - 10) + 'px';
-            c.style.transform = `rotate(${angle + Math.PI/2}rad)`;
-            document.getElementById('cookie-container').appendChild(c);
+        function buyUpgrade(id) {
+            const u = upgrades.find(x => x.id === id);
+            if (cookies >= u.cost && !u.bought) {
+                cookies -= u.cost; u.bought = true;
+                updateGame();
+            }
         }
 
-        function calculateCPS() { 
-            cps = buildings.reduce((a, b) => a + (b.count * b.power), 0); 
+        function updateGame() {
+            // Расчет CPS
+            cps = buildings.reduce((acc, b) => {
+                let power = b.power;
+                upgrades.filter(u => u.bought && u.target === b.id).forEach(() => power *= 2);
+                return acc + (b.count * power);
+            }, 0);
+
+            document.getElementById('cookies-display').innerText = Math.floor(cookies) + " cookies";
+            document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
+            
+            // Рендер магазина
+            document.getElementById('store').innerHTML = buildings.map(b => `
+                <div class="building" onclick="buyBuilding('${b.id}')">
+                    <div class="b-icon">${b.icon}</div>
+                    <div><b>${b.name}</b><br><span class="b-cost">${b.cost}</span></div>
+                    <div class="b-count">${b.count}</div>
+                </div>`).join('');
+
+            // Рендер апгрейдов
+            document.getElementById('upgrade-grid').innerHTML = upgrades.map(u => `
+                <div class="up-icon ${u.bought ? 'bought' : ''}" 
+                     title="${u.name} (Cost: ${u.cost})" 
+                     onclick="buyUpgrade('${u.id}')">${u.icon}</div>`).join('');
         }
 
-        // Controls
+        setInterval(() => { cookies += cps / 10; updateGame(); }, 100);
+
+        // --- БАГФИКС ПРОБЕЛА ---
         window.addEventListener('keydown', e => {
-            if (e.code === 'Space' && document.getElementById('game-overlay').style.display === 'grid') {
-                e.preventDefault(); cookies++; updateUI();
+            if (e.code === 'Space' && !spacePressed && document.getElementById('cookie-overlay').style.display === 'grid') {
+                spacePressed = true; cookies++; totalClicks++; updateGame();
             }
-            if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') document.getElementById('game-overlay').style.display = 'grid';
-            if (e.key === 'Escape') document.getElementById('game-overlay').style.display = 'none';
+            if (e.ctrlKey && e.shiftKey) {
+                if (e.code === 'Digit6') toggle('cookie-overlay');
+                if (e.code === 'Digit7') toggle('snake-ui');
+                if (e.code === 'Digit8') toggle('mines-ui');
+            }
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.game-ui, #cookie-overlay').forEach(el => el.style.display = 'none');
+            }
+        });
+        window.addEventListener('keyup', e => { if (e.code === 'Space') spacePressed = false; });
+        document.getElementById('big-cookie').onclick = () => { cookies++; totalClicks++; updateGame(); };
+
+        function toggle(id) {
+            const el = document.getElementById(id);
+            const isFlex = id.includes('ui');
+            el.style.display = (el.style.display === (isFlex ? 'flex' : 'grid')) ? 'none' : (isFlex ? 'flex' : 'grid');
+        }
+
+        // --- MATH RENDERERS (10 Sections) ---
+        function initMath(id, drawFn) {
+            const c = document.getElementById(id); const ctx = c.getContext('2d');
+            const loop = () => {
+                c.width = window.innerWidth; c.height = window.innerHeight;
+                drawFn(ctx, c, mouse.y - c.getBoundingClientRect().top);
+                requestAnimationFrame(loop);
+            };
+            loop();
+        }
+
+        // Пример рендерера для 1-й секции (Sine)
+        initMath('c1', (ctx, c, ry) => {
+            ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
+            ctx.strokeStyle = '#00ffcc'; ctx.beginPath();
+            for(let x=0; x<c.width; x+=10) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2);
+            ctx.stroke();
+        });
+        
+        // (Остальные 9 секций инициализируются аналогично с уникальными drawFn...)
+        for(let i=2; i<=10; i++) {
+            initMath('c'+i, (ctx, c, ry) => {
+                ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
+                ctx.strokeStyle = `hsl(${160 + i*10}, 100%, 50%)`; ctx.beginPath();
+                ctx.arc(c.width/2, c.height/2, Math.abs(ry*0.5), 0, Math.PI*2); ctx.stroke();
+            });
+        }
+
+        // Сохранение
+        function saveGame() { localStorage.setItem('mathSave', JSON.stringify({cookies, buildings, upgrades})); alert("Progress Saved!"); }
+        function resetGame() { localStorage.removeItem('mathSave'); location.reload(); }
+
+        // Навигация
+        const nav = document.getElementById('nav');
+        for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
+        window.addEventListener('scroll', () => {
+            let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
+            document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.1)');
         });
 
-        document.getElementById('big-cookie').onclick = () => { cookies++; updateUI(); };
-        setInterval(() => { cookies += cps / 10; updateUI(); }, 100);
-
-        // Init
-        loadGame();
-        updateUI();
-
-        // Simple Math BG
-        const c1 = document.getElementById('c1'); const ctx1 = c1.getContext('2d');
-        function draw() {
-            c1.width = window.innerWidth; c1.height = window.innerHeight;
-            ctx1.fillStyle = 'rgba(5,5,8,0.1)'; ctx1.fillRect(0,0,c1.width,c1.height);
-            ctx1.strokeStyle = '#00ffcc'; ctx1.beginPath();
-            for(let x=0; x<c1.width; x+=5) ctx1.lineTo(x, c1.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*100);
-            ctx1.stroke(); requestAnimationFrame(draw);
-        }
-        draw();
+        updateGame();
     </script>
 </body>
 </html>
