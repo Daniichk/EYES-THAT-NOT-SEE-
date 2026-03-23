@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Orbit Edition</title>
+    <title>Math Journey | Orbit Analytics Edition</title>
     <style>
         :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; }
         body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
@@ -16,89 +16,94 @@
         .visual-area { flex: 1.5; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,255,204,0.1); border-radius: 20px; overflow: hidden; }
         #canvas-orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         #big-cookie { font-size: 80px; cursor: pointer; z-index: 10; transition: transform 0.1s; user-select: none; filter: drop-shadow(0 0 20px var(--accent)); }
-        #big-cookie:active { transform: scale(0.85); }
+        
+        /* Анимация пульсации ядра */
+        @keyframes pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accent)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 40px var(--accent)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accent)); }
+        }
+        .pulsing { animation: pulse 2s infinite ease-in-out; }
+
+        #big-cookie:active { transform: scale(0.85) !important; animation: none; }
         .stats { z-index: 10; text-align: center; pointer-events: none; margin-bottom: 20px; }
 
         /* Right side: Shop & Upgrades */
         .sidebar { width: 400px; display: flex; flex-direction: column; gap: 15px; }
         .panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,204,0.2); border-radius: 15px; padding: 15px; overflow-y: auto; }
-        .shop { flex: 2; }
-        .upgrades { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; }
+        .shop { flex: 2; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
+        .upgrades { flex: 0.5; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; min-height: 80px; }
 
         /* Buttons */
         .item-btn { 
-            width: 100%; padding: 10px; margin: 5px 0; background: rgba(0,255,204,0.05); 
-            border: 1px solid rgba(0,255,204,0.2); color: #fff; cursor: pointer; text-align: left; font-size: 0.85rem;
+            width: 100%; padding: 12px; margin: 5px 0; background: rgba(0,255,204,0.05); 
+            border: 1px solid rgba(0,255,204,0.2); color: #fff; cursor: pointer; text-align: left; transition: 0.3s;
         }
-        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.1); }
-        .item-btn:disabled { opacity: 0.3; filter: grayscale(1); }
+        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.15); transform: translateX(5px); }
+        .item-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
         .upg-icon { 
-            width: 45px; height: 45px; border: 1px solid var(--gold); border-radius: 5px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            background: rgba(225, 177, 44, 0.1); transition: 0.2s;
+            width: 50px; height: 50px; border: 1px solid var(--gold); border-radius: 10px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+            background: rgba(225, 177, 44, 0.1); transition: 0.3s;
         }
-        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; }
+        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; transform: scale(1.1); }
 
-        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 1s forwards; z-index: 20; }
-        @keyframes float { to { transform: translateY(-80px); opacity: 0; } }
+        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 1s forwards; z-index: 20; text-shadow: 0 0 10px var(--accent); }
+        @keyframes float { to { transform: translateY(-100px) scale(1.5); opacity: 0; } }
     </style>
 </head>
 <body>
 
 <div class="overlay">
     <div class="game-container">
-        <!-- Визуализация -->
         <div class="visual-area">
             <canvas id="canvas-orbit"></canvas>
             <div class="stats">
-                <h1 id="score" style="font-size: 3rem; margin: 0; color: var(--accent);">0</h1>
-                <p id="pps" style="color: var(--gold); margin: 0;">generation: 0/s</p>
+                <h1 id="score" style="font-size: 3.5rem; margin: 0; color: var(--accent); letter-spacing: -2px;">0</h1>
+                <p id="pps" style="color: var(--gold); margin: 0; font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">generation: 0/s</p>
             </div>
-            <div id="big-cookie">💠</div>
+            <div id="big-cookie" class="pulsing">💠</div>
         </div>
 
-        <!-- Магазин -->
         <div class="sidebar">
-            <div class="panel upgrades" id="upgrades-area">
-                <!-- Сюда попадут улучшения -->
-            </div>
-            <div class="panel shop" id="shop-area">
-                <!-- Сюда попадут постройки -->
-            </div>
+            <div class="panel upgrades" id="upgrades-area"></div>
+            <div class="panel shop" id="shop-area"></div>
         </div>
     </div>
 </div>
+
+<!-- VERCEL ANALYTICS SCRIPT -->
+<script defer src="/_vercel/insights/script.js"></script>
 
 <script>
     let state = {
         score: 0,
         totalMultiplier: 1,
         buildings: [
-            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 120, speed: 0.02 },
-            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 160, speed: 0.015 },
-            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 200, speed: 0.01 },
-            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 240, speed: 0.008 },
-            { id: 4, name: "Tensor Hub", cost: 130000, pps: 260, count: 0, orbit: 280, speed: 0.005 }
+            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 110, speed: 0.02, color: '#00ffcc' },
+            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 150, speed: 0.015, color: '#00ccff' },
+            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 190, speed: 0.012, color: '#ff00ff' },
+            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 230, speed: 0.009, color: '#e1b12c' },
+            { id: 4, name: "Tensor Hub", cost: 130000, pps: 260, count: 0, orbit: 270, speed: 0.007, color: '#ff4d4d' }
         ],
         upgrades: [
-            { id: 0, name: "Fast Math", cost: 500, mult: 1.1, icon: "⚡", bought: false },
-            { id: 1, name: "Clean Code", cost: 5000, mult: 1.2, icon: "💎", bought: false },
-            { id: 2, name: "AI Assist", cost: 50000, mult: 1.5, icon: "🤖", bought: false }
+            { id: 0, name: "Turbo Boost", cost: 500, mult: 1.1, icon: "⚡", bought: false },
+            { id: 1, name: "Clean Architecture", cost: 5000, mult: 1.25, icon: "🏛️", bought: false },
+            { id: 2, name: "Quantum Supremacy", cost: 50000, mult: 2.0, icon: "⚛️", bought: false }
         ]
     };
 
     const canvas = document.getElementById('canvas-orbit');
     const ctx = canvas.getContext('2d');
 
-    // --- LOGIC ---
     function buyBuilding(id) {
         let b = state.buildings[id];
         if (state.score >= b.cost) {
             state.score -= b.cost;
             b.count++;
             b.cost *= 1.15;
-            render();
+            updateInterface();
         }
     }
 
@@ -108,30 +113,26 @@
             state.score -= u.cost;
             u.bought = true;
             state.totalMultiplier *= u.mult;
-            render();
+            updateInterface();
         }
     }
 
     function getPPS() {
-        let base = state.buildings.reduce((s, b) => s + (b.count * b.pps), 0);
-        return base * state.totalMultiplier;
+        return state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier;
     }
 
-    // --- RENDERING ---
-    function render() {
-        // Shop
+    function updateInterface() {
         const shop = document.getElementById('shop-area');
-        shop.innerHTML = '<h3 style="margin-top:0; font-size:0.8rem; letter-spacing:2px;">CONSTRUCTIONS</h3>';
+        shop.innerHTML = '<h3 style="margin-top:0; font-size:0.7rem; letter-spacing:3px; opacity:0.5;">CONSTRUCTIONS</h3>';
         state.buildings.forEach(b => {
             const btn = document.createElement('button');
             btn.className = 'item-btn';
             btn.disabled = state.score < b.cost;
             btn.onclick = () => buyBuilding(b.id);
-            btn.innerHTML = `<b>${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${Math.floor(b.cost)}</span><br><small>+${b.pps}/s</small>`;
+            btn.innerHTML = `<b>${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${Math.floor(b.cost).toLocaleString()}</span><br><small style="opacity:0.6">+${b.pps}/s base</small>`;
             shop.appendChild(btn);
         });
 
-        // Upgrades
         const upgArea = document.getElementById('upgrades-area');
         upgArea.innerHTML = '';
         state.upgrades.forEach(u => {
@@ -140,14 +141,13 @@
                 btn.className = 'upg-icon';
                 btn.disabled = state.score < u.cost;
                 btn.innerHTML = u.icon;
-                btn.title = `${u.name}: +${Math.round((u.mult-1)*100)}% income (Cost: ${u.cost})`;
+                btn.title = `${u.name}: x${u.mult} Multiplier (Cost: ${u.cost})`;
                 btn.onclick = () => buyUpgrade(u.id);
                 upgArea.appendChild(btn);
             }
         });
     }
 
-    // --- ANIMATION (ORBITS) ---
     function animate() {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
@@ -156,45 +156,39 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        state.buildings.forEach((b, bIdx) => {
+        state.buildings.forEach(b => {
             if (b.count > 0) {
-                // Draw Orbit Circle
+                // Линия орбиты
                 ctx.beginPath();
                 ctx.arc(cx, cy, b.orbit, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(0, 255, 204, 0.05)';
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
                 ctx.stroke();
 
-                // Draw Dots (Buildings)
+                // Отрисовка точек-спутников
                 for (let i = 0; i < b.count; i++) {
                     let angle = (Date.now() * b.speed * 0.01) + (i * (Math.PI * 2 / b.count));
                     let x = cx + Math.cos(angle) * b.orbit;
                     let y = cy + Math.sin(angle) * b.orbit;
 
                     ctx.beginPath();
-                    ctx.arc(x, y, 4, 0, Math.PI * 2);
-                    ctx.fillStyle = `hsl(${160 + bIdx * 30}, 100%, 50%)`;
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = ctx.fillStyle;
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = b.color;
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = b.color;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 }
             }
         });
 
-        // Stats Update
+        // Доход в секунду (делим на 60 FPS)
         state.score += getPPS() / 60;
         document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
         document.getElementById('pps').innerText = `generation: ${getPPS().toFixed(1)}/s`;
-        
-        // Update button states every frame (for cost checking)
-        document.querySelectorAll('.item-btn, .upg-icon').forEach((btn, idx) => {
-             // Simple state check to avoid heavy DOM re-renders
-        });
 
         requestAnimationFrame(animate);
     }
 
-    // --- INTERACTION ---
     document.getElementById('big-cookie').addEventListener('click', (e) => {
         state.score += 1;
         const txt = document.createElement('div');
@@ -204,13 +198,13 @@
         txt.innerText = "+1";
         document.body.appendChild(txt);
         setTimeout(() => txt.remove(), 1000);
-        render();
+        updateInterface();
     });
 
-    // Check affordance every second
-    setInterval(render, 1000);
+    // Регулярная проверка доступности кнопок
+    setInterval(updateInterface, 500);
 
-    render();
+    updateInterface();
     animate();
 </script>
 </body>
