@@ -3,144 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Zen | Analytics Enabled</title>
+    <title>Math Zen | 10 Levels of Light</title>
     <style>
-        :root { --bg: #050505; --accent: #64ffda; --secondary: #7f5af0; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: white; font-family: 'Courier New', monospace; scroll-behavior: smooth; overflow-x: hidden; }
-        
+        :root {
+            --bg: #0a0a0c;
+            --accent: #00ffcc;
+            --light: rgba(0, 255, 204, 0.15);
+            --text: #e0e0e0;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            scroll-behavior: smooth;
+        }
+
         section {
             height: 100vh;
             width: 100vw;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             position: relative;
-            border-bottom: 1px solid #111;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+        }
 
-        .label {
+        /* Эффект фонарика за мышкой */
+        .cursor-light {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--light) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+        }
+
+        .content {
             z-index: 10;
             text-align: center;
-            background: rgba(5, 5, 5, 0.7);
-            padding: 25px;
-            border-radius: 2px;
-            border: 1px solid rgba(100, 255, 218, 0.1);
-            backdrop-filter: blur(5px);
+            pointer-events: none;
         }
 
-        h2 { font-weight: 100; letter-spacing: 12px; color: var(--accent); margin: 0; text-transform: uppercase; }
-        p { opacity: 0.4; font-size: 0.75rem; margin-top: 15px; letter-spacing: 2px; }
-
-        .scroll-down {
-            position: absolute;
-            bottom: 30px;
-            font-size: 0.6rem;
-            letter-spacing: 5px;
-            opacity: 0.3;
-            animation: breathe 3s infinite;
+        h2 {
+            font-weight: 200;
+            font-size: 3rem;
+            letter-spacing: 15px;
+            margin: 0;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--light);
         }
 
-        @keyframes breathe { 0%, 100% { opacity: 0.1; transform: translateY(0); } 50% { opacity: 0.6; transform: translateY(-5px); } }
+        p {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            opacity: 0.7;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .dot:hover { background: var(--accent); }
     </style>
 </head>
 <body>
 
-    <!-- SECTION 1: CALCULUS (Vector Field) -->
-    <section id="s1">
-        <canvas id="canvas1"></canvas>
-        <div class="label">
-            <h2>Calculus</h2>
-            <p>The derivative of the flow.</p>
-        </div>
-        <div class="scroll-down">DESCEND INTO MATH</div>
-    </section>
+    <div class="cursor-light" id="light"></div>
 
-    <!-- SECTION 2: TRIGONOMETRY (Wave Interference) -->
-    <section id="s2">
-        <canvas id="canvas2"></canvas>
-        <div class="label">
-            <h2>Trigonometry</h2>
-            <p>Oscillations in the dark.</p>
-        </div>
-    </section>
+    <!-- 10 СЕКЦИЙ -->
+    <section id="s1"><div class="content"><h2>Origin</h2><p>The point where it all begins. (0,0,0)</p></div></section>
+    <section id="s2"><div class="content"><h2>Trigonometry</h2><p>Waves of sine and cosine in harmony.</p></div></section>
+    <section id="s3"><div class="content"><h2>Calculus</h2><p>Approaching infinity, one limit at a time.</p></div></section>
+    <section id="s4"><div class="content"><h2>Geometry</h2><p>The perfection of the golden ratio.</p></div></section>
+    <section id="s5"><div class="content"><h2>Prime</h2><p>Numbers that stand alone, unbreakable.</p></div></section>
+    <section id="s6"><div class="content"><h2>Fractals</h2><p>Self-similarity across all scales.</p></div></section>
+    <section id="s7"><div class="content"><h2>Logarithms</h2><p>The slow growth of ancient trees.</p></div></section>
+    <section id="s8"><div class="content"><h2>Probability</h2><p>Dancing in the realm of chance.</p></div></section>
+    <section id="s9"><div class="content"><h2>Dimensions</h2><p>Seeing beyond the visible light.</p></div></section>
+    <section id="s10"><div class="content"><h2>Unity</h2><p>e<sup>iπ</sup> + 1 = 0</p></div></section>
 
-    <!-- SECTION 3: PROBABILITY (Gaussian Cloud) -->
-    <section id="s3">
-        <canvas id="canvas3"></canvas>
-        <div class="label">
-            <h2>Probability</h2>
-            <p>Order within the chaos.</p>
-        </div>
-    </section>
+    <!-- Точки навигации -->
+    <div class="nav-dots">
+        <div class="dot" onclick="window.scrollTo(0, 0)"></div>
+        <div class="dot" onclick="window.scrollTo(0, window.innerHeight)"></div>
+        <div class="dot" onclick="window.scrollTo(0, window.innerHeight*2)"></div>
+        <div class="dot" onclick="window.scrollTo(0, window.innerHeight*9)"></div>
+    </div>
 
-    <!-- VERCEL ANALYTICS SCRIPT -->
+    <!-- Vercel Analytics -->
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
-        const mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        const light = document.getElementById('light');
+        
+        // Движение света
         window.addEventListener('mousemove', e => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+            light.style.left = e.clientX + 'px';
+            light.style.top = e.clientY + 'px';
         });
 
-        // --- SECTION 1: VECTOR FIELD ---
-        const c1 = document.getElementById('canvas1');
-        const ctx1 = c1.getContext('2d');
-        function draw1() {
-            c1.width = window.innerWidth; c1.height = window.innerHeight;
-            ctx1.strokeStyle = 'rgba(100, 255, 218, 0.2)';
-            for(let x=0; x<c1.width; x+=50) {
-                for(let y=0; y<c1.height; y+=50) {
-                    let dx = mouse.x - x;
-                    let dy = mouse.y - y;
-                    let angle = Math.atan2(dy, dx);
-                    ctx1.beginPath();
-                    ctx1.moveTo(x, y);
-                    ctx1.lineTo(x + Math.cos(angle)*15, y + Math.sin(angle)*15);
-                    ctx1.stroke();
+        // Добавим немного фоновой графики для каждой секции через JS
+        const sections = document.querySelectorAll('section');
+        sections.forEach((sec, index) => {
+            const canvas = document.createElement('canvas');
+            sec.appendChild(canvas);
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = `rgba(0, 255, 204, ${0.05 + (index * 0.01)})`;
+                ctx.lineWidth = 1;
+                
+                ctx.beginPath();
+                // Разные формулы для каждой секции
+                for(let x = 0; x < canvas.width; x += 20) {
+                    let y = canvas.height/2 + Math.sin(x * 0.002 + Date.now() * 0.001) * (10 * index);
+                    ctx.lineTo(x, y);
                 }
+                ctx.stroke();
+                requestAnimationFrame(animate);
             }
-            requestAnimationFrame(draw1);
-        }
-
-        // --- SECTION 2: TRIG WAVES ---
-        const c2 = document.getElementById('canvas2');
-        const ctx2 = c2.getContext('2d');
-        function draw2() {
-            c2.width = window.innerWidth; c2.height = window.innerHeight;
-            ctx2.strokeStyle = '#7f5af0';
-            ctx2.lineWidth = 1;
-            let time = Date.now() * 0.001;
-            for(let i=0; i<10; i++) {
-                ctx2.beginPath();
-                for(let x=0; x<c2.width; x+=10) {
-                    let y = c2.height/2 + Math.sin(x*0.005 + time + i*0.5) * (mouse.y*0.1);
-                    ctx2.lineTo(x, y);
-                }
-                ctx2.stroke();
-            }
-            requestAnimationFrame(draw2);
-        }
-
-        // --- SECTION 3: PROBABILITY ---
-        const c3 = document.getElementById('canvas3');
-        const ctx3 = c3.getContext('2d');
-        function draw3() {
-            c3.width = window.innerWidth; c3.height = window.innerHeight;
-            ctx3.fillStyle = 'rgba(100, 255, 218, 0.4)';
-            for(let i=0; i<200; i++) {
-                let r = Math.sqrt(-2 * Math.log(Math.random())) * 80;
-                let theta = 2 * Math.PI * Math.random();
-                let x = mouse.x + r * Math.cos(theta);
-                let y = (mouse.y - (window.innerHeight * 2)) + r * Math.sin(theta);
-                ctx3.fillRect(x, y, 1, 1);
-            }
-            requestAnimationFrame(draw3);
-        }
-
-        draw1(); draw2(); draw3();
+            animate();
+        });
     </script>
 </body>
 </html>
