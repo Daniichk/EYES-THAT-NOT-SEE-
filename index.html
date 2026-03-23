@@ -2,138 +2,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Neural Interface | 50 Unique Modules</title>
+    <title>Neural Relaxation | Apple R&D</title>
     <style>
-        :root { --bg: #000; --card: #1c1c1e; --accent: #0a84ff; }
-        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 40px; }
-        header { text-align: center; margin-bottom: 60px; }
-        h1 { font-size: 42px; font-weight: 600; letter-spacing: -1px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .module { background: var(--card); border-radius: 20px; padding: 20px; border: 1px solid #2c2c2e; position: relative; overflow: hidden; height: 300px; display: flex; flex-direction: column; }
-        .module:hover { border-color: var(--accent); }
-        .label { font-size: 10px; color: var(--accent); font-family: monospace; margin-bottom: 10px; z-index: 2; }
-        canvas { background: #000; border-radius: 12px; flex-grow: 1; width: 100%; cursor: crosshair; }
+        :root {
+            --bg: #000000;
+            --card: #1c1c1e;
+            --accent: #0a84ff;
+            --secondary: #2c2c2e;
+            --text: #ffffff;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 40px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        header { text-align: left; width: 100%; max-width: 1200px; margin-bottom: 60px; }
+        h1 { font-size: 40px; font-weight: 600; letter-spacing: -1px; margin: 0; }
+        p { color: #8e8e93; font-size: 18px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .module {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid var(--secondary);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .module:hover { border-color: var(--accent); transform: scale(1.02); }
+        .label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; opacity: 0.8; }
+        canvas { background: #000; border-radius: 16px; width: 100%; height: 220px; cursor: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Cognitive Systems Dashboard</h1>
-    <p style="color: #888;">50 Unique Asynchronous Interaction Units</p>
+    <h1>Aesthetic Neural Study</h1>
+    <p>Calibrating sensory response through interactive minimalism.</p>
 </header>
 
-<div class="grid" id="grid"></div>
+<div class="grid" id="zen-grid"></div>
 
 <script>
-const grid = document.getElementById('grid');
+const grid = document.getElementById('zen-grid');
 
-// Список 50 уникальных названий и логик
-const experiments = [
-    { n: "Gravity Well", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.arc(m.x, m.y, 20 + Math.sin(t)*10, 0, 7); ctx.strokeStyle = "#0a84ff"; ctx.stroke();
-    }},
-    { n: "Binary Rain", f: (ctx, w, h, t, m) => {
-        ctx.fillStyle = "#0a84ff"; ctx.fillText(Math.random() > 0.5 ? "1":"0", Math.random()*w, (t*100)%h);
-    }},
-    { n: "Vector Alignment", f: (ctx, w, h, t, m) => {
-        for(let x=20; x<w; x+=30) {
-            let a = Math.atan2(m.y - h/2, m.x - x);
-            ctx.moveTo(x, h/2); ctx.lineTo(x + Math.cos(a)*15, h/2 + Math.sin(a)*15);
+const zenExperiments = [
+    { n: "Liquid Silk", f: (ctx, w, h, t, m) => {
+        ctx.beginPath(); ctx.strokeStyle = "#5e5ce6"; ctx.lineWidth = 3;
+        for(let x=0; x<w; x+=2) {
+            let d = Math.abs(x - m.x);
+            let y = h/2 + Math.sin(x*0.02 + t) * (20 + (60/(d/10+1)));
+            if(x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = "#0a84ff"; ctx.stroke();
+        ctx.stroke();
     }},
-    { n: "Sine Distortion", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); for(let x=0; x<w; x++) ctx.lineTo(x, h/2 + Math.sin(x*0.05 + t)*20); ctx.strokeStyle="#fff"; ctx.stroke();
-    }},
-    { n: "Particle Cloud", f: (ctx, w, h, t, m) => {
-        for(let i=0; i<5; i++) ctx.fillRect(Math.random()*w, Math.random()*h, 2, 2); ctx.fillStyle="#0a84ff";
-    }},
-    { n: "Elastic Grid", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); for(let i=0; i<w; i+=20) { ctx.moveTo(i, 0); ctx.quadraticCurveTo(m.x, m.y, i, h); } ctx.strokeStyle="#333"; ctx.stroke();
-    }},
-    { n: "Circular Breath", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.arc(w/2, h/2, Math.abs(Math.sin(t))*40, 0, 7); ctx.fillStyle="#0a84ff"; ctx.fill();
-    }},
-    { n: "DNA Helix", f: (ctx, w, h, t, m) => {
-        for(let y=0; y<h; y+=10) { 
-            ctx.fillRect(w/2 + Math.sin(y*0.1+t)*20, y, 3, 3);
-            ctx.fillRect(w/2 - Math.sin(y*0.1+t)*20, y, 3, 3);
+    { n: "Bioluminescence", f: (ctx, w, h, t, m) => {
+        let grad = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, 80);
+        grad.addColorStop(0, "rgba(10, 132, 255, 0.4)");
+        grad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+        for(let i=0; i<10; i++) {
+            ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.3;
+            ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1);
         }
-        ctx.fillStyle="#fff";
     }},
-    { n: "Radar Pulse", f: (ctx, w, h, t, m) => {
-        let r = (t*50)%100; ctx.beginPath(); ctx.arc(w/2, h/2, r, 0, 7); ctx.strokeStyle="rgba(10,132,255,"+(1-r/100)+")"; ctx.stroke();
-    }},
-    { n: "Orbitals", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.arc(w/2 + Math.cos(t)*40, h/2 + Math.sin(t)*40, 5, 0, 7); ctx.fill();
-    }},
-    { n: "Noise Scan", f: (ctx, w, h, t, m) => {
-        ctx.fillRect(0, (t*50)%h, w, 2); ctx.fillStyle="#333";
-    }},
-    { n: "Magnetic Pins", f: (ctx, w, h, t, m) => {
-        for(let i=10; i<w; i+=20) {
-            let d = Math.hypot(m.x-i, m.y-h/2);
-            ctx.fillRect(i, h/2 - (50-d/2), 2, d);
+    { n: "Star Drift", f: (ctx, w, h, t, m) => {
+        ctx.translate(w/2, h/2);
+        for(let i=0; i<50; i++) {
+            let r = (i*5 + t*20) % (w/2);
+            let ang = i * 0.5;
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(Math.cos(ang)*r, Math.sin(ang)*r, 1.5, 1.5);
         }
-        ctx.fillStyle="#0a84ff";
     }},
-    { n: "Geometric Growth", f: (ctx, w, h, t, m) => {
-        ctx.strokeRect(w/2-t%50, h/2-t%50, t%100, t%100); ctx.strokeStyle="#fff";
+    { n: "Soft Aurora", f: (ctx, w, h, t, m) => {
+        for(let i=0; i<3; i++) {
+            ctx.beginPath();
+            ctx.strokeStyle = i === 0 ? "#0a84ff" : "#5e5ce6";
+            ctx.globalAlpha = 0.2; ctx.lineWidth = 40;
+            ctx.moveTo(0, h/2 + Math.sin(t+i)*30);
+            ctx.bezierCurveTo(w/3, h/2 + Math.cos(t)*50, w/1.5, h/2 - Math.sin(t)*50, w, h/2 + Math.sin(t+i)*30);
+            ctx.stroke();
+        }
     }},
-    { n: "Fibonacci Point", f: (ctx, w, h, t, m) => {
-        ctx.translate(w/2, h/2); ctx.rotate(t); ctx.fillRect(20, 20, 5, 5); ctx.fillStyle="#0a84ff";
+    { n: "Magnetic Sand", f: (ctx, w, h, t, m) => {
+        for(let i=0; i<400; i+=20) {
+            for(let j=0; j<220; j+=20) {
+                let dx = m.x - i, dy = m.y - j;
+                let dist = Math.sqrt(dx*dx+dy*dy);
+                ctx.fillStyle = "#444";
+                ctx.fillRect(i + dx/dist*5, j + dy/dist*5, 2, 2);
+            }
+        }
     }},
-    { n: "Mouse Trace", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.arc(m.x, m.y, 5, 0, 7); ctx.fill();
+    { n: "Floating Nebulae", f: (ctx, w, h, t, m) => {
+        ctx.globalAlpha = 0.5;
+        for(let i=0; i<3; i++) {
+            ctx.beginPath();
+            ctx.arc(w/2 + Math.cos(t+i)*40, h/2 + Math.sin(t*0.5+i)*20, 30+i*10, 0, 7);
+            ctx.fillStyle = i % 2 === 0 ? "#30d158" : "#0a84ff";
+            ctx.filter = "blur(20px)"; ctx.fill();
+        }
     }},
-    { n: "Horizontal Shift", f: (ctx, w, h, t, m) => {
-        ctx.fillRect((t*100)%w, 0, 10, h); ctx.fillStyle="rgba(255,255,255,0.1)";
+    { n: "Echo Ripples", f: (ctx, w, h, t, m) => {
+        for(let i=0; i<5; i++) {
+            let r = (t*40 + i*40) % 150;
+            ctx.beginPath(); ctx.arc(m.x, m.y, r, 0, 7);
+            ctx.strokeStyle = `rgba(255,255,255, ${1 - r/150})`; ctx.stroke();
+        }
     }},
-    { n: "Hypno Spiral", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); for(let i=0; i<100; i++) ctx.lineTo(w/2 + Math.cos(i+t)*i, h/2 + Math.sin(i+t)*i); ctx.stroke();
+    { n: "Golden Ratio Rain", f: (ctx, w, h, t, m) => {
+        ctx.fillStyle = "#ffd60a";
+        for(let i=0; i<20; i++) {
+            let x = (i * 137.5) % w;
+            let y = (t * 60 + i * 20) % h;
+            ctx.fillRect(x, y, 1, 10);
+        }
     }},
-    { n: "Data Blocks", f: (ctx, w, h, t, m) => {
-        for(let i=0; i<10; i++) ctx.fillRect(i*30, h-Math.random()*h, 20, 10); ctx.fillStyle="#0a84ff";
+    { n: "Orbital Harmony", f: (ctx, w, h, t, m) => {
+        ctx.strokeStyle = "#38383a";
+        ctx.beginPath(); ctx.arc(w/2, h/2, 60, 0, 7); ctx.stroke();
+        ctx.beginPath(); ctx.arc(w/2 + Math.cos(t)*60, h/2 + Math.sin(t)*60, 8, 0, 7);
+        ctx.fillStyle = "#ff375f"; ctx.fill();
     }},
-    { n: "Web Connection", f: (ctx, w, h, t, m) => {
-        ctx.moveTo(0,0); ctx.lineTo(m.x, m.y); ctx.lineTo(w,0); ctx.lineTo(w,h); ctx.lineTo(m.x, m.y); ctx.stroke(); ctx.strokeStyle="#333";
-    }},
-    { n: "Light Prism", f: (ctx, w, h, t, m) => {
-        ctx.fillStyle="hsl("+(t*50)%360+", 70%, 50%)"; ctx.fillRect(w/2-20, h/2-20, 40, 40);
+    { n: "Elastic Horizon", f: (ctx, w, h, t, m) => {
+        ctx.beginPath(); ctx.moveTo(0, h/2);
+        ctx.quadraticCurveTo(m.x, m.y, w, h/2);
+        ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
     }}
 ];
 
-// Автозаполнение до 50 штук (клонирование с вариациями)
-for (let i = 20; i < 50; i++) {
-    experiments.push({
-        n: "Module Analysis #" + (i+1),
-        f: experiments[i % 20].f
-    });
-}
-
-experiments.forEach((exp, i) => {
+zenExperiments.forEach((exp, i) => {
     const card = document.createElement('div');
     card.className = 'module';
-    card.innerHTML = `<div class="label">EXP_ID: ${String(i+1).padStart(3,'0')} // ${exp.n}</div><canvas id="c${i}"></canvas>`;
+    card.innerHTML = `<div class="label">Unit ${String(i+1).padStart(2,'0')} // ${exp.n}</div><canvas id="z${i}"></canvas>`;
     grid.appendChild(card);
 
-    const canvas = document.getElementById(`c${i}`);
+    const canvas = document.getElementById(`z${i}`);
     const ctx = canvas.getContext('2d');
-    let w, h;
-    let mouse = { x: 0, y: 0 };
+    let mouse = { x: 170, y: 110 };
 
     canvas.onmousemove = (e) => { mouse.x = e.offsetX; mouse.y = e.offsetY; };
 
-    function loop(t) {
-        w = canvas.width = canvas.offsetWidth;
-        h = canvas.height = canvas.offsetHeight;
-        ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,w,h);
+    function render(time) {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = 220;
+        ctx.fillStyle = "#000"; ctx.fillRect(0,0,canvas.width, canvas.height);
         ctx.save();
-        exp.f(ctx, w, h, t/1000, mouse);
+        exp.f(ctx, canvas.width, canvas.height, time/1000, mouse);
         ctx.restore();
-        requestAnimationFrame(loop);
+        requestAnimationFrame(render);
     }
-    loop(0);
+    render(0);
 });
 </script>
 
