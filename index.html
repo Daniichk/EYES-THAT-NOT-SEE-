@@ -121,139 +121,221 @@
 
     <script>
         const mouse = { x: 0, y: 0 };
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-        // --- COOKIE CLICKER ENGINE ---
-        let cookies = 0; let cps = 0; let spaceDown = false;
-        const bld = [
-            { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', dist: 75, count: 0 },
-            { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', dist: 110, count: 0 },
-            { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', dist: 150, count: 0 },
-            { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', dist: 190, count: 0 }
-        ];
+// --- COOKIE CLICKER ENGINE ---
+let cookies = 0; 
+let cps = 0; 
+let spaceDown = false;
 
-        function buy(id) {
-            const b = bld.find(x => x.id === id);
-            if (cookies >= b.cost) {
-                cookies -= b.cost; b.count++; b.cost = Math.floor(b.cost * 1.15);
-                addVisual(b); updateUI();
-            }
-        }
+// Список зданий
+const bld = [
+    { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', dist: 75, count: 0 },
+    { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', dist: 110, count: 0 },
+    { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', dist: 150, count: 0 },
+    { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', dist: 190, count: 0 }
+];
 
-        function addVisual(b) {
-            const container = document.getElementById('cookie-system');
-            if (b.count === 1) {
-                const orb = document.createElement('div'); orb.className = 'orbit';
-                orb.style.width = orb.style.height = (b.dist * 2) + 'px';
-                container.appendChild(orb);
-            }
-            const s = document.createElement('div'); s.className = 'satelite';
-            s.innerText = b.icon; s.style.setProperty('--dist', b.dist + 'px');
-            s.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            container.appendChild(s);
-        }
-
-        function updateUI() {
-            document.getElementById('cookies-count').innerText = Math.floor(cookies) + " cookies";
-            cps = bld.reduce((a, b) => a + (b.count * b.power), 0);
-            document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
-            document.getElementById('store-container').innerHTML = bld.map(b => `
-                <div class="building" onclick="buy('${b.id}')">
-                    <div style="font-size:1.5rem; margin-right:15px">${b.icon}</div>
-                    <div><b>${b.name}</b><br><span class="b-cost">${b.cost}</span></div>
-                    <div class="b-count">${b.count}</div>
-                </div>`).join('');
-        }
-
-        // --- MATH RENDERERS (10 Sections) ---
-        function initMath(id, draw) {
-            const c = document.getElementById(id); const ctx = c.getContext('2d');
-            const loop = () => {
-                c.width = window.innerWidth; c.height = window.innerHeight;
-                const rect = c.getBoundingClientRect();
-                draw(ctx, c, mouse.y - rect.top);
-                requestAnimationFrame(loop);
-            };
-            loop();
-        }
-
-        initMath('c1', (ctx, c, ry) => {
-            ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
-            ctx.strokeStyle = '#00ffcc'; ctx.beginPath();
-            for(let x=0; x<c.width; x+=5) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2);
-            ctx.stroke();
-        });
-        // (Остальные 9 инициализаций аналогично...)
-        for(let i=2; i<=10; i++) {
-            initMath('c'+i, (ctx, c, ry) => {
-                ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
-                ctx.strokeStyle = `hsl(${160 + i*10}, 100%, 50%)`; ctx.beginPath();
-                ctx.arc(c.width/2, c.height/2, Math.abs(ry*0.5), 0, Math.PI*2); ctx.stroke();
-            });
-        }
-
-        // --- HOTKEYS & CONTROLS ---
-        window.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.shiftKey) {
-                if (e.code === 'Digit6') toggle('cookie-overlay', 'grid');
-                if (e.code === 'Digit7') toggle('car-overlay', 'flex');
-                if (e.code === 'Digit8') toggle('mines-overlay', 'flex');
-                if (e.code === 'Digit9') startBalatro();
-            }
-            if (e.key === 'Escape') closeAll();
-            // Space bugfix
-            if (e.code === 'Space' && !spaceDown && document.getElementById('cookie-overlay').style.display === 'grid') {
-                spaceDown = true; cookies++; updateUI();
-            }
-        });
-        window.addEventListener('keyup', e => { if(e.code === 'Space') spaceDown = false; });
-
-        function toggle(id, type) {
-            const el = document.getElementById(id);
-            el.style.display = (el.style.display === type) ? 'none' : type;
-        }
-
-        function closeAll() {
-            document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none');
-        }
-
-        // --- BALATRO LOADER ---
-        function startBalatro() {
-            document.getElementById('balatro-overlay').style.display = 'block';
-            if (!window.BalatroInited) {
-                const script = document.createElement('script');
-                script.src = "https://raw.githack.com";
-                script.onload = () => { if(typeof applicationLoad === 'function') applicationLoad(); };
-                document.body.appendChild(script);
-                window.BalatroInited = true;
-            }
-        }
-
-        // --- PERSISTENCE ---
-        function saveGame() { localStorage.setItem('cookieSave', JSON.stringify({cookies, bld})); alert("Math Progress Saved!"); }
-        function loadGame() {
-            const s = JSON.parse(localStorage.getItem('cookieSave'));
-            if(s) {
-                cookies = s.cookies;
-                s.bld.forEach((sb, i) => { if(bld[i]) { bld[i].count = sb.count; bld[i].cost = sb.cost; for(let n=0; n<sb.count; n++) addVisual(bld[i]); } });
-                updateUI();
-            }
-        }
-        function resetGame() { localStorage.removeItem('cookieSave'); location.reload(); }
-
-        // Start
-        document.getElementById('big-cookie').onclick = () => { cookies++; updateUI(); };
-        setInterval(() => { cookies += cps / 10; updateUI(); }, 100);
-        loadGame();
+function buy(id) {
+    const b = bld.find(x => x.id === id);
+    if (cookies >= b.cost) {
+        cookies -= b.cost; 
+        b.count++; 
+        b.cost = Math.floor(b.cost * 1.15);
+        addVisual(b); 
         updateUI();
+    }
+}
 
-        // Nav dots logic
-        const nav = document.getElementById('nav');
-        for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
-        window.addEventListener('scroll', () => {
-            let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
-            document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.1)');
+function addVisual(b) {
+    const container = document.getElementById('cookie-system');
+    if (!container) return;
+    
+    // Создаем орбиту, если это первое здание типа
+    if (b.count === 1) {
+        const orb = document.createElement('div'); 
+        orb.className = 'orbit';
+        orb.style.width = orb.style.height = (b.dist * 2) + 'px';
+        container.appendChild(orb);
+    }
+    
+    // Добавляем спутник на орбиту
+    const s = document.createElement('div'); 
+    s.className = 'satelite';
+    s.innerText = b.icon; 
+    s.style.setProperty('--dist', b.dist + 'px');
+    s.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    container.appendChild(s);
+}
+
+function updateUI() {
+    const countEl = document.getElementById('cookies-count');
+    const cpsEl = document.getElementById('cps-display');
+    const storeEl = document.getElementById('store-container');
+
+    if (countEl) countEl.innerText = Math.floor(cookies) + " cookies";
+    
+    cps = bld.reduce((a, b) => a + (b.count * b.power), 0);
+    if (cpsEl) cpsEl.innerText = "per second: " + cps.toFixed(1);
+    
+    if (storeEl) {
+        storeEl.innerHTML = bld.map(b => `
+            <div class="building" onclick="buy('${b.id}')">
+                <div style="font-size:1.5rem; margin-right:15px">${b.icon}</div>
+                <div><b>${b.name}</b><br><span class="b-cost">${b.cost}</span></div>
+                <div class="b-count">${b.count}</div>
+            </div>`).join('');
+    }
+}
+
+// --- MATH RENDERERS (10 Sections) ---
+function initMath(id, draw) {
+    const c = document.getElementById(id); 
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const loop = () => {
+        c.width = window.innerWidth; 
+        c.height = window.innerHeight;
+        const rect = c.getBoundingClientRect();
+        draw(ctx, c, mouse.y - rect.top);
+        requestAnimationFrame(loop);
+    };
+    loop();
+}
+
+// Инициализация 10 секций
+initMath('c1', (ctx, c, ry) => {
+    ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.strokeStyle = '#00ffcc'; ctx.beginPath();
+    for(let x=0; x<c.width; x+=5) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2);
+    ctx.stroke();
+});
+
+for(let i=2; i<=10; i++) {
+    initMath('c'+i, (ctx, c, ry) => {
+        ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
+        ctx.strokeStyle = `hsl(${160 + i*10}, 100%, 50%)`; ctx.beginPath();
+        ctx.arc(c.width/2, c.height/2, Math.abs(ry*0.5), 0, Math.PI*2); ctx.stroke();
+    });
+}
+
+// --- HOTKEYS & CONTROLS ---
+window.addEventListener('keydown', e => {
+    // Ctrl + Shift + Keys
+    if (e.ctrlKey && e.shiftKey) {
+        if (e.code === 'Digit6') toggle('cookie-overlay', 'grid');
+        if (e.code === 'Digit7') toggle('car-overlay', 'flex');
+        if (e.code === 'Digit8') toggle('mines-overlay', 'flex');
+        if (e.code === 'Digit9') startBalatro();
+    }
+    
+    if (e.key === 'Escape') closeAll();
+
+    // Исправленный клик пробелом (Space Bugfix)
+    if (e.code === 'Space' && !spaceDown) {
+        const cookieOverlay = document.getElementById('cookie-overlay');
+        if (cookieOverlay && cookieOverlay.style.display === 'grid') {
+            e.preventDefault(); 
+            spaceDown = true; 
+            cookies++; 
+            updateUI();
+        }
+    }
+});
+
+window.addEventListener('keyup', e => { if(e.code === 'Space') spaceDown = false; });
+
+function toggle(id, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (el.style.display === type) ? 'none' : type;
+}
+
+function closeAll() {
+    document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none');
+    // Если Balatro открыт в iframe, при закрытии оверлея можно его обнулять
+    const balatroFrame = document.querySelector('#balatro-overlay iframe');
+    if (balatroFrame) balatroFrame.src = balatroFrame.src; 
+}
+
+// --- BALATRO LOADER (Iframe Version for Vercel) ---
+function startBalatro() {
+    const overlay = document.getElementById('balatro-overlay');
+    if (overlay) {
+        overlay.style.display = 'block';
+        // Если iframe пустой, загружаем в него balatro.html
+        const iframe = overlay.querySelector('iframe');
+        if (iframe && !iframe.src.includes('balatro.html')) {
+            iframe.src = 'balatro.html';
+        }
+    }
+}
+
+// --- PERSISTENCE (Save/Load) ---
+function saveGame() {
+    const data = {
+        cookies: cookies,
+        bld: bld.map(item => ({ id: item.id, count: item.count, cost: item.cost }))
+    };
+    localStorage.setItem('cookieSave', JSON.stringify(data));
+    console.log("Game Autosaved");
+}
+
+function loadGame() {
+    const s = JSON.parse(localStorage.getItem('cookieSave'));
+    if(s) {
+        cookies = s.cookies;
+        s.bld.forEach((savedItem, i) => {
+            const currentBld = bld.find(b => b.id === savedItem.id);
+            if(currentBld) {
+                currentBld.count = savedItem.count;
+                currentBld.cost = savedItem.cost;
+                // Восстанавливаем визуализацию орбит
+                for(let n=0; n<savedItem.count; n++) addVisual(currentBld);
+            }
         });
+        updateUI();
+    }
+}
+
+function resetGame() {
+    if(confirm("Erase all math cookies?")) {
+        localStorage.removeItem('cookieSave');
+        location.reload();
+    }
+}
+
+// --- STARTUP ---
+const cookieBtn = document.getElementById('big-cookie');
+if (cookieBtn) {
+    cookieBtn.onclick = () => { cookies++; updateUI(); };
+}
+
+// Интервал начисления CPS
+setInterval(() => { 
+    cookies += cps / 10; 
+    updateUI(); 
+}, 100);
+
+// Автосохранение каждые 30 секунд
+setInterval(saveGame, 30000);
+
+// Навигация (точки справа)
+const nav = document.getElementById('nav');
+if (nav) {
+    for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
+    window.addEventListener('scroll', () => {
+        let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
+        document.querySelectorAll('.dot').forEach((d,i) => {
+            d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.1)';
+        });
+    });
+}
+
+// Инициализация при загрузке
+loadGame();
+updateUI();
+
     </script>
 </body>
 </html>
