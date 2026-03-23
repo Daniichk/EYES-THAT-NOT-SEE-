@@ -2,168 +2,213 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Neural Relaxation | Apple R&D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axiom | Interactive Mathematics</title>
     <style>
         :root {
-            --bg: #000000;
-            --card: #1c1c1e;
-            --accent: #0a84ff;
-            --secondary: #2c2c2e;
+            --bg: #050505;
+            --card: #121212;
+            --accent: #ffeb3b; /* Gold/Yellow like 3b1b */
+            --blue: #0a84ff;
             --text: #ffffff;
+            --secondary: #888;
         }
+
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 40px;
+            font-family: "SF Pro Display", -apple-system, sans-serif;
+            margin: 0; padding: 0;
             display: flex; flex-direction: column; align-items: center;
         }
-        header { text-align: left; width: 100%; max-width: 1200px; margin-bottom: 60px; }
-        h1 { font-size: 40px; font-weight: 600; letter-spacing: -1px; margin: 0; }
-        p { color: #8e8e93; font-size: 18px; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 25px;
-            width: 100%;
-            max-width: 1200px;
+        nav {
+            width: 100%; height: 60px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid #333;
+            display: flex; align-items: center; justify-content: center;
+            position: fixed; top: 0; z-index: 100;
         }
-        .module {
+
+        .hero { margin-top: 120px; text-align: center; max-width: 800px; }
+        .hero h1 { font-size: 56px; font-weight: 700; letter-spacing: -2px; margin: 0; }
+        .hero p { color: var(--secondary); font-size: 20px; margin-top: 10px; }
+
+        .container { max-width: 1100px; width: 90%; margin: 60px 0; }
+
+        .lesson-card {
             background: var(--card);
             border-radius: 24px;
-            padding: 24px;
-            border: 1px solid var(--secondary);
-            display: flex;
-            flex-direction: column;
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #222;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 40px;
+            align-items: center;
         }
-        .module:hover { border-color: var(--accent); transform: scale(1.02); }
-        .label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; opacity: 0.8; }
-        canvas { background: #000; border-radius: 16px; width: 100%; height: 220px; cursor: none; }
+
+        .explanation h2 { color: var(--accent); font-size: 28px; margin-top: 0; }
+        .explanation p { line-height: 1.6; color: #ccc; font-size: 17px; }
+
+        canvas {
+            background: #000;
+            border-radius: 16px;
+            width: 100%; height: 350px;
+            border: 1px solid #333;
+            cursor: crosshair;
+        }
+
+        .math-symbol { font-family: "Times New Roman", serif; font-style: italic; color: var(--accent); }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Aesthetic Neural Study</h1>
-    <p>Calibrating sensory response through interactive minimalism.</p>
-</header>
+<nav>AXIOM // INTERACTIVE CALCULUS</nav>
 
-<div class="grid" id="zen-grid"></div>
+<div class="hero">
+    <h1>Visualizing the Invisible</h1>
+    <p>Mathematics isn't about numbers. It's about patterns and intuition.</p>
+</div>
+
+<div class="container">
+    <!-- Lesson 1: The Derivative -->
+    <div class="lesson-card">
+        <canvas id="derivative-canvas"></canvas>
+        <div class="explanation">
+            <h3>01. The Derivative</h3>
+            <p>The derivative measures the <strong>instantaneous rate of change</strong>. Imagine a car moving: the derivative is exactly what your speedometer shows at a single moment.</p>
+            <p>On this graph of <span class="math-symbol">f(x) = x²</span>, move your mouse to see the tangent line change its slope <span class="math-symbol">2x</span>.</p>
+        </div>
+    </div>
+
+    <!-- Lesson 2: Pi as a Limit -->
+    <div class="lesson-card">
+        <canvas id="pi-canvas"></canvas>
+        <div class="explanation">
+            <h3>02. The Essence of Pi</h3>
+            <p><span class="math-symbol">π</span> is the ratio of a circle's circumference to its diameter. But it can also be seen as the limit of regular polygons.</p>
+            <p>Move your mouse left-to-right to increase the number of sides. Watch the perimeter converge to a perfect circle.</p>
+        </div>
+    </div>
+
+    <!-- Lesson 3: Linear Transformations -->
+    <div class="lesson-card">
+        <canvas id="vector-canvas"></canvas>
+        <div class="explanation">
+            <h3>03. Linear Algebra</h3>
+            <p>A matrix isn't just a grid of numbers; it's a <strong>transformation</strong> of space. It stretches, rotates, and squishes the coordinate system.</p>
+            <p>Interact with the grid to see how a vector <span class="math-symbol">v</span> moves when the basis vectors are shifted.</p>
+        </div>
+    </div>
+</div>
 
 <script>
-const grid = document.getElementById('zen-grid');
+    // --- 01. Derivative Interaction ---
+    const c1 = document.getElementById('derivative-canvas');
+    const ctx1 = c1.getContext('2d');
+    let m1 = { x: 200 };
 
-const zenExperiments = [
-    { n: "Liquid Silk", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.strokeStyle = "#5e5ce6"; ctx.lineWidth = 3;
-        for(let x=0; x<w; x+=2) {
-            let d = Math.abs(x - m.x);
-            let y = h/2 + Math.sin(x*0.02 + t) * (20 + (60/(d/10+1)));
-            if(x===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-    }},
-    { n: "Bioluminescence", f: (ctx, w, h, t, m) => {
-        let grad = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, 80);
-        grad.addColorStop(0, "rgba(10, 132, 255, 0.4)");
-        grad.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
-        for(let i=0; i<10; i++) {
-            ctx.fillStyle = "#fff"; ctx.globalAlpha = 0.3;
-            ctx.fillRect(Math.random()*w, Math.random()*h, 1, 1);
-        }
-    }},
-    { n: "Star Drift", f: (ctx, w, h, t, m) => {
-        ctx.translate(w/2, h/2);
-        for(let i=0; i<50; i++) {
-            let r = (i*5 + t*20) % (w/2);
-            let ang = i * 0.5;
-            ctx.fillStyle = "#fff";
-            ctx.fillRect(Math.cos(ang)*r, Math.sin(ang)*r, 1.5, 1.5);
-        }
-    }},
-    { n: "Soft Aurora", f: (ctx, w, h, t, m) => {
-        for(let i=0; i<3; i++) {
-            ctx.beginPath();
-            ctx.strokeStyle = i === 0 ? "#0a84ff" : "#5e5ce6";
-            ctx.globalAlpha = 0.2; ctx.lineWidth = 40;
-            ctx.moveTo(0, h/2 + Math.sin(t+i)*30);
-            ctx.bezierCurveTo(w/3, h/2 + Math.cos(t)*50, w/1.5, h/2 - Math.sin(t)*50, w, h/2 + Math.sin(t+i)*30);
-            ctx.stroke();
-        }
-    }},
-    { n: "Magnetic Sand", f: (ctx, w, h, t, m) => {
-        for(let i=0; i<400; i+=20) {
-            for(let j=0; j<220; j+=20) {
-                let dx = m.x - i, dy = m.y - j;
-                let dist = Math.sqrt(dx*dx+dy*dy);
-                ctx.fillStyle = "#444";
-                ctx.fillRect(i + dx/dist*5, j + dy/dist*5, 2, 2);
-            }
-        }
-    }},
-    { n: "Floating Nebulae", f: (ctx, w, h, t, m) => {
-        ctx.globalAlpha = 0.5;
-        for(let i=0; i<3; i++) {
-            ctx.beginPath();
-            ctx.arc(w/2 + Math.cos(t+i)*40, h/2 + Math.sin(t*0.5+i)*20, 30+i*10, 0, 7);
-            ctx.fillStyle = i % 2 === 0 ? "#30d158" : "#0a84ff";
-            ctx.filter = "blur(20px)"; ctx.fill();
-        }
-    }},
-    { n: "Echo Ripples", f: (ctx, w, h, t, m) => {
-        for(let i=0; i<5; i++) {
-            let r = (t*40 + i*40) % 150;
-            ctx.beginPath(); ctx.arc(m.x, m.y, r, 0, 7);
-            ctx.strokeStyle = `rgba(255,255,255, ${1 - r/150})`; ctx.stroke();
-        }
-    }},
-    { n: "Golden Ratio Rain", f: (ctx, w, h, t, m) => {
-        ctx.fillStyle = "#ffd60a";
-        for(let i=0; i<20; i++) {
-            let x = (i * 137.5) % w;
-            let y = (t * 60 + i * 20) % h;
-            ctx.fillRect(x, y, 1, 10);
-        }
-    }},
-    { n: "Orbital Harmony", f: (ctx, w, h, t, m) => {
-        ctx.strokeStyle = "#38383a";
-        ctx.beginPath(); ctx.arc(w/2, h/2, 60, 0, 7); ctx.stroke();
-        ctx.beginPath(); ctx.arc(w/2 + Math.cos(t)*60, h/2 + Math.sin(t)*60, 8, 0, 7);
-        ctx.fillStyle = "#ff375f"; ctx.fill();
-    }},
-    { n: "Elastic Horizon", f: (ctx, w, h, t, m) => {
-        ctx.beginPath(); ctx.moveTo(0, h/2);
-        ctx.quadraticCurveTo(m.x, m.y, w, h/2);
-        ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
-    }}
-];
+    c1.onmousemove = (e) => { m1.x = e.offsetX; };
 
-zenExperiments.forEach((exp, i) => {
-    const card = document.createElement('div');
-    card.className = 'module';
-    card.innerHTML = `<div class="label">Unit ${String(i+1).padStart(2,'0')} // ${exp.n}</div><canvas id="z${i}"></canvas>`;
-    grid.appendChild(card);
+    function drawDerivative() {
+        ctx1.clearRect(0,0,c1.width, c1.height);
+        const w = c1.width = c1.offsetWidth;
+        const h = c1.height = 350;
+        
+        // Draw Axis
+        ctx1.strokeStyle = "#333"; ctx1.beginPath();
+        ctx1.moveTo(0, h-50); ctx1.lineTo(w, h-50); ctx1.moveTo(50, 0); ctx1.lineTo(50, h); ctx1.stroke();
 
-    const canvas = document.getElementById(`z${i}`);
-    const ctx = canvas.getContext('2d');
-    let mouse = { x: 170, y: 110 };
+        // Draw f(x) = x^2
+        ctx1.strokeStyle = "#0a84ff"; ctx1.lineWidth = 3; ctx1.beginPath();
+        for(let x=0; x<w; x++) {
+            let val = Math.pow((x-50)/40, 2) * 40;
+            ctx1.lineTo(x, (h-50) - val);
+        }
+        ctx1.stroke();
 
-    canvas.onmousemove = (e) => { mouse.x = e.offsetX; mouse.y = e.offsetY; };
+        // Tangent calculation
+        let mouseX = (m1.x - 50) / 40;
+        let baseY = (h-50) - Math.pow(mouseX, 2) * 40;
+        let slope = 2 * mouseX;
 
-    function render(time) {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = 220;
-        ctx.fillStyle = "#000"; ctx.fillRect(0,0,canvas.width, canvas.height);
-        ctx.save();
-        exp.f(ctx, canvas.width, canvas.height, time/1000, mouse);
-        ctx.restore();
-        requestAnimationFrame(render);
+        ctx1.strokeStyle = "#ffeb3b"; ctx1.beginPath();
+        ctx1.moveTo(m1.x - 60, baseY + 60*slope);
+        ctx1.lineTo(m1.x + 60, baseY - 60*slope);
+        ctx1.stroke();
+
+        ctx1.fillStyle = "#fff"; ctx1.beginPath();
+        ctx1.arc(m1.x, baseY, 5, 0, 7); ctx1.fill();
+
+        requestAnimationFrame(drawDerivative);
     }
-    render(0);
-});
+
+    // --- 02. Pi Polygon Limit ---
+    const c2 = document.getElementById('pi-canvas');
+    const ctx2 = c2.getContext('2d');
+    let m2 = { x: 50 };
+
+    c2.onmousemove = (e) => { m2.x = e.offsetX; };
+
+    function drawPi() {
+        ctx2.clearRect(0,0,c2.width, c2.height);
+        const w = c2.width = c2.offsetWidth;
+        const h = c2.height = 350;
+        
+        let sides = Math.floor((m2.x / w) * 20) + 3;
+        let radius = 80;
+
+        // Circle reference
+        ctx2.strokeStyle = "#222"; ctx2.beginPath();
+        ctx2.arc(w/2, h/2, radius, 0, Math.PI*2); ctx2.stroke();
+
+        // Polygon
+        ctx2.strokeStyle = "#ffeb3b"; ctx2.lineWidth = 2; ctx2.beginPath();
+        for(let i=0; i<=sides; i++) {
+            let angle = (i/sides) * Math.PI * 2;
+            let px = w/2 + Math.cos(angle) * radius;
+            let py = h/2 + Math.sin(angle) * radius;
+            if(i===0) ctx2.moveTo(px, py); else ctx2.lineTo(px, py);
+        }
+        ctx2.stroke();
+
+        ctx2.fillStyle = "#888";
+        ctx2.fillText(`Sides: ${sides}`, 20, 30);
+        requestAnimationFrame(drawPi);
+    }
+
+    // --- 03. Linear Transformation Grid ---
+    const c3 = document.getElementById('vector-canvas');
+    const ctx3 = c3.getContext('2d');
+    let m3 = { x: 100, y: 100 };
+    c3.onmousemove = (e) => { m3.x = e.offsetX; m3.y = e.offsetY; };
+
+    function drawVector() {
+        ctx3.clearRect(0,0,c3.width, c3.height);
+        const w = c3.width = c3.offsetWidth;
+        const h = c3.height = 350;
+
+        // Grid
+        ctx3.strokeStyle = "#1a1a1a";
+        for(let i=0; i<w; i+=30) { ctx3.beginPath(); ctx3.moveTo(i,0); ctx3.lineTo(i,h); ctx3.stroke(); }
+        for(let i=0; i<h; i+=30) { ctx3.beginPath(); ctx3.moveTo(0,i); ctx3.lineTo(w,i); ctx3.stroke(); }
+
+        // Vector
+        ctx3.strokeStyle = "#0a84ff"; ctx3.lineWidth = 4; ctx3.beginPath();
+        ctx3.moveTo(w/2, h/2); ctx3.lineTo(m3.x, m3.y); ctx3.stroke();
+
+        // Arrow head
+        ctx3.fillStyle = "#0a84ff"; ctx3.beginPath();
+        ctx3.arc(m3.x, m3.y, 6, 0, 7); ctx3.fill();
+
+        requestAnimationFrame(drawVector);
+    }
+
+    drawDerivative();
+    drawPi();
+    drawVector();
 </script>
 
 </body>
