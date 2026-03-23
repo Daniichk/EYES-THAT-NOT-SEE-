@@ -3,131 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Ultimate Stash</title>
+    <title>Math Journey | Ultimate Stash & Clicker</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --text: #ffffff; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
 
-        /* --- MATH SECTIONS --- */
+        /* --- BACKGROUND SECTIONS --- */
         section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
         canvas.math-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .content { z-index: 10; text-align: center; background: rgba(5, 5, 8, 0.85); padding: 35px; border-radius: 15px; border: 1px solid rgba(0,255,204,0.2); backdrop-filter: blur(15px); transition: 0.3s; }
-        .content:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,255,204,0.2); }
+        .content { z-index: 10; text-align: center; background: rgba(5, 5, 8, 0.85); padding: 35px; border-radius: 15px; border: 1px solid rgba(0,255,204,0.2); backdrop-filter: blur(15px); }
         h2 { font-weight: 100; font-size: 2.2rem; letter-spacing: 12px; margin: 0; color: var(--accent); text-transform: uppercase; }
 
-        /* --- OVERLAYS --- */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; }
-        .game-frame { width: 100%; height: 100%; border: none; }
-        .close-hint { position: absolute; top: 20px; right: 20px; color: #555; font-size: 0.7rem; z-index: 10001; cursor: pointer; letter-spacing: 2px; }
+        /* --- CLICKER OVERLAY --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; }
+        .shop-container { display: flex; width: 90%; max-width: 1000px; height: 80vh; gap: 30px; }
+        
+        /* Left Side: Interaction */
+        .cookie-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        #big-cookie { font-size: 120px; cursor: pointer; user-select: none; transition: transform 0.1s; filter: drop-shadow(0 0 20px var(--accent)); }
+        #big-cookie:active { transform: scale(0.9); }
+        
+        /* Right Side: Shop */
+        .shop-menu { width: 350px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid var(--accent); overflow-y: auto; }
+        .upgrade-btn { 
+            width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,255,204,0.05); 
+            border: 1px solid rgba(0,255,204,0.3); color: #fff; cursor: pointer; text-align: left; transition: 0.2s;
+        }
+        .upgrade-btn:hover:not(:disabled) { background: var(--accent); color: #000; }
+        .upgrade-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #444; }
+        
+        /* Floating Numbers */
+        .float-num { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 10000; }
+        @keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100px); opacity: 0; } }
 
+        /* Navigation */
         .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
         .dot { width: 5px; height: 25px; background: rgba(0,255,204,0.1); margin: 10px 0; transition: 0.5s; }
+        .close-hint { position: absolute; top: 30px; right: 30px; color: #666; cursor: pointer; font-size: 0.8rem; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
     <div class="nav" id="nav"></div>
 
-    <!-- 10 MATH SECTIONS -->
     <section id="s1"><canvas id="c1" class="math-bg"></canvas><div class="content"><h2>01. SINE</h2><p>Trig oscillation</p></div></section>
     <section id="s2"><canvas id="c2" class="math-bg"></canvas><div class="content"><h2>02. VECTORS</h2><p>Gradient fields</p></div></section>
-    <!-- Добавь здесь еще 8 секций s3-s10 -->
+    <section id="s3"><canvas id="c3" class="math-bg"></canvas><div class="content"><h2>03. LOGIC</h2><p>Binary states</p></div></section>
 
-    <!-- GAME OVERLAYS -->
+    <!-- CLICKER GAME OVERLAY -->
     <div id="cookie-overlay" class="overlay">
         <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
-        <iframe id="cookie-frame" class="game-frame"></iframe>
-    </div>
-
-    <div id="car-overlay" class="overlay" style="display:none; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
-        <h2 style="color:var(--accent)">NEON RACER</h2>
-        <div id="road" style="width:300px; height:400px; border:2px solid var(--accent); position:relative; overflow:hidden;">
-            <div id="car" style="width:40px; height:70px; background:var(--accent); position:absolute; bottom:20px; left:130px; transition:0.1s;"></div>
+        <div class="shop-container">
+            <div class="cookie-main" id="cookie-container">
+                <h1 id="score-display" style="margin:0; font-size:3rem; color:var(--accent)">0</h1>
+                <p id="pps-display" style="color:var(--gold); margin-bottom:40px;">GENERATION: 0/s</p>
+                <div id="big-cookie">💠</div>
+            </div>
+            <div class="shop-menu" id="shop-items">
+                <h3 style="letter-spacing: 3px; color: var(--accent); margin-bottom: 20px;">SYSTEM UPGRADES</h3>
+                <!-- Buildings generate here -->
+            </div>
         </div>
     </div>
 
-    <script defer src="/_vercel/insights/script.js"></script>
-
     <script>
-        const mouse = { x: 0, y: 0 };
-        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        // --- CORE GAME DATA ---
+        let state = {
+            score: 0,
+            pps: 0,
+            buildings: [
+                { id: 0, name: "Neural Node", cost: 15, power: 0.1, count: 0 },
+                { id: 1, name: "Logic Gate", cost: 100, power: 1, count: 0 },
+                { id: 2, name: "Vector Array", cost: 1100, power: 8, count: 0 },
+                { id: 3, name: "Matrix Core", cost: 12000, power: 47, count: 0 },
+                { id: 4, name: "Tensor Flow", cost: 130000, power: 260, count: 0 },
+                { id: 5, name: "Quantum CPU", cost: 1400000, power: 1400, count: 0 },
+                { id: 6, name: "Hypervisor", cost: 20000000, power: 7800, count: 0 },
+                { id: 7, name: "Singularity", cost: 330000000, power: 44000, count: 0 }
+            ]
+        };
 
-        // --- ГОРЯЧИЕ КЛАВИШИ ---
-        window.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.shiftKey) {
-                if (e.code === 'Digit6') openGame('cookie-overlay', 'cookie.html');
-                if (e.code === 'Digit7') toggleOverlay('car-overlay', 'flex');
-            }
-            if (e.key === 'Escape') closeAll();
-            
-            // Управление машиной
-            if (e.code === 'ArrowLeft') moveCar(-20);
-            if (e.code === 'ArrowRight') moveCar(20);
-        });
-
-        function openGame(id, url) {
-            const overlay = document.getElementById(id);
-            const frame = document.getElementById('cookie-frame');
-            if (frame && !frame.src.includes(url)) frame.src = url;
-            overlay.style.display = 'block';
+        // --- INITIALIZATION ---
+        function init() {
+            loadGame();
+            renderShop();
+            animateBackgrounds();
+            createNav();
+            setInterval(gameLoop, 100);
+            setInterval(saveGame, 10000); // Auto-save every 10s
         }
 
-        function toggleOverlay(id, type) {
+        // --- CLICKER LOGIC ---
+        const cookieBtn = document.getElementById('big-cookie');
+        cookieBtn.addEventListener('click', (e) => {
+            state.score += 1;
+            createFloatingNumber(e.clientX, e.clientY, "+1");
+            updateUI();
+        });
+
+        function buyBuilding(id) {
+            const b = state.buildings[id];
+            if (state.score >= b.cost) {
+                state.score -= b.cost;
+                b.count++;
+                b.cost *= 1.15;
+                calculatePPS();
+                renderShop();
+                updateUI();
+            }
+        }
+
+        function calculatePPS() {
+            state.pps = state.buildings.reduce((sum, b) => sum + (b.count * b.power), 0);
+        }
+
+        function gameLoop() {
+            if (state.pps > 0) {
+                state.score += state.pps / 10;
+                updateUI();
+            }
+        }
+
+        // --- UI FUNCTIONS ---
+        function updateUI() {
+            document.getElementById('score-display').innerText = Math.floor(state.score).toLocaleString();
+            document.getElementById('pps-display').innerText = `GENERATION: ${state.pps.toFixed(1)}/s`;
+            
+            state.buildings.forEach(b => {
+                const btn = document.getElementById(`build-${b.id}`);
+                if (btn) btn.disabled = state.score < b.cost;
+            });
+        }
+
+        function renderShop() {
+            const shop = document.getElementById('shop-items');
+            shop.innerHTML = '<h3 style="letter-spacing:3px; color:var(--accent); margin-bottom:20px;">SYSTEM UPGRADES</h3>';
+            state.buildings.forEach(b => {
+                const btn = document.createElement('button');
+                btn.className = 'upgrade-btn';
+                btn.id = `build-${b.id}`;
+                btn.onclick = () => buyBuilding(b.id);
+                btn.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                        <span>${b.name} (${b.count})</span>
+                        <span style="color:var(--gold)">$${Math.floor(b.cost).toLocaleString()}</span>
+                    </div>
+                    <div style="font-size:0.7rem; opacity:0.6;">Yields +${b.power}/s</div>
+                `;
+                shop.appendChild(btn);
+            });
+        }
+
+        function createFloatingNumber(x, y, text) {
+            const num = document.createElement('div');
+            num.className = 'float-num';
+            num.style.left = `${x}px`;
+            num.style.top = `${y}px`;
+            num.innerText = text;
+            document.body.appendChild(num);
+            setTimeout(() => num.remove(), 1000);
+        }
+
+        // --- UTILS & STORAGE ---
+        function saveGame() {
+            localStorage.setItem('mathClickerSave', JSON.stringify(state));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('mathClickerSave');
+            if (saved) {
+                const loadedState = JSON.parse(saved);
+                state.score = loadedState.score;
+                state.buildings.forEach((b, i) => {
+                    if (loadedState.buildings[i]) {
+                        b.count = loadedState.buildings[i].count;
+                        b.cost = loadedState.buildings[i].cost;
+                    }
+                });
+                calculatePPS();
+            }
+        }
+
+        function toggleOverlay(id, display) {
             const el = document.getElementById(id);
-            el.style.display = (el.style.display === type) ? 'none' : type;
+            el.style.display = (el.style.display === display) ? 'none' : display;
         }
 
         function closeAll() {
-            document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
         }
 
-        let carPos = 130;
-        function moveCar(offset) {
-            carPos = Math.max(0, Math.min(260, carPos + offset));
-            const car = document.getElementById('car');
-            if (car) car.style.left = carPos + 'px';
-        }
-
-        // --- МАТЕМАТИЧЕСКАЯ АНИМАЦИЯ (Светлее и интерактивнее) ---
-        function initMath(id, i) {
-            const c = document.getElementById(id); if (!c) return;
-            const ctx = c.getContext('2d');
-            const loop = () => {
-                c.width = window.innerWidth; c.height = window.innerHeight;
-                const ry = mouse.y - c.getBoundingClientRect().top;
-                ctx.fillStyle = 'rgba(5, 5, 8, 0.15)'; 
-                ctx.fillRect(0, 0, c.width, c.height);
-                
-                // Эффект света
-                const grad = ctx.createRadialGradient(mouse.x, ry, 0, mouse.x, ry, 300);
-                grad.addColorStop(0, `rgba(0, 255, 204, 0.1)`);
-                grad.addColorStop(1, 'transparent');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, c.width, c.height);
-
-                ctx.strokeStyle = `hsl(${160 + i*10}, 100%, 50%)`;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                for(let x=0; x<c.width; x+=10) {
-                    let y = c.height/2 + Math.sin(x*0.01 + Date.now()*0.002) * (ry * 0.15);
-                    ctx.lineTo(x, y);
-                }
-                ctx.stroke();
-                requestAnimationFrame(loop);
-            };
-            loop();
-        }
-
-        for(let i=1; i<=10; i++) initMath('c'+i, i);
-
-        // Навигация
-        const nav = document.getElementById('nav');
-        for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
-        window.addEventListener('scroll', () => {
-            let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
-            document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.1)');
+        window.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') toggleOverlay('cookie-overlay', 'flex');
+            if (e.key === 'Escape') closeAll();
         });
+
+        // --- VISUALS (FROM ORIGINAL) ---
+        function animateBackgrounds() {
+            const mouse = { x: 0, y: 0 };
+            window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+            function draw(id, i) {
+                const c = document.getElementById(id); if (!c) return;
+                const ctx = c.getContext('2d');
+                const l = () => {
+                    c.width = window.innerWidth; c.height = window.innerHeight;
+                    ctx.fillStyle = 'rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height);
+                    ctx.strokeStyle = `hsl(${160 + i*20}, 100%, 50%)`;
+                    ctx.beginPath();
+                    for(let x=0; x<c.width; x+=15) {
+                        let y = c.height/2 + Math.sin(x*0.01 + Date.now()*0.001) * (mouse.y*0.1 + 20);
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    requestAnimationFrame(l);
+                };
+                l();
+            }
+            for(let i=1; i<=3; i++) draw('c'+i, i);
+        }
+
+        function createNav() {
+            const nav = document.getElementById('nav');
+            for(let i=1; i<=3; i++) nav.innerHTML += `<div class="dot" id="d${i}"></div>`;
+            window.addEventListener('scroll', () => {
+                let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
+                document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? 'var(--accent)' : 'rgba(0,255,204,0.1)');
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
