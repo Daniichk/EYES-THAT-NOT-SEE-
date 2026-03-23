@@ -3,51 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math & Cookie Universe | Ultimate Edition</title>
+    <title>Math Journey | Ultimate Multiverse</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --panel: rgba(10, 10, 15, 0.98); }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --red: #ff4d4d; --panel: rgba(10, 10, 15, 0.98); }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
 
-        /* --- MATH SECTIONS --- */
+        /* --- MATH SECTIONS (10 WORLDS) --- */
         section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
         canvas.math-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .content { z-index: 10; text-align: center; background: rgba(5,5,8,0.8); padding: 30px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(0,255,204,0.2); }
-        h2 { font-weight: 100; font-size: 2rem; letter-spacing: 10px; color: var(--accent); text-transform: uppercase; margin: 0; }
-        .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
-        .dot { width: 5px; height: 20px; background: rgba(0,255,204,0.1); margin: 8px 0; transition: 0.5s; }
+        .content { z-index: 10; text-align: center; cursor: help; background: rgba(5, 5, 8, 0.85); padding: 35px; border-radius: 15px; backdrop-filter: blur(15px); border: 1px solid rgba(0,255,204,0.2); transition: 0.4s; }
+        .content:hover { border-color: var(--accent); box-shadow: 0 0 30px rgba(0,255,204,0.2); transform: scale(1.02); }
+        h2 { font-weight: 100; font-size: 2.2rem; letter-spacing: 12px; margin: 0; color: var(--accent); text-transform: uppercase; }
+        .formula-hint { position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; padding: 6px 18px; font-family: monospace; font-size: 0.85rem; font-weight: bold; border-radius: 4px; opacity: 0; transition: 0.3s; pointer-events: none; }
+        .content:hover .formula-hint { opacity: 1; bottom: -55px; }
 
-        /* --- COOKIE CLICKER ULTIMATE (3 COLUMNS) --- */
-        #cookie-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: none;
-            grid-template-columns: 320px 1fr 320px; border: 4px solid #333;
-        }
-        
-        /* Left: Cookie & Stats */
-        .cp-left { background: radial-gradient(circle, #333, #000); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; padding: 20px; text-align: center; }
-        #big-cookie { font-size: 110px; cursor: pointer; user-select: none; transition: 0.05s; margin: 40px 0; filter: drop-shadow(0 0 30px rgba(0,0,0,0.5)); }
-        #big-cookie:active { transform: scale(0.95); }
-        
-        /* Middle: Upgrades Grid & News */
-        .cp-mid { background: #111; border-right: 3px solid #444; display: flex; flex-direction: column; overflow-y: auto; }
-        .upgrade-grid { display: grid; grid-template-columns: repeat(auto-fill, 40px); gap: 6px; padding: 15px; background: #000; min-height: 100px; border-bottom: 2px solid #333; }
-        .up-icon { width: 40px; height: 40px; background: #222; border: 1px solid #444; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .up-icon:hover { border-color: var(--accent); background: #333; }
-        .up-icon.bought { border-color: var(--gold); background: #1a1a00; }
+        /* --- OVERLAYS --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; }
+        .close-hint { position: absolute; top: 20px; right: 20px; color: #444; font-size: 0.7rem; letter-spacing: 3px; z-index: 10001; cursor: pointer; }
 
-        /* Right: Buildings Store */
+        /* --- COOKIE CLICKER GALAXY (3 COLUMNS) --- */
+        #cookie-overlay { grid-template-columns: 350px 1fr 350px; border: 4px solid #333; box-sizing: border-box; }
+        .cp-left { background: radial-gradient(circle, #333 0%, #000 100%); border-right: 3px solid #444; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .cp-mid { background: #111; border-right: 3px solid #444; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
         .cp-right { background: #1a1a1a; overflow-y: auto; }
-        .store-header { padding: 10px; background: #000; text-align: center; font-weight: bold; border-bottom: 2px solid #333; }
-        .building { display: flex; align-items: center; padding: 10px; background: #222; border-bottom: 1px solid #333; cursor: pointer; position: relative; }
-        .building:hover { background: #2a2a2a; }
-        .b-icon { font-size: 1.8rem; margin-right: 12px; width: 40px; text-align: center; }
-        .b-cost { color: var(--accent); font-size: 0.8rem; font-weight: bold; }
-        .b-count { position: absolute; right: 10px; font-size: 1.5rem; opacity: 0.1; font-weight: 900; }
+        
+        #cookie-system { position: relative; width: 300px; height: 300px; margin-top: 40px; display: flex; align-items: center; justify-content: center; }
+        #big-cookie { font-size: 90px; cursor: pointer; user-select: none; z-index: 10; transition: 0.05s; }
+        #big-cookie:active { transform: scale(0.92); }
+        
+        .orbit { position: absolute; border: 1px dashed rgba(255,255,255,0.05); border-radius: 50%; pointer-events: none; }
+        .satelite { position: absolute; font-size: 20px; animation: rotate-sat 10s linear infinite; z-index: 5; }
+        @keyframes rotate-sat { from { transform: rotate(0deg) translateX(var(--dist)) rotate(0deg); } to { transform: rotate(360deg) translateX(var(--dist)) rotate(-360deg); } }
 
-        /* Common Overlays */
-        .game-ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,8,0.98); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .btn { padding: 10px 20px; border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; margin: 5px; }
-        .btn:hover { background: var(--accent); color: #000; }
+        .building { display: flex; align-items: center; padding: 12px; background: #222; border-bottom: 1px solid #333; cursor: pointer; position: relative; }
+        .building:hover { background: #2a2a2a; }
+        .b-cost { color: var(--accent); font-weight: bold; font-size: 0.8rem; }
+        .b-count { position: absolute; right: 15px; font-size: 1.5rem; opacity: 0.1; font-weight: 900; }
+
+        /* --- MINI GAMES (SNAKE, CAR, MINES) --- */
+        .flex-center { display: none; flex-direction: column; align-items: center; justify-content: center; background: rgba(5,5,8,0.98); }
+        #mines-grid { display: grid; grid-template-columns: repeat(10, 35px); gap: 2px; background: #222; padding: 10px; border: 2px solid var(--gold); }
+        .cell { width: 35px; height: 35px; background: #333; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; }
+        .cell.revealed { background: #111; }
+        
+        #road { width: 300px; height: 500px; background: #111; border-left: 4px dashed var(--accent); border-right: 4px dashed var(--accent); position: relative; overflow: hidden; }
+        #player-car { position: absolute; bottom: 20px; left: 125px; width: 50px; height: 80px; background: var(--accent); border-radius: 5px; box-shadow: 0 0 20px var(--accent); }
+
+        .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
+        .dot { width: 5px; height: 25px; background: rgba(0,255,204,0.1); margin: 10px 0; transition: 0.5s; }
     </style>
 </head>
 <body>
@@ -55,43 +58,65 @@
     <div class="nav" id="nav"></div>
 
     <!-- 10 MATH SECTIONS -->
-    <section id="s1"><canvas id="c1" class="math-bg"></canvas><div class="content"><h2>01. Sine</h2><p>Trigonometric Rhythm</p></div></section>
-    <section id="s2"><canvas id="c2" class="math-bg"></canvas><div class="content"><h2>02. Vectors</h2><p>Gradient Flow</p></div></section>
-    <section id="s3"><canvas id="c3" class="math-bg"></canvas><div class="content"><h2>03. Kinetic</h2><p>Particle Physics</p></div></section>
-    <section id="s4"><canvas id="c4" class="math-bg"></canvas><div class="content"><h2>04. Geometry</h2><p>Hypercube Projection</p></div></section>
-    <section id="s5"><canvas id="c5" class="math-bg"></canvas><div class="content"><h2>05. Probability</h2><p>Gaussian Cloud</p></div></section>
-    <section id="s6"><canvas id="c6" class="math-bg"></canvas><div class="content"><h2>06. Spirals</h2><p>Logarithmic Phi</p></div></section>
-    <section id="s7"><canvas id="c7" class="math-bg"></canvas><div class="content"><h2>07. Spacetime</h2><p>Grid Deformation</p></div></section>
-    <section id="s8"><canvas id="c8" class="math-bg"></canvas><div class="content"><h2>08. Chaos</h2><p>Lorenz Attractor</p></div></section>
-    <section id="s9"><canvas id="c9" class="math-bg"></canvas><div class="content"><h2>09. Fractals</h2><p>Recursive Symmetry</p></div></section>
-    <section id="s10"><canvas id="c10" class="math-bg"></canvas><div class="content"><h2>10. Quantum Zen</h2><p>e<sup>iπ</sup> + 1 = 0</p></div></section>
+    <section id="s1"><canvas id="c1" class="math-bg"></canvas><div class="content"><h2>01. Sine</h2><p>Trig oscillation</p><div class="formula-hint">y = A sin(Bx)</div></div></section>
+    <section id="s2"><canvas id="c2" class="math-bg"></canvas><div class="content"><h2>02. Vectors</h2><p>Gradient fields</p><div class="formula-hint">∇f(x,y)</div></div></section>
+    <section id="s3"><canvas id="c3" class="math-bg"></canvas><div class="content"><h2>03. Kinetic</h2><p>Force dynamics</p><div class="formula-hint">F = ma</div></div></section>
+    <section id="s4"><canvas id="c4" class="math-bg"></canvas><div class="content"><h2>04. Geometry</h2><p>Angular rotation</p><div class="formula-hint">θ = s/r</div></div></section>
+    <section id="s5"><canvas id="c5" class="math-bg"></canvas><div class="content"><h2>05. Probability</h2><p>Stochastic cloud</p><div class="formula-hint">P(x) = Gaussian</div></div></section>
+    <section id="s6"><canvas id="c6" class="math-bg"></canvas><div class="content"><h2>06. Spirals</h2><p>Phi growth</p><div class="formula-hint">r = a + bθ</div></div></section>
+    <section id="s7"><canvas id="c7" class="math-bg"></canvas><div class="content"><h2>07. Spacetime</h2><p>Grid curvature</p><div class="formula-hint">Gμν = 8πGTμν</div></div></section>
+    <section id="s8"><canvas id="c8" class="math-bg"></canvas><div class="content"><h2>08. Chaos</h2><p>Lorenz Attractor</p><div class="formula-hint">dx/dt = σ(y-x)</div></div></section>
+    <section id="s9"><canvas id="c9" class="math-bg"></canvas><div class="content"><h2>09. Fractals</h2><p>Recursive logic</p><div class="formula-hint">z = z² + c</div></div></section>
+    <section id="s10"><canvas id="c10" class="math-bg"></canvas><div class="content"><h2>10. Quantum Zen</h2><p>Final Equilibrium</p><div class="formula-hint">e^iπ + 1 = 0</div></div></section>
 
-    <!-- COOKIE CLICKER OVERLAY -->
-    <div id="cookie-overlay">
+    <!-- OVERLAYS -->
+    <div id="cookie-overlay" class="overlay">
+        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
         <div class="cp-left">
-            <div id="cookies-display" style="font-size: 1.5rem; font-weight: bold;">0 cookies</div>
-            <div id="cps-display" style="font-size: 0.8rem; color: var(--accent);">per second: 0</div>
-            <div id="big-cookie">🍪</div>
-            <button class="btn" onclick="saveGame()">SAVE</button>
-            <button class="btn" style="border-color: var(--gold)" onclick="resetGame()">RESET</button>
+            <div id="score-box" style="margin-top:20px; text-align:center;">
+                <div id="cookies-count" style="font-size:2rem; font-weight:bold;">0 cookies</div>
+                <div id="cps-display" style="color:var(--accent);">per second: 0</div>
+            </div>
+            <div id="cookie-system"><div id="big-cookie">🍪</div></div>
+            <button onclick="saveGame()" style="margin-top:20px; padding:10px 30px; border:1px solid var(--accent); background:none; color:var(--accent); cursor:pointer;">SAVE PROGRESS</button>
+            <button onclick="resetGame()" style="margin-top:10px; color:#555; background:none; border:none; cursor:pointer;">Reset All</button>
         </div>
         <div class="cp-mid">
-            <div style="padding: 10px; background: #000; text-align: center; font-size: 0.7rem; color: #555;">UPGRADES</div>
-            <div class="upgrade-grid" id="upgrade-grid"></div>
-            <div id="news" style="padding: 20px; font-style: italic; color: #666; text-align: center;">"Your math bakery is growing."</div>
-            <div id="achievements" style="margin-top: auto; padding: 10px; background: #000; font-size: 0.7rem; color: var(--gold);"></div>
+            <div style="background:#000; padding:10px; text-align:center; font-size:0.7rem; color:#444;">UPGRADES</div>
+            <div id="upgrade-area" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; padding:10px;"></div>
+            <div id="news-ticker" style="margin-top:20px; text-align:center; color:#666; font-style:italic;">"Math is the cookie of the mind."</div>
         </div>
         <div class="cp-right">
-            <div class="store-header">STORE</div>
-            <div id="store"></div>
-            <p style="text-align: center; font-size: 0.6rem; color: #444; padding: 20px;">ESC TO RETURN TO MATH</p>
+            <div style="background:#000; padding:15px; text-align:center; font-weight:bold;">STORE</div>
+            <div id="store-container"></div>
         </div>
     </div>
 
-    <!-- OTHER GAMES OVERLAYS -->
-    <div id="snake-ui" class="game-ui"><h2>NEON SNAKE</h2><canvas id="snake-canvas" width="400" height="400"></canvas></div>
-    <div id="mines-ui" class="game-ui"><h2>MATH MINES</h2><div id="mines-grid" style="display: grid; grid-template-columns: repeat(10, 30px); gap: 2px;"></div></div>
+    <div id="snake-overlay" class="overlay flex-center">
+        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
+        <h2>NEON SERPIENTE</h2>
+        <canvas id="snake-canvas" width="400" height="400" style="border:2px solid var(--accent)"></canvas>
+    </div>
 
+    <div id="car-overlay" class="overlay flex-center">
+        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
+        <h2>NEON RACER</h2>
+        <div id="road"><div id="player-car"></div></div>
+    </div>
+
+    <div id="mines-overlay" class="overlay flex-center">
+        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
+        <h2>MATH MINES</h2>
+        <div id="mines-grid"></div>
+    </div>
+
+    <div id="balatro-overlay" class="overlay">
+        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
+        <canvas id="loadingCanvas" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></canvas>
+        <canvas id="canvas" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); visibility:hidden;"></canvas>
+    </div>
+
+    <!-- SCRIPTS -->
     <script defer src="/_vercel/insights/script.js"></script>
 
     <script>
@@ -99,114 +124,66 @@
         window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
         // --- COOKIE CLICKER ENGINE ---
-        let cookies = 0;
-        let cps = 0;
-        let totalClicks = 0;
-        let spacePressed = false; // Багфикс пробела
-
-        const buildings = [
-            { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', count: 0 },
-            { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', count: 0 },
-            { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', count: 0 },
-            { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', count: 0 },
-            { id: 'fac', name: 'Factory', cost: 130000, power: 260, icon: '🏭', count: 0 },
-            { id: 'bnk', name: 'Bank', cost: 1400000, power: 1400, icon: '🏦', count: 0 },
-            { id: 'tmp', name: 'Temple', cost: 20000000, power: 7800, icon: '⛩️', count: 0 }
+        let cookies = 0; let cps = 0; let spaceDown = false;
+        const bld = [
+            { id: 'cur', name: 'Cursor', cost: 15, power: 0.1, icon: '🖱️', dist: 75, count: 0 },
+            { id: 'grm', name: 'Grandma', cost: 100, power: 1, icon: '👵', dist: 110, count: 0 },
+            { id: 'frm', name: 'Farm', cost: 1100, power: 8, icon: '🌾', dist: 150, count: 0 },
+            { id: 'mne', name: 'Mine', cost: 12000, power: 47, icon: '⛏️', dist: 190, count: 0 }
         ];
 
-        const upgrades = [
-            { id: 'up1', name: 'Reinforced Index', cost: 100, mult: 2, target: 'cur', icon: '☝️', bought: false },
-            { id: 'up2', name: 'Foraging', cost: 500, mult: 2, target: 'frm', icon: '🍎', bought: false },
-            { id: 'up3', name: 'Steel Grandma', cost: 1000, mult: 2, target: 'grm', icon: '🤖', bought: false }
-        ];
-
-        function buyBuilding(id) {
-            const b = buildings.find(x => x.id === id);
+        function buy(id) {
+            const b = bld.find(x => x.id === id);
             if (cookies >= b.cost) {
                 cookies -= b.cost; b.count++; b.cost = Math.floor(b.cost * 1.15);
-                updateGame();
+                addVisual(b); updateUI();
             }
         }
 
-        function buyUpgrade(id) {
-            const u = upgrades.find(x => x.id === id);
-            if (cookies >= u.cost && !u.bought) {
-                cookies -= u.cost; u.bought = true;
-                updateGame();
+        function addVisual(b) {
+            const container = document.getElementById('cookie-system');
+            if (b.count === 1) {
+                const orb = document.createElement('div'); orb.className = 'orbit';
+                orb.style.width = orb.style.height = (b.dist * 2) + 'px';
+                container.appendChild(orb);
             }
+            const s = document.createElement('div'); s.className = 'satelite';
+            s.innerText = b.icon; s.style.setProperty('--dist', b.dist + 'px');
+            s.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            container.appendChild(s);
         }
 
-        function updateGame() {
-            // Расчет CPS
-            cps = buildings.reduce((acc, b) => {
-                let power = b.power;
-                upgrades.filter(u => u.bought && u.target === b.id).forEach(() => power *= 2);
-                return acc + (b.count * power);
-            }, 0);
-
-            document.getElementById('cookies-display').innerText = Math.floor(cookies) + " cookies";
+        function updateUI() {
+            document.getElementById('cookies-count').innerText = Math.floor(cookies) + " cookies";
+            cps = bld.reduce((a, b) => a + (b.count * b.power), 0);
             document.getElementById('cps-display').innerText = "per second: " + cps.toFixed(1);
-            
-            // Рендер магазина
-            document.getElementById('store').innerHTML = buildings.map(b => `
-                <div class="building" onclick="buyBuilding('${b.id}')">
-                    <div class="b-icon">${b.icon}</div>
+            document.getElementById('store-container').innerHTML = bld.map(b => `
+                <div class="building" onclick="buy('${b.id}')">
+                    <div style="font-size:1.5rem; margin-right:15px">${b.icon}</div>
                     <div><b>${b.name}</b><br><span class="b-cost">${b.cost}</span></div>
                     <div class="b-count">${b.count}</div>
                 </div>`).join('');
-
-            // Рендер апгрейдов
-            document.getElementById('upgrade-grid').innerHTML = upgrades.map(u => `
-                <div class="up-icon ${u.bought ? 'bought' : ''}" 
-                     title="${u.name} (Cost: ${u.cost})" 
-                     onclick="buyUpgrade('${u.id}')">${u.icon}</div>`).join('');
-        }
-
-        setInterval(() => { cookies += cps / 10; updateGame(); }, 100);
-
-        // --- БАГФИКС ПРОБЕЛА ---
-        window.addEventListener('keydown', e => {
-            if (e.code === 'Space' && !spacePressed && document.getElementById('cookie-overlay').style.display === 'grid') {
-                spacePressed = true; cookies++; totalClicks++; updateGame();
-            }
-            if (e.ctrlKey && e.shiftKey) {
-                if (e.code === 'Digit6') toggle('cookie-overlay');
-                if (e.code === 'Digit7') toggle('snake-ui');
-                if (e.code === 'Digit8') toggle('mines-ui');
-            }
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.game-ui, #cookie-overlay').forEach(el => el.style.display = 'none');
-            }
-        });
-        window.addEventListener('keyup', e => { if (e.code === 'Space') spacePressed = false; });
-        document.getElementById('big-cookie').onclick = () => { cookies++; totalClicks++; updateGame(); };
-
-        function toggle(id) {
-            const el = document.getElementById(id);
-            const isFlex = id.includes('ui');
-            el.style.display = (el.style.display === (isFlex ? 'flex' : 'grid')) ? 'none' : (isFlex ? 'flex' : 'grid');
         }
 
         // --- MATH RENDERERS (10 Sections) ---
-        function initMath(id, drawFn) {
+        function initMath(id, draw) {
             const c = document.getElementById(id); const ctx = c.getContext('2d');
             const loop = () => {
                 c.width = window.innerWidth; c.height = window.innerHeight;
-                drawFn(ctx, c, mouse.y - c.getBoundingClientRect().top);
+                const rect = c.getBoundingClientRect();
+                draw(ctx, c, mouse.y - rect.top);
                 requestAnimationFrame(loop);
             };
             loop();
         }
 
-        // Пример рендерера для 1-й секции (Sine)
         initMath('c1', (ctx, c, ry) => {
             ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
             ctx.strokeStyle = '#00ffcc'; ctx.beginPath();
-            for(let x=0; x<c.width; x+=10) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2);
+            for(let x=0; x<c.width; x+=5) ctx.lineTo(x, c.height/2 + Math.sin(x*0.01 + Date.now()*0.002)*ry*0.2);
             ctx.stroke();
         });
-        
-        // (Остальные 9 секций инициализируются аналогично с уникальными drawFn...)
+        // (Остальные 9 инициализаций аналогично...)
         for(let i=2; i<=10; i++) {
             initMath('c'+i, (ctx, c, ry) => {
                 ctx.fillStyle = 'rgba(5,5,8,0.1)'; ctx.fillRect(0,0,c.width,c.height);
@@ -215,19 +192,68 @@
             });
         }
 
-        // Сохранение
-        function saveGame() { localStorage.setItem('mathSave', JSON.stringify({cookies, buildings, upgrades})); alert("Progress Saved!"); }
-        function resetGame() { localStorage.removeItem('mathSave'); location.reload(); }
+        // --- HOTKEYS & CONTROLS ---
+        window.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.shiftKey) {
+                if (e.code === 'Digit6') toggle('cookie-overlay', 'grid');
+                if (e.code === 'Digit7') toggle('car-overlay', 'flex');
+                if (e.code === 'Digit8') toggle('mines-overlay', 'flex');
+                if (e.code === 'Digit9') startBalatro();
+            }
+            if (e.key === 'Escape') closeAll();
+            // Space bugfix
+            if (e.code === 'Space' && !spaceDown && document.getElementById('cookie-overlay').style.display === 'grid') {
+                spaceDown = true; cookies++; updateUI();
+            }
+        });
+        window.addEventListener('keyup', e => { if(e.code === 'Space') spaceDown = false; });
 
-        // Навигация
+        function toggle(id, type) {
+            const el = document.getElementById(id);
+            el.style.display = (el.style.display === type) ? 'none' : type;
+        }
+
+        function closeAll() {
+            document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none');
+        }
+
+        // --- BALATRO LOADER ---
+        function startBalatro() {
+            document.getElementById('balatro-overlay').style.display = 'block';
+            if (!window.BalatroInited) {
+                const script = document.createElement('script');
+                script.src = "https://raw.githack.com";
+                script.onload = () => { if(typeof applicationLoad === 'function') applicationLoad(); };
+                document.body.appendChild(script);
+                window.BalatroInited = true;
+            }
+        }
+
+        // --- PERSISTENCE ---
+        function saveGame() { localStorage.setItem('cookieSave', JSON.stringify({cookies, bld})); alert("Math Progress Saved!"); }
+        function loadGame() {
+            const s = JSON.parse(localStorage.getItem('cookieSave'));
+            if(s) {
+                cookies = s.cookies;
+                s.bld.forEach((sb, i) => { if(bld[i]) { bld[i].count = sb.count; bld[i].cost = sb.cost; for(let n=0; n<sb.count; n++) addVisual(bld[i]); } });
+                updateUI();
+            }
+        }
+        function resetGame() { localStorage.removeItem('cookieSave'); location.reload(); }
+
+        // Start
+        document.getElementById('big-cookie').onclick = () => { cookies++; updateUI(); };
+        setInterval(() => { cookies += cps / 10; updateUI(); }, 100);
+        loadGame();
+        updateUI();
+
+        // Nav dots logic
         const nav = document.getElementById('nav');
         for(let i=0; i<10; i++) nav.innerHTML += `<div class="dot" id="d${i+1}"></div>`;
         window.addEventListener('scroll', () => {
             let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
             document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? '#00ffcc' : 'rgba(0,255,204,0.1)');
         });
-
-        updateGame();
     </script>
 </body>
 </html>
