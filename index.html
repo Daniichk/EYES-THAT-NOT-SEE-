@@ -3,54 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Orbit Analytics Edition</title>
+    <title>Math Journey | Advanced Upgrades</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; }
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --red: #ff4d4d; }
         body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* --- UI & OVERLAY --- */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0a111a 0%, #050508 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .game-container { display: flex; width: 95%; height: 90vh; gap: 20px; }
 
-        /* Left side: Visuals */
         .visual-area { flex: 1.5; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,255,204,0.1); border-radius: 20px; overflow: hidden; }
         #canvas-orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        #big-cookie { font-size: 80px; cursor: pointer; z-index: 10; transition: transform 0.1s; user-select: none; filter: drop-shadow(0 0 20px var(--accent)); }
         
-        /* Анимация пульсации ядра */
-        @keyframes pulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accent)); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 40px var(--accent)); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accent)); }
-        }
-        .pulsing { animation: pulse 2s infinite ease-in-out; }
+        #big-cookie { font-size: 90px; cursor: pointer; z-index: 10; transition: transform 0.05s; user-select: none; filter: drop-shadow(0 0 25px var(--accent)); }
+        .pulsing { animation: pulse 2.5s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
-        #big-cookie:active { transform: scale(0.85) !important; animation: none; }
-        .stats { z-index: 10; text-align: center; pointer-events: none; margin-bottom: 20px; }
-
-        /* Right side: Shop & Upgrades */
-        .sidebar { width: 400px; display: flex; flex-direction: column; gap: 15px; }
+        .stats { z-index: 10; text-align: center; pointer-events: none; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 50px; backdrop-filter: blur(5px); }
+        .sidebar { width: 420px; display: flex; flex-direction: column; gap: 15px; }
         .panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,204,0.2); border-radius: 15px; padding: 15px; overflow-y: auto; }
-        .shop { flex: 2; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
-        .upgrades { flex: 0.5; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; min-height: 80px; }
+        .shop { flex: 2; }
+        .upgrades { flex: 1; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
 
-        /* Buttons */
-        .item-btn { 
-            width: 100%; padding: 12px; margin: 5px 0; background: rgba(0,255,204,0.05); 
-            border: 1px solid rgba(0,255,204,0.2); color: #fff; cursor: pointer; text-align: left; transition: 0.3s;
-        }
-        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.15); transform: translateX(5px); }
+        .item-btn { width: 100%; padding: 12px; margin: 6px 0; background: rgba(0,255,204,0.03); border: 1px solid rgba(0,255,204,0.15); color: #fff; cursor: pointer; text-align: left; transition: 0.2s; border-radius: 8px; }
+        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.1); transform: scale(1.02); }
         .item-btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .upg-icon { 
-            width: 50px; height: 50px; border: 1px solid var(--gold); border-radius: 10px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
-            background: rgba(225, 177, 44, 0.1); transition: 0.3s;
-        }
-        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; transform: scale(1.1); }
+        .upg-icon { width: 55px; height: 55px; border: 2px solid var(--gold); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; background: rgba(225, 177, 44, 0.05); transition: 0.3s; position: relative; }
+        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; transform: translateY(-3px); }
+        .upg-icon:disabled { border-color: #444; opacity: 0.4; filter: grayscale(1); }
+        
+        .tooltip { display: none; position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 8px; border-radius: 5px; width: 150px; font-size: 0.75rem; text-align: center; border: 1px solid var(--gold); z-index: 100; pointer-events: none; }
+        .upg-icon:hover .tooltip { display: block; }
 
-        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 1s forwards; z-index: 20; text-shadow: 0 0 10px var(--accent); }
-        @keyframes float { to { transform: translateY(-100px) scale(1.5); opacity: 0; } }
+        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 0.8s forwards; z-index: 20; text-shadow: 0 0 10px var(--accent); }
+        @keyframes float { to { transform: translateY(-120px) scale(1.2); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -60,12 +46,11 @@
         <div class="visual-area">
             <canvas id="canvas-orbit"></canvas>
             <div class="stats">
-                <h1 id="score" style="font-size: 3.5rem; margin: 0; color: var(--accent); letter-spacing: -2px;">0</h1>
-                <p id="pps" style="color: var(--gold); margin: 0; font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">generation: 0/s</p>
+                <h1 id="score" style="font-size: 3.2rem; margin: 0; color: var(--accent); letter-spacing: -2px;">0</h1>
+                <p id="pps" style="color: var(--gold); margin: 0; font-size: 0.8rem; font-weight: bold;">0/S • CLICK: <span id="click-val">1</span></p>
             </div>
             <div id="big-cookie" class="pulsing">💠</div>
         </div>
-
         <div class="sidebar">
             <div class="panel upgrades" id="upgrades-area"></div>
             <div class="panel shop" id="shop-area"></div>
@@ -73,37 +58,68 @@
     </div>
 </div>
 
-<!-- VERCEL ANALYTICS SCRIPT -->
 <script defer src="/_vercel/insights/script.js"></script>
 
 <script>
     let state = {
         score: 0,
+        clickPower: 1,
         totalMultiplier: 1,
+        priceDiscount: 1,
+        isSpacePressed: false,
         buildings: [
-            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 110, speed: 0.02, color: '#00ffcc' },
-            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 150, speed: 0.015, color: '#00ccff' },
-            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 190, speed: 0.012, color: '#ff00ff' },
-            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 230, speed: 0.009, color: '#e1b12c' },
-            { id: 4, name: "Tensor Hub", cost: 130000, pps: 260, count: 0, orbit: 270, speed: 0.007, color: '#ff4d4d' }
+            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 110, speed: 0.02, icon: '🧠' },
+            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 155, speed: 0.015, icon: '⚙️' },
+            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 200, speed: 0.012, icon: '📐' },
+            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 245, speed: 0.009, icon: '📊' }
         ],
         upgrades: [
-            { id: 0, name: "Turbo Boost", cost: 500, mult: 1.1, icon: "⚡", bought: false },
-            { id: 1, name: "Clean Architecture", cost: 5000, mult: 1.25, icon: "🏛️", bought: false },
-            { id: 2, name: "Quantum Supremacy", cost: 50000, mult: 2.0, icon: "⚛️", bought: false }
+            { id: 0, name: "Heavy Fingers", cost: 100, type: 'click', val: 2, icon: "🔨", desc: "Удваивает силу клика", bought: false },
+            { id: 1, name: "Smart Sale", cost: 500, type: 'discount', val: 0.8, icon: "🏷️", desc: "Скидка 20% на все здания", bought: false },
+            { id: 2, name: "Turbo Mode", cost: 2000, type: 'mult', val: 1.5, icon: "⚡", desc: "+50% к пассивному доходу", bought: false },
+            { id: 3, name: "Macro Click", cost: 10000, type: 'click', val: 5, icon: "🖱️", desc: "+5 к силе клика", bought: false },
+            { id: 4, name: "Quantum Tax", cost: 50000, type: 'discount', val: 0.7, icon: "📉", desc: "Еще 30% скидки", bought: false }
         ]
     };
 
     const canvas = document.getElementById('canvas-orbit');
     const ctx = canvas.getContext('2d');
+    const cookie = document.getElementById('big-cookie');
+
+    function handleMainClick() {
+        state.score += state.clickPower;
+        cookie.style.transform = 'scale(0.85)';
+        setTimeout(() => cookie.style.transform = 'scale(1)', 50);
+        
+        const txt = document.createElement('div');
+        txt.className = 'float-text';
+        txt.style.left = (window.innerWidth/2 - 40 + Math.random()*80) + 'px';
+        txt.style.top = (window.innerHeight/2 - 20) + 'px';
+        txt.innerText = "+" + state.clickPower;
+        document.body.appendChild(txt);
+        setTimeout(() => txt.remove(), 800);
+        updateUI();
+    }
+
+    // --- KEYBOARD FIX ---
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !state.isSpacePressed) {
+            e.preventDefault();
+            state.isSpacePressed = true;
+            handleMainClick();
+        }
+    });
+    window.addEventListener('keyup', (e) => { if (e.code === 'Space') state.isSpacePressed = false; });
+    cookie.addEventListener('mousedown', (e) => { e.preventDefault(); handleMainClick(); });
 
     function buyBuilding(id) {
         let b = state.buildings[id];
-        if (state.score >= b.cost) {
-            state.score -= b.cost;
+        let realCost = b.cost * state.priceDiscount;
+        if (state.score >= realCost) {
+            state.score -= realCost;
             b.count++;
             b.cost *= 1.15;
-            updateInterface();
+            updateUI();
         }
     }
 
@@ -112,24 +128,30 @@
         if (state.score >= u.cost && !u.bought) {
             state.score -= u.cost;
             u.bought = true;
-            state.totalMultiplier *= u.mult;
-            updateInterface();
+            if (u.type === 'click') {
+                if (u.val === 2) state.clickPower *= 2; else state.clickPower += u.val;
+            }
+            if (u.type === 'discount') state.priceDiscount *= u.val;
+            if (u.type === 'mult') state.totalMultiplier *= u.val;
+            updateUI();
         }
     }
 
-    function getPPS() {
-        return state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier;
-    }
+    function updateUI() {
+        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
+        document.getElementById('click-val').innerText = state.clickPower;
+        let currentPPS = state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier;
+        document.getElementById('pps').innerText = `${currentPPS.toFixed(1)}/S • CLICK: ${state.clickPower}`;
 
-    function updateInterface() {
         const shop = document.getElementById('shop-area');
-        shop.innerHTML = '<h3 style="margin-top:0; font-size:0.7rem; letter-spacing:3px; opacity:0.5;">CONSTRUCTIONS</h3>';
+        shop.innerHTML = '<h3 style="margin:0 0 10px 0; font-size:0.7rem; letter-spacing:3px; opacity:0.5;">CONSTRUCTIONS</h3>';
         state.buildings.forEach(b => {
             const btn = document.createElement('button');
             btn.className = 'item-btn';
-            btn.disabled = state.score < b.cost;
+            let cost = Math.floor(b.cost * state.priceDiscount);
+            btn.disabled = state.score < cost;
             btn.onclick = () => buyBuilding(b.id);
-            btn.innerHTML = `<b>${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${Math.floor(b.cost).toLocaleString()}</span><br><small style="opacity:0.6">+${b.pps}/s base</small>`;
+            btn.innerHTML = `<b>${b.icon} ${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${cost.toLocaleString()}</span>`;
             shop.appendChild(btn);
         });
 
@@ -140,8 +162,7 @@
                 const btn = document.createElement('button');
                 btn.className = 'upg-icon';
                 btn.disabled = state.score < u.cost;
-                btn.innerHTML = u.icon;
-                btn.title = `${u.name}: x${u.mult} Multiplier (Cost: ${u.cost})`;
+                btn.innerHTML = `${u.icon}<div class="tooltip"><b>${u.name}</b><br>${u.desc}<br>Cost: $${u.cost}</div>`;
                 btn.onclick = () => buyUpgrade(u.id);
                 upgArea.appendChild(btn);
             }
@@ -153,58 +174,33 @@
         canvas.height = canvas.offsetHeight;
         const cx = canvas.width / 2;
         const cy = canvas.height / 2;
-
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         state.buildings.forEach(b => {
             if (b.count > 0) {
-                // Линия орбиты
                 ctx.beginPath();
                 ctx.arc(cx, cy, b.orbit, 0, Math.PI * 2);
                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
                 ctx.stroke();
 
-                // Отрисовка точек-спутников
                 for (let i = 0; i < b.count; i++) {
                     let angle = (Date.now() * b.speed * 0.01) + (i * (Math.PI * 2 / b.count));
                     let x = cx + Math.cos(angle) * b.orbit;
                     let y = cy + Math.sin(angle) * b.orbit;
-
-                    ctx.beginPath();
-                    ctx.arc(x, y, 3, 0, Math.PI * 2);
-                    ctx.fillStyle = b.color;
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = b.color;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
+                    ctx.font = "20px serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText(b.icon, x, y);
                 }
             }
         });
 
-        // Доход в секунду (делим на 60 FPS)
-        state.score += getPPS() / 60;
-        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('pps').innerText = `generation: ${getPPS().toFixed(1)}/s`;
-
+        let passive = (state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier) / 60;
+        state.score += passive;
         requestAnimationFrame(animate);
     }
 
-    document.getElementById('big-cookie').addEventListener('click', (e) => {
-        state.score += 1;
-        const txt = document.createElement('div');
-        txt.className = 'float-text';
-        txt.style.left = e.clientX + 'px';
-        txt.style.top = e.clientY + 'px';
-        txt.innerText = "+1";
-        document.body.appendChild(txt);
-        setTimeout(() => txt.remove(), 1000);
-        updateInterface();
-    });
-
-    // Регулярная проверка доступности кнопок
-    setInterval(updateInterface, 500);
-
-    updateInterface();
+    setInterval(updateUI, 1000);
+    updateUI();
     animate();
 </script>
 </body>
