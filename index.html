@@ -3,236 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Ultimate Stash & Clicker</title>
+    <title>Math Journey | Orbit Edition</title>
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --text: #ffffff; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
+        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; }
+        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
 
-        /* --- BACKGROUND SECTIONS --- */
-        section { height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center; position: relative; border-bottom: 1px solid rgba(0,255,204,0.1); }
-        canvas.math-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-        .content { z-index: 10; text-align: center; background: rgba(5, 5, 8, 0.85); padding: 35px; border-radius: 15px; border: 1px solid rgba(0,255,204,0.2); backdrop-filter: blur(15px); }
-        h2 { font-weight: 100; font-size: 2.2rem; letter-spacing: 12px; margin: 0; color: var(--accent); text-transform: uppercase; }
+        /* --- UI & OVERLAY --- */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0a111a 0%, #050508 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .game-container { display: flex; width: 95%; height: 90vh; gap: 20px; }
 
-        /* --- CLICKER OVERLAY --- */
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .shop-container { display: flex; width: 90%; max-width: 1000px; height: 80vh; gap: 30px; }
-        
-        /* Left Side: Interaction */
-        .cookie-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        #big-cookie { font-size: 120px; cursor: pointer; user-select: none; transition: transform 0.1s; filter: drop-shadow(0 0 20px var(--accent)); }
-        #big-cookie:active { transform: scale(0.9); }
-        
-        /* Right Side: Shop */
-        .shop-menu { width: 350px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 15px; border: 1px solid var(--accent); overflow-y: auto; }
-        .upgrade-btn { 
-            width: 100%; padding: 12px; margin: 8px 0; background: rgba(0,255,204,0.05); 
-            border: 1px solid rgba(0,255,204,0.3); color: #fff; cursor: pointer; text-align: left; transition: 0.2s;
+        /* Left side: Visuals */
+        .visual-area { flex: 1.5; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,255,204,0.1); border-radius: 20px; overflow: hidden; }
+        #canvas-orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #big-cookie { font-size: 80px; cursor: pointer; z-index: 10; transition: transform 0.1s; user-select: none; filter: drop-shadow(0 0 20px var(--accent)); }
+        #big-cookie:active { transform: scale(0.85); }
+        .stats { z-index: 10; text-align: center; pointer-events: none; margin-bottom: 20px; }
+
+        /* Right side: Shop & Upgrades */
+        .sidebar { width: 400px; display: flex; flex-direction: column; gap: 15px; }
+        .panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,204,0.2); border-radius: 15px; padding: 15px; overflow-y: auto; }
+        .shop { flex: 2; }
+        .upgrades { flex: 1; display: flex; flex-wrap: wrap; gap: 5px; align-content: flex-start; }
+
+        /* Buttons */
+        .item-btn { 
+            width: 100%; padding: 10px; margin: 5px 0; background: rgba(0,255,204,0.05); 
+            border: 1px solid rgba(0,255,204,0.2); color: #fff; cursor: pointer; text-align: left; font-size: 0.85rem;
         }
-        .upgrade-btn:hover:not(:disabled) { background: var(--accent); color: #000; }
-        .upgrade-btn:disabled { opacity: 0.3; cursor: not-allowed; border-color: #444; }
-        
-        /* Floating Numbers */
-        .float-num { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 10000; }
-        @keyframes floatUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-100px); opacity: 0; } }
+        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.1); }
+        .item-btn:disabled { opacity: 0.3; filter: grayscale(1); }
 
-        /* Navigation */
-        .nav { position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 100; }
-        .dot { width: 5px; height: 25px; background: rgba(0,255,204,0.1); margin: 10px 0; transition: 0.5s; }
-        .close-hint { position: absolute; top: 30px; right: 30px; color: #666; cursor: pointer; font-size: 0.8rem; letter-spacing: 2px; }
+        .upg-icon { 
+            width: 45px; height: 45px; border: 1px solid var(--gold); border-radius: 5px; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+            background: rgba(225, 177, 44, 0.1); transition: 0.2s;
+        }
+        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; }
+
+        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 1s forwards; z-index: 20; }
+        @keyframes float { to { transform: translateY(-80px); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div class="nav" id="nav"></div>
-
-    <section id="s1"><canvas id="c1" class="math-bg"></canvas><div class="content"><h2>01. SINE</h2><p>Trig oscillation</p></div></section>
-    <section id="s2"><canvas id="c2" class="math-bg"></canvas><div class="content"><h2>02. VECTORS</h2><p>Gradient fields</p></div></section>
-    <section id="s3"><canvas id="c3" class="math-bg"></canvas><div class="content"><h2>03. LOGIC</h2><p>Binary states</p></div></section>
-
-    <!-- CLICKER GAME OVERLAY -->
-    <div id="cookie-overlay" class="overlay">
-        <div class="close-hint" onclick="closeAll()">[ ESC TO EXIT ]</div>
-        <div class="shop-container">
-            <div class="cookie-main" id="cookie-container">
-                <h1 id="score-display" style="margin:0; font-size:3rem; color:var(--accent)">0</h1>
-                <p id="pps-display" style="color:var(--gold); margin-bottom:40px;">GENERATION: 0/s</p>
-                <div id="big-cookie">💠</div>
+<div class="overlay">
+    <div class="game-container">
+        <!-- Визуализация -->
+        <div class="visual-area">
+            <canvas id="canvas-orbit"></canvas>
+            <div class="stats">
+                <h1 id="score" style="font-size: 3rem; margin: 0; color: var(--accent);">0</h1>
+                <p id="pps" style="color: var(--gold); margin: 0;">generation: 0/s</p>
             </div>
-            <div class="shop-menu" id="shop-items">
-                <h3 style="letter-spacing: 3px; color: var(--accent); margin-bottom: 20px;">SYSTEM UPGRADES</h3>
-                <!-- Buildings generate here -->
+            <div id="big-cookie">💠</div>
+        </div>
+
+        <!-- Магазин -->
+        <div class="sidebar">
+            <div class="panel upgrades" id="upgrades-area">
+                <!-- Сюда попадут улучшения -->
+            </div>
+            <div class="panel shop" id="shop-area">
+                <!-- Сюда попадут постройки -->
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // --- CORE GAME DATA ---
-        let state = {
-            score: 0,
-            pps: 0,
-            buildings: [
-                { id: 0, name: "Neural Node", cost: 15, power: 0.1, count: 0 },
-                { id: 1, name: "Logic Gate", cost: 100, power: 1, count: 0 },
-                { id: 2, name: "Vector Array", cost: 1100, power: 8, count: 0 },
-                { id: 3, name: "Matrix Core", cost: 12000, power: 47, count: 0 },
-                { id: 4, name: "Tensor Flow", cost: 130000, power: 260, count: 0 },
-                { id: 5, name: "Quantum CPU", cost: 1400000, power: 1400, count: 0 },
-                { id: 6, name: "Hypervisor", cost: 20000000, power: 7800, count: 0 },
-                { id: 7, name: "Singularity", cost: 330000000, power: 44000, count: 0 }
-            ]
-        };
+<script>
+    let state = {
+        score: 0,
+        totalMultiplier: 1,
+        buildings: [
+            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 120, speed: 0.02 },
+            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 160, speed: 0.015 },
+            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 200, speed: 0.01 },
+            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 240, speed: 0.008 },
+            { id: 4, name: "Tensor Hub", cost: 130000, pps: 260, count: 0, orbit: 280, speed: 0.005 }
+        ],
+        upgrades: [
+            { id: 0, name: "Fast Math", cost: 500, mult: 1.1, icon: "⚡", bought: false },
+            { id: 1, name: "Clean Code", cost: 5000, mult: 1.2, icon: "💎", bought: false },
+            { id: 2, name: "AI Assist", cost: 50000, mult: 1.5, icon: "🤖", bought: false }
+        ]
+    };
 
-        // --- INITIALIZATION ---
-        function init() {
-            loadGame();
-            renderShop();
-            animateBackgrounds();
-            createNav();
-            setInterval(gameLoop, 100);
-            setInterval(saveGame, 10000); // Auto-save every 10s
+    const canvas = document.getElementById('canvas-orbit');
+    const ctx = canvas.getContext('2d');
+
+    // --- LOGIC ---
+    function buyBuilding(id) {
+        let b = state.buildings[id];
+        if (state.score >= b.cost) {
+            state.score -= b.cost;
+            b.count++;
+            b.cost *= 1.15;
+            render();
         }
+    }
 
-        // --- CLICKER LOGIC ---
-        const cookieBtn = document.getElementById('big-cookie');
-        cookieBtn.addEventListener('click', (e) => {
-            state.score += 1;
-            createFloatingNumber(e.clientX, e.clientY, "+1");
-            updateUI();
+    function buyUpgrade(id) {
+        let u = state.upgrades[id];
+        if (state.score >= u.cost && !u.bought) {
+            state.score -= u.cost;
+            u.bought = true;
+            state.totalMultiplier *= u.mult;
+            render();
+        }
+    }
+
+    function getPPS() {
+        let base = state.buildings.reduce((s, b) => s + (b.count * b.pps), 0);
+        return base * state.totalMultiplier;
+    }
+
+    // --- RENDERING ---
+    function render() {
+        // Shop
+        const shop = document.getElementById('shop-area');
+        shop.innerHTML = '<h3 style="margin-top:0; font-size:0.8rem; letter-spacing:2px;">CONSTRUCTIONS</h3>';
+        state.buildings.forEach(b => {
+            const btn = document.createElement('button');
+            btn.className = 'item-btn';
+            btn.disabled = state.score < b.cost;
+            btn.onclick = () => buyBuilding(b.id);
+            btn.innerHTML = `<b>${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${Math.floor(b.cost)}</span><br><small>+${b.pps}/s</small>`;
+            shop.appendChild(btn);
         });
 
-        function buyBuilding(id) {
-            const b = state.buildings[id];
-            if (state.score >= b.cost) {
-                state.score -= b.cost;
-                b.count++;
-                b.cost *= 1.15;
-                calculatePPS();
-                renderShop();
-                updateUI();
-            }
-        }
-
-        function calculatePPS() {
-            state.pps = state.buildings.reduce((sum, b) => sum + (b.count * b.power), 0);
-        }
-
-        function gameLoop() {
-            if (state.pps > 0) {
-                state.score += state.pps / 10;
-                updateUI();
-            }
-        }
-
-        // --- UI FUNCTIONS ---
-        function updateUI() {
-            document.getElementById('score-display').innerText = Math.floor(state.score).toLocaleString();
-            document.getElementById('pps-display').innerText = `GENERATION: ${state.pps.toFixed(1)}/s`;
-            
-            state.buildings.forEach(b => {
-                const btn = document.getElementById(`build-${b.id}`);
-                if (btn) btn.disabled = state.score < b.cost;
-            });
-        }
-
-        function renderShop() {
-            const shop = document.getElementById('shop-items');
-            shop.innerHTML = '<h3 style="letter-spacing:3px; color:var(--accent); margin-bottom:20px;">SYSTEM UPGRADES</h3>';
-            state.buildings.forEach(b => {
+        // Upgrades
+        const upgArea = document.getElementById('upgrades-area');
+        upgArea.innerHTML = '';
+        state.upgrades.forEach(u => {
+            if (!u.bought) {
                 const btn = document.createElement('button');
-                btn.className = 'upgrade-btn';
-                btn.id = `build-${b.id}`;
-                btn.onclick = () => buyBuilding(b.id);
-                btn.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                        <span>${b.name} (${b.count})</span>
-                        <span style="color:var(--gold)">$${Math.floor(b.cost).toLocaleString()}</span>
-                    </div>
-                    <div style="font-size:0.7rem; opacity:0.6;">Yields +${b.power}/s</div>
-                `;
-                shop.appendChild(btn);
-            });
-        }
-
-        function createFloatingNumber(x, y, text) {
-            const num = document.createElement('div');
-            num.className = 'float-num';
-            num.style.left = `${x}px`;
-            num.style.top = `${y}px`;
-            num.innerText = text;
-            document.body.appendChild(num);
-            setTimeout(() => num.remove(), 1000);
-        }
-
-        // --- UTILS & STORAGE ---
-        function saveGame() {
-            localStorage.setItem('mathClickerSave', JSON.stringify(state));
-        }
-
-        function loadGame() {
-            const saved = localStorage.getItem('mathClickerSave');
-            if (saved) {
-                const loadedState = JSON.parse(saved);
-                state.score = loadedState.score;
-                state.buildings.forEach((b, i) => {
-                    if (loadedState.buildings[i]) {
-                        b.count = loadedState.buildings[i].count;
-                        b.cost = loadedState.buildings[i].cost;
-                    }
-                });
-                calculatePPS();
+                btn.className = 'upg-icon';
+                btn.disabled = state.score < u.cost;
+                btn.innerHTML = u.icon;
+                btn.title = `${u.name}: +${Math.round((u.mult-1)*100)}% income (Cost: ${u.cost})`;
+                btn.onclick = () => buyUpgrade(u.id);
+                upgArea.appendChild(btn);
             }
-        }
+        });
+    }
 
-        function toggleOverlay(id, display) {
-            const el = document.getElementById(id);
-            el.style.display = (el.style.display === display) ? 'none' : display;
-        }
+    // --- ANIMATION (ORBITS) ---
+    function animate() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
 
-        function closeAll() {
-            document.querySelectorAll('.overlay').forEach(o => o.style.display = 'none');
-        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        window.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.shiftKey && e.code === 'Digit6') toggleOverlay('cookie-overlay', 'flex');
-            if (e.key === 'Escape') closeAll();
+        state.buildings.forEach((b, bIdx) => {
+            if (b.count > 0) {
+                // Draw Orbit Circle
+                ctx.beginPath();
+                ctx.arc(cx, cy, b.orbit, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 255, 204, 0.05)';
+                ctx.stroke();
+
+                // Draw Dots (Buildings)
+                for (let i = 0; i < b.count; i++) {
+                    let angle = (Date.now() * b.speed * 0.01) + (i * (Math.PI * 2 / b.count));
+                    let x = cx + Math.cos(angle) * b.orbit;
+                    let y = cy + Math.sin(angle) * b.orbit;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${160 + bIdx * 30}, 100%, 50%)`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = ctx.fillStyle;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
         });
 
-        // --- VISUALS (FROM ORIGINAL) ---
-        function animateBackgrounds() {
-            const mouse = { x: 0, y: 0 };
-            window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        // Stats Update
+        state.score += getPPS() / 60;
+        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
+        document.getElementById('pps').innerText = `generation: ${getPPS().toFixed(1)}/s`;
+        
+        // Update button states every frame (for cost checking)
+        document.querySelectorAll('.item-btn, .upg-icon').forEach((btn, idx) => {
+             // Simple state check to avoid heavy DOM re-renders
+        });
 
-            function draw(id, i) {
-                const c = document.getElementById(id); if (!c) return;
-                const ctx = c.getContext('2d');
-                const l = () => {
-                    c.width = window.innerWidth; c.height = window.innerHeight;
-                    ctx.fillStyle = 'rgba(5,5,8,0.2)'; ctx.fillRect(0,0,c.width,c.height);
-                    ctx.strokeStyle = `hsl(${160 + i*20}, 100%, 50%)`;
-                    ctx.beginPath();
-                    for(let x=0; x<c.width; x+=15) {
-                        let y = c.height/2 + Math.sin(x*0.01 + Date.now()*0.001) * (mouse.y*0.1 + 20);
-                        ctx.lineTo(x, y);
-                    }
-                    ctx.stroke();
-                    requestAnimationFrame(l);
-                };
-                l();
-            }
-            for(let i=1; i<=3; i++) draw('c'+i, i);
-        }
+        requestAnimationFrame(animate);
+    }
 
-        function createNav() {
-            const nav = document.getElementById('nav');
-            for(let i=1; i<=3; i++) nav.innerHTML += `<div class="dot" id="d${i}"></div>`;
-            window.addEventListener('scroll', () => {
-                let idx = Math.floor((window.scrollY + 300) / window.innerHeight);
-                document.querySelectorAll('.dot').forEach((d,i) => d.style.background = i<=idx ? 'var(--accent)' : 'rgba(0,255,204,0.1)');
-            });
-        }
+    // --- INTERACTION ---
+    document.getElementById('big-cookie').addEventListener('click', (e) => {
+        state.score += 1;
+        const txt = document.createElement('div');
+        txt.className = 'float-text';
+        txt.style.left = e.clientX + 'px';
+        txt.style.top = e.clientY + 'px';
+        txt.innerText = "+1";
+        document.body.appendChild(txt);
+        setTimeout(() => txt.remove(), 1000);
+        render();
+    });
 
-        init();
-    </script>
+    // Check affordance every second
+    setInterval(render, 1000);
+
+    render();
+    animate();
+</script>
 </body>
 </html>
