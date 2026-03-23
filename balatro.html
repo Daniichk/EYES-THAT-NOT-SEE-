@@ -2,40 +2,39 @@
 <html lang="en-us">
 <head>
     <meta charset="utf-8">
-    <title>Balatro | Math Secret</title>
+    <title>Balatro Engine</title>
+    <!-- Подключаем сам движок Love.js из надежного источника -->
+    <script src="https://raw.githack.com"></script>
     <style>
-        body { margin: 0; background: #000; overflow: hidden; width: 100vw; height: 100vh; }
-        canvas { width: 100%; height: 100%; display: block; }
-        #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #00ffcc; font-family: monospace; }
+        body, html { margin: 0; padding: 0; overflow: hidden; background: #000; width: 100%; height: 100%; }
+        #canvas { width: 100vw; height: 100vh; display: block; }
     </style>
 </head>
 <body>
-    <div id="loading">INITIALIZING QUANTUM CARDS...</div>
     <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
 
-    <script>
-        // 1. ТВОЯ ГИГАНТСКАЯ СТРОКА (Вставь её сюда полностью)
+    <script type="text/javascript">
+        // 1. ВСТАВЬ СЮДА СВОЮ ГИГАНТСКУЮ СТРОКУ (window.gameDataBase64 = "...")
         window.gameDataBase64 = "UEsDBBQAAAAIALGZX1tOiVIseAoAAEcyAAAIAAAAYmFjay5sdWHVG2tv0zDwOxL/IeJLUhYCK+Mp+mGMaiABQ2MgAZoiN3Hb0DSu8ugYU/87d3YSO8+6Gw9RiTWx7+W78935XO7dOwpJkty+9ZJ4C2NknEy+Uy99Tn+kNPKtwe1bt2/lIMY7ms6ZD6DTLPLSgEUG4jwPoiC1EhoCGvXdCQwBlgGfYGpELDUqU0Y6p5EyJJgeOx/co/H7s/HpR2fixtQ3gDkngqBTJyJLCmAVNDHIYsM8BfhX1FuYAkPBo9MpIADmFQzmH49GKY3r1GwJkMLa3U9vAMI0lWGPRdNgZozgYXXppmQSUqsqkIDIF79RxAiZ5+ZLgEcSBj/pVXq5wncTx11kadoAnOIQahXeFvQS3pR1OEJ0ByaAOqcv6BkrlgCo1QKbRQCxAAWRyG+jBZgDVOLVDyBwYBvI8oEqOyddPnLQ2rSDqPy7No60+PftW9ycdceZ0ZSrxZL+0rMC4TkxTbM4qqmVhgnNZ0oFW+bCFYjmAL2pU4aIxiSlYHCLAYfYNrLATYAGtY1lELl+sExsw5uTMKTRjApRyxljVDxy1TxwnvD5kgbMF49i/plqNvQat/Qrzh6hmkpQkYTDMNebg8sXaGhe8VRsC7lxVGRBteDZRM4nalLkw5yQVAXft0evD9++Hb8/Hn/8huYsJ90gSt1pzJZu4FvFqNiu5kB8nXNnyveFOT49PTk1a36NFibxDAzAbc18ihqPgtDmXqiGGVWZVZ8RUD2Q4s0P0CtApsq8T5dMeB6QkZ/mPgbRvDhYIY2k3LwmouduWO7vOyeo6ju2ka+nXBssc01iGCnXvSmZch8Ppr2yO0IWYHuBPokRkYveIrkwtwxKcs9k0SJiF5GZO7pUnRqkv/WKgZzPa/s2pyY/QoJrh8WtAmwqHPN8Ij+lijE5SFE217SyVwQbF1T/Ny3tB4nH1iA9WbIsSk2h7e6lpixJ4yCaWb3kBbHBzbVRiPc3VYLOn6RkQXNlaLt/n/N9RILlGuVWcD+cnLz96PDp/l3BRTrnyVvHEyHnsJBlMR/G0MrxXRi0trMZbG5uOk7opnbDXVcYUI3D9SyG2zvMqPGqDFoVtVTSljOHfNXwjiZJXhjqUUQ3JbEe0S80DNmFJl0WhiTWInscUxrpUQXHjImLWnAnLMrAAm3zYk0CREuClyH4lZ4E39kC3DQJWWob965pnHdkFnhd7Lq3pHTWtevFl+CloTuB8kJu1c8sAy6xubENHTKeO2VMQT8jMUvNjc4S3tNJFpKbrSGFIwTEyBVtXcC9fR05jucQ1RUxNFAOJ2AnFlU3iAbeET5ROKHtxu4r8wNyQ2unaBh3SWM=
 "; 
 
-        // 2. НАСТРОЙКИ ЭМУЛЯТОРА
+        // 2. НАСТРОЙКИ МОДУЛЯ
         var Module = {
             arguments: ["./game.love"],
             INITIAL_MEMORY: 256000000,
+            printErr: console.error.bind(console),
             canvas: document.getElementById('canvas'),
-            setStatus: function(text) {
-                if (!text) document.getElementById('loading').style.display = 'none';
-            }
+            setStatus: function(text) { console.log("Status: " + text); }
         };
 
-        // 3. ЗАГРУЗКА ДВИЖКА С CDN (Чтобы не хранить love.js у себя)
-        const engineScript = document.createElement('script');
-        engineScript.src = "https://raw.githack.com";
-        engineScript.onload = () => {
-            // Эта функция запускает игру, когда движок скачан
-            Love(Module); 
-        };
-        document.body.appendChild(engineScript);
+        // Запуск игры
+        window.addEventListener('load', function() {
+            if (typeof Love === 'function') {
+                Love(Module);
+            } else {
+                console.error("Engine Love.js not loaded. Check script source.");
+            }
+        });
     </script>
 </body>
 </html>
