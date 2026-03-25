@@ -2,206 +2,95 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Journey | Advanced Upgrades</title>
+    <title>Math Concept - Study Guide</title>
+    <script defer src="/_vercel/insights/script.js"></script> <!-- Vercel Analytics -->
     <style>
-        :root { --bg: #050508; --accent: #00ffcc; --gold: #e1b12c; --red: #ff4d4d; }
-        body, html { margin: 0; padding: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
+        body { font-family: 'Courier New', Courier, monospace; background: #f0f0f0; margin: 0; overflow: hidden; }
+        /* Скучный математический вид */
+        #math-ui { padding: 50px; color: #333; }
+        .hidden { display: none !important; }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #0a111a 0%, #050508 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .game-container { display: flex; width: 95%; height: 90vh; gap: 20px; }
-
-        .visual-area { flex: 1.5; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid rgba(0,255,204,0.1); border-radius: 20px; overflow: hidden; }
-        #canvas-orbit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        
-        #big-cookie { font-size: 90px; cursor: pointer; z-index: 10; transition: transform 0.05s; user-select: none; filter: drop-shadow(0 0 25px var(--accent)); }
-        .pulsing { animation: pulse 2.5s infinite ease-in-out; }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-
-        .stats { z-index: 10; text-align: center; pointer-events: none; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px 20px; border-radius: 50px; backdrop-filter: blur(5px); }
-        .sidebar { width: 420px; display: flex; flex-direction: column; gap: 15px; }
-        .panel { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,204,0.2); border-radius: 15px; padding: 15px; overflow-y: auto; }
-        .shop { flex: 2; }
-        .upgrades { flex: 1; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
-
-        .item-btn { width: 100%; padding: 12px; margin: 6px 0; background: rgba(0,255,204,0.03); border: 1px solid rgba(0,255,204,0.15); color: #fff; cursor: pointer; text-align: left; transition: 0.2s; border-radius: 8px; }
-        .item-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(0,255,204,0.1); transform: scale(1.02); }
-        .item-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-
-        .upg-icon { width: 55px; height: 55px; border: 2px solid var(--gold); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; background: rgba(225, 177, 44, 0.05); transition: 0.3s; position: relative; }
-        .upg-icon:hover:not(:disabled) { background: var(--gold); color: #000; transform: translateY(-3px); }
-        .upg-icon:disabled { border-color: #444; opacity: 0.4; filter: grayscale(1); }
-        
-        .tooltip { display: none; position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%); background: #111; color: #fff; padding: 8px; border-radius: 5px; width: 150px; font-size: 0.75rem; text-align: center; border: 1px solid var(--gold); z-index: 100; pointer-events: none; }
-        .upg-icon:hover .tooltip { display: block; }
-
-        .float-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: float 0.8s forwards; z-index: 20; text-shadow: 0 0 10px var(--accent); }
-        @keyframes float { to { transform: translateY(-120px) scale(1.2); opacity: 0; } }
+        /* Игровой интерфейс (Кликер) */
+        #game-ui { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: #1a1a1a; color: #00ff00; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        #big-brain { font-size: 100px; cursor: pointer; user-select: none; transition: transform 0.1s; }
+        #big-brain:active { transform: scale(0.9); }
+        .stats { font-size: 24px; margin: 20px; }
+        button { background: #333; color: #0f0; border: 1px solid #0f0; padding: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="overlay">
-    <div class="game-container">
-        <div class="visual-area">
-            <canvas id="canvas-orbit"></canvas>
-            <div class="stats">
-                <h1 id="score" style="font-size: 3.2rem; margin: 0; color: var(--accent); letter-spacing: -2px;">0</h1>
-                <p id="pps" style="color: var(--gold); margin: 0; font-size: 0.8rem; font-weight: bold;">0/S • CLICK: <span id="click-val">1</span></p>
-            </div>
-            <div id="big-cookie" class="pulsing">💠</div>
-        </div>
-        <div class="sidebar">
-            <div class="panel upgrades" id="upgrades-area"></div>
-            <div class="panel shop" id="shop-area"></div>
+    <!-- ВИД ДЛЯ УЧИТЕЛЯ -->
+    <div id="math-ui">
+        <h1>Теорема Пифагора и её применение</h1>
+        <p>Для прямоугольного треугольника выполняется: a² + b² = c²...</p>
+        <div id="calculator">
+            <input type="number" placeholder="Сторона A">
+            <input type="number" placeholder="Сторона B">
+            <button onclick="alert('Результат вычислен в логах')">Вычислить гипотенузу</button>
         </div>
     </div>
-</div>
 
-<script defer src="/_vercel/insights/script.js"></script>
+    <!-- СКРЫТЫЙ КЛИКЕР -->
+    <div id="game-ui" class="hidden">
+        <div class="stats">Нервные клетки: <span id="score">0</span></div>
+        <div id="big-brain">🫠</div>
+        <div class="stats">Уровень клика: <span id="click-lvl">1</span></div>
+        <button id="upgrade-btn">Купить "Кофе" (Цена: <span id="cost">10</span>)</button>
+        <p style="font-size: 10px; color: #555;">Нажми Ctrl+Shift+6 чтобы спрятать</p>
+    </div>
 
-<script>
-    let state = {
-        score: 0,
-        clickPower: 1,
-        totalMultiplier: 1,
-        priceDiscount: 1,
-        isSpacePressed: false,
-        buildings: [
-            { id: 0, name: "Neural Link", cost: 15, pps: 0.1, count: 0, orbit: 110, speed: 0.02, icon: '🧠' },
-            { id: 1, name: "Logic Core", cost: 100, pps: 1, count: 0, orbit: 155, speed: 0.015, icon: '⚙️' },
-            { id: 2, name: "Vector Field", cost: 1100, pps: 8, count: 0, orbit: 200, speed: 0.012, icon: '📐' },
-            { id: 3, name: "Matrix Grid", cost: 12000, pps: 47, count: 0, orbit: 245, speed: 0.009, icon: '📊' }
-        ],
-        upgrades: [
-            { id: 0, name: "Heavy Fingers", cost: 100, type: 'click', val: 2, icon: "🔨", desc: "Удваивает силу клика", bought: false },
-            { id: 1, name: "Smart Sale", cost: 500, type: 'discount', val: 0.8, icon: "🏷️", desc: "Скидка 20% на все здания", bought: false },
-            { id: 2, name: "Turbo Mode", cost: 2000, type: 'mult', val: 1.5, icon: "⚡", desc: "+50% к пассивному доходу", bought: false },
-            { id: 3, name: "Macro Click", cost: 10000, type: 'click', val: 5, icon: "🖱️", desc: "+5 к силе клика", bought: false },
-            { id: 4, name: "Quantum Tax", cost: 50000, type: 'discount', val: 0.7, icon: "📉", desc: "Еще 30% скидки", bought: false }
-        ]
-    };
+    <script>
+        let score = parseInt(localStorage.getItem('brain_score')) || 0;
+        let power = parseInt(localStorage.getItem('brain_power')) || 1;
+        let cost = parseInt(localStorage.getItem('brain_cost')) || 10;
 
-    const canvas = document.getElementById('canvas-orbit');
-    const ctx = canvas.getContext('2d');
-    const cookie = document.getElementById('big-cookie');
+        const mathUI = document.getElementById('math-ui');
+        const gameUI = document.getElementById('game-ui');
 
-    function handleMainClick() {
-        state.score += state.clickPower;
-        cookie.style.transform = 'scale(0.85)';
-        setTimeout(() => cookie.style.transform = 'scale(1)', 50);
-        
-        const txt = document.createElement('div');
-        txt.className = 'float-text';
-        txt.style.left = (window.innerWidth/2 - 40 + Math.random()*80) + 'px';
-        txt.style.top = (window.innerHeight/2 - 20) + 'px';
-        txt.innerText = "+" + state.clickPower;
-        document.body.appendChild(txt);
-        setTimeout(() => txt.remove(), 800);
-        updateUI();
-    }
-
-    // --- KEYBOARD FIX ---
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && !state.isSpacePressed) {
-            e.preventDefault();
-            state.isSpacePressed = true;
-            handleMainClick();
-        }
-    });
-    window.addEventListener('keyup', (e) => { if (e.code === 'Space') state.isSpacePressed = false; });
-    cookie.addEventListener('mousedown', (e) => { e.preventDefault(); handleMainClick(); });
-
-    function buyBuilding(id) {
-        let b = state.buildings[id];
-        let realCost = b.cost * state.priceDiscount;
-        if (state.score >= realCost) {
-            state.score -= realCost;
-            b.count++;
-            b.cost *= 1.15;
-            updateUI();
-        }
-    }
-
-    function buyUpgrade(id) {
-        let u = state.upgrades[id];
-        if (state.score >= u.cost && !u.bought) {
-            state.score -= u.cost;
-            u.bought = true;
-            if (u.type === 'click') {
-                if (u.val === 2) state.clickPower *= 2; else state.clickPower += u.val;
-            }
-            if (u.type === 'discount') state.priceDiscount *= u.val;
-            if (u.type === 'mult') state.totalMultiplier *= u.val;
-            updateUI();
-        }
-    }
-
-    function updateUI() {
-        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('click-val').innerText = state.clickPower;
-        let currentPPS = state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier;
-        document.getElementById('pps').innerText = `${currentPPS.toFixed(1)}/S • CLICK: ${state.clickPower}`;
-
-        const shop = document.getElementById('shop-area');
-        shop.innerHTML = '<h3 style="margin:0 0 10px 0; font-size:0.7rem; letter-spacing:3px; opacity:0.5;">CONSTRUCTIONS</h3>';
-        state.buildings.forEach(b => {
-            const btn = document.createElement('button');
-            btn.className = 'item-btn';
-            let cost = Math.floor(b.cost * state.priceDiscount);
-            btn.disabled = state.score < cost;
-            btn.onclick = () => buyBuilding(b.id);
-            btn.innerHTML = `<b>${b.icon} ${b.name}</b> (${b.count}) <span style="float:right; color:var(--gold)">$${cost.toLocaleString()}</span>`;
-            shop.appendChild(btn);
-        });
-
-        const upgArea = document.getElementById('upgrades-area');
-        upgArea.innerHTML = '';
-        state.upgrades.forEach(u => {
-            if (!u.bought) {
-                const btn = document.createElement('button');
-                btn.className = 'upg-icon';
-                btn.disabled = state.score < u.cost;
-                btn.innerHTML = `${u.icon}<div class="tooltip"><b>${u.name}</b><br>${u.desc}<br>Cost: $${u.cost}</div>`;
-                btn.onclick = () => buyUpgrade(u.id);
-                upgArea.appendChild(btn);
-            }
-        });
-    }
-
-    function animate() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        state.buildings.forEach(b => {
-            if (b.count > 0) {
-                ctx.beginPath();
-                ctx.arc(cx, cy, b.orbit, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-                ctx.stroke();
-
-                for (let i = 0; i < b.count; i++) {
-                    let angle = (Date.now() * b.speed * 0.01) + (i * (Math.PI * 2 / b.count));
-                    let x = cx + Math.cos(angle) * b.orbit;
-                    let y = cy + Math.sin(angle) * b.orbit;
-                    ctx.font = "20px serif";
-                    ctx.textAlign = "center";
-                    ctx.fillText(b.icon, x, y);
-                }
+        // Секретная комбинация Ctrl + Shift + 6
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === '6') {
+                gameUI.classList.toggle('hidden');
+                mathUI.classList.toggle('hidden');
+                // Vercel Analytics custom event
+                if (window.va) window.va('event', { name: 'secret_open' });
             }
         });
 
-        let passive = (state.buildings.reduce((s, b) => s + (b.count * b.pps), 0) * state.totalMultiplier) / 60;
-        state.score += passive;
-        requestAnimationFrame(animate);
-    }
+        // Логика кликера
+        document.getElementById('big-brain').addEventListener('click', () => {
+            score += power;
+            updateDisplay();
+            save();
+        });
 
-    setInterval(updateUI, 1000);
-    updateUI();
-    animate();
-</script>
+        document.getElementById('upgrade-btn').addEventListener('click', () => {
+            if (score >= cost) {
+                score -= cost;
+                power++;
+                cost = Math.floor(cost * 1.5);
+                updateDisplay();
+                save();
+            }
+        });
+
+        function updateDisplay() {
+            document.getElementById('score').innerText = score;
+            document.getElementById('click-lvl').innerText = power;
+            document.getElementById('cost').innerText = cost;
+        }
+
+        function save() {
+            localStorage.setItem('brain_score', score);
+            localStorage.setItem('brain_power', power);
+            localStorage.setItem('brain_cost', cost);
+        }
+
+        updateDisplay();
+    </script>
 </body>
 </html>
