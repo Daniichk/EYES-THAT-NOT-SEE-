@@ -1,52 +1,58 @@
-/* Основные переменные и сброс */
+/* --- ПЕРЕМЕННЫЕ И ОСНОВА --- */
 :root {
     --neon: #00f2ff;
     --gold: #ffd700;
-    --bg: #050a14;
-    --card: #111827;
+    --bg-dark: #050a14;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --danger: #f43f5e;
     --success: #10b981;
-    --text: #ffffff;
+    --text: #e2e8f0;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     margin: 0;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background: #fff;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background: #ffffff; /* Маскировка под белый лист */
     overflow: hidden;
     color: var(--text);
-    transition: background 0.4s ease;
+    transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hidden { display: none !important; }
 
-/* Маскировка под математику */
+/* --- МАТЕМАТИЧЕСКИЙ ЭКРАН (MASK) --- */
 #math-ui {
-    padding: 50px;
-    color: #333;
-    max-width: 850px;
+    padding: 60px;
+    color: #1e293b;
+    max-width: 900px;
     margin: auto;
-    line-height: 1.6;
+    animation: fadeIn 1s ease;
 }
 
 .formula {
     background: #f1f5f9;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #3b82f6;
-    font-family: 'Courier New', monospace;
-    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #3b82f6;
+    font-family: 'Consolas', monospace;
+    margin: 25px 0;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
 
-.hint { color: #94a3b8; font-size: 0.8rem; margin-top: 50px; }
-
-/* Игровой интерфейс */
+/* --- ИГРОВОЙ ИНТЕРФЕЙС --- */
 #game-ui {
     position: fixed;
     inset: 0;
     display: grid;
     grid-template-columns: 1fr 380px;
-    z-index: 10;
+    z-index: 100;
+    backdrop-filter: blur(10px);
 }
 
 .click-area {
@@ -56,212 +62,143 @@ body {
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-right: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid var(--glass-border);
 }
 
-/* Измерения (Dimensions) */
-.dim-cyber { background: radial-gradient(circle, #0f172a 0%, #020617 100%); }
-.dim-candy { background: radial-gradient(circle, #f472b6 0%, #be185d 100%); }
-.dim-void { background: radial-gradient(circle, #171717 0%, #000000 100%); }
+/* Измерения */
+.dim-cyber { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
+.dim-candy { background: radial-gradient(circle at center, #f472b6 0%, #780a3c 100%); }
+.dim-void { background: radial-gradient(circle at center, #171717 0%, #000000 100%); }
 
 #big-brain {
-    font-size: 150px;
+    font-size: 160px;
     cursor: pointer;
-    filter: drop-shadow(0 0 30px var(--neon));
-    transition: transform 0.1s ease;
+    filter: drop-shadow(0 0 40px var(--neon));
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     user-select: none;
-    z-index: 5;
+    z-index: 10;
 }
 
-#big-brain:active { transform: scale(0.9); }
+#big-brain:active { transform: scale(0.85) rotate(-5deg); }
 
-/* Частицы при клике */
-.particle {
-    position: absolute;
-    pointer-events: none;
-    font-weight: bold;
-    color: var(--neon);
-    font-size: 20px;
-    z-index: 100;
-    animation: particle-fly 0.7s ease-out forwards;
-}
-
-@keyframes particle-fly {
-    to {
-        transform: translate(var(--x), var(--y));
-        opacity: 0;
-    }
-}
-
-/* Сайдбар */
+/* --- САЙДБАР И КНОПКИ --- */
 .sidebar {
     background: var(--card);
-    padding: 20px;
+    background-image: linear-gradient(to bottom, #111827, #030712);
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
     overflow-y: auto;
 }
 
 .stat-card {
-    background: rgba(0,0,0,0.3);
+    background: var(--glass);
+    backdrop-filter: blur(5px);
     padding: 20px;
-    border-radius: 15px;
-    border: 1px solid #334155;
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
     text-align: center;
 }
 
-.stat-val { font-size: 36px; color: var(--neon); font-weight: bold; }
-.bps-label { font-size: 14px; color: var(--success); }
-
-/* Табы */
-.tabs { display: flex; gap: 5px; }
-.tab-btn {
-    flex: 1;
-    background: #1e293b;
-    border: 1px solid #334155;
-    color: #94a3b8;
-    padding: 8px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: bold;
+.stat-val { 
+    font-size: 42px; 
+    color: var(--neon); 
+    font-weight: 800; 
+    text-shadow: 0 0 20px rgba(0,242,255,0.3);
 }
 
-.tab-btn.active { background: #334155; color: #fff; border-color: var(--neon); }
-.tab-btn.danger { color: var(--danger); border-color: var(--danger); }
-
-/* Магазин */
-.item {
-    background: #1f2937;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 8px;
+/* Красивые кнопки */
+.tab-btn, .item, .casino-btn, .daily-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    padding: 14px;
+    border-radius: 14px;
     cursor: pointer;
-    border: 1px solid transparent;
-    transition: 0.2s;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 1.5px;
 }
 
-.item:hover:not(.disabled) { border-color: var(--neon); background: #374151; }
-.item.disabled { opacity: 0.3; cursor: not-allowed; }
+.tab-btn:hover, .item:hover:not(.disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 0 15px rgba(0,242,255,0.2);
+}
 
-/* Казино */
+.tab-btn.active {
+    background: var(--neon);
+    color: #020617;
+    border-color: var(--neon);
+    box-shadow: 0 0 25px rgba(0,242,255,0.4);
+}
+
+.daily-btn {
+    background: linear-gradient(135deg, #ffd700, #f59e0b);
+    color: #000;
+    border: none;
+    font-size: 12px;
+}
+
+.item.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    transform: none !important;
+}
+
+/* --- КАЗИНО И МОДАЛКИ --- */
 #casino-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.95);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
+    backdrop-filter: blur(15px);
 }
 
 .modal {
-    background: #161b33;
+    background: #111827;
     border: 2px solid var(--neon);
-    padding: 30px;
-    border-radius: 25px;
-    width: 450px;
+    padding: 40px;
+    border-radius: 32px;
+    width: 480px;
     text-align: center;
-    box-shadow: 0 0 50px rgba(0,242,255,0.2);
+    box-shadow: 0 0 60px rgba(0,242,255,0.15);
 }
 
-.casino-btn, .cas-action {
-    background: #3b82f6;
-    color: #fff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 5px;
+.cas-action {
+    padding: 16px 28px;
+    font-size: 14px;
 }
 
-.success { background: var(--success); }
-.danger { background: var(--danger); }
-
-#bet-val {
-    background: #0f172a;
-    border: 1px solid var(--neon);
-    color: #fff;
-    padding: 12px;
-    border-radius: 10px;
-    width: 80%;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-/* Башня */
-#t-visual {
-    height: 150px;
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 10px;
-}
-
-.tower-block {
-    width: 100px;
-    height: 15px;
-    background: var(--neon);
-    border-radius: 3px;
-    animation: block-in 0.2s ease-out;
-}
-
-@keyframes block-in { from { transform: scaleX(0); opacity: 0; } }
-
-/* Рулетка */
-.r-wrap {
-    width: 100%;
-    overflow: hidden;
-    background: #000;
-    height: 60px;
-    border: 2px solid var(--gold);
-    position: relative;
-    margin: 20px 0;
-}
-
-#r-track { display: flex; width: fit-content; }
-.r-slot { min-width: 60px; height: 60px; border-right: 1px solid #111; }
-.r-red { background: var(--danger); }
-.r-black { background: #1f2937; }
-.r-green { background: var(--success); }
-.r-pin {
+/* Частицы */
+.particle {
     position: absolute;
-    left: 50%; top: 0; bottom: 0;
-    width: 4px; background: #fff;
-    transform: translateX(-50%);
-    z-index: 10;
+    pointer-events: none;
+    font-weight: 900;
+    color: var(--neon);
+    z-index: 1000;
+    text-shadow: 0 0 10px var(--neon);
+    animation: particle-up 0.8s ease-out forwards;
 }
 
-/* Блэкджек */
-.bj-zone {
-    background: rgba(0,0,0,0.3);
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
+@keyframes particle-up {
+    0% { transform: scale(1) translateY(0); opacity: 1; }
+    100% { transform: scale(1.5) translateY(-100px); opacity: 0; }
 }
 
-#bj-p-cards, #bj-d-cards {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
+/* Скроллбар */
+.sidebar::-webkit-scrollbar { width: 6px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { 
+    background: var(--glass-border); 
+    border-radius: 10px; 
 }
-
-.bj-card {
-    width: 45px;
-    height: 65px;
-    background: #fff;
-    color: #000;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    animation: card-deal 0.3s ease-out;
-}
-
-@keyframes card-deal { from { transform: translateY(-50px); opacity: 0; } }
-
