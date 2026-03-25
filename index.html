@@ -2,154 +2,173 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Math Concept - Pythagorean Theorem</title>
+    <title>Advanced Math Analytics</title>
     <script defer src="/_vercel/insights/script.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f4f4; margin: 0; overflow: hidden; }
+        :root { --primary: #00f2ff; --bg: #0b0e14; --card: rgba(255, 255, 255, 0.05); }
+        body { font-family: 'Inter', sans-serif; background: #f8f9fa; margin: 0; transition: 0.3s; }
         .hidden { display: none !important; }
-        #math-ui { padding: 40px; color: #444; line-height: 1.6; }
 
-        /* Игровой интерфейс */
+        /* Математический вид */
+        #math-ui { padding: 60px; color: #2d3436; max-width: 800px; margin: auto; }
+        .formula { background: #eee; padding: 20px; border-radius: 10px; font-family: serif; font-style: italic; }
+
+        /* Игровой интерфейс (Cyberpunk Glass) */
         #game-ui { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: #0f172a; color: #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: fixed; inset: 0; background: var(--bg); color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-image: radial-gradient(circle at center, #1e293b 0%, #0b0e14 100%);
         }
-        #big-brain { font-size: 120px; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 20px #38bdf8); }
-        #big-brain:active { transform: scale(0.85); }
-        
-        .stats-panel { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; min-width: 300px; }
-        .shop { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        
-        button { 
-            background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 10px 20px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        button:hover:not(:disabled) { background: #38bdf8; color: #0f172a; }
-        button:disabled { border-color: #475569; color: #475569; cursor: not-allowed; }
 
-        /* Достижения */
+        .main-container { display: flex; gap: 40px; align-items: flex-start; }
+
+        /* Кликер */
+        .clicker-section { text-align: center; background: var(--card); padding: 40px; border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        #big-brain { font-size: 140px; cursor: pointer; user-select: none; transition: 0.1s; display: inline-block; filter: drop-shadow(0 0 30px var(--primary)); }
+        #big-brain:active { transform: scale(0.9); }
+
+        /* Магазин и лидерборд */
+        .side-panel { width: 300px; display: flex; flex-direction: column; gap: 20px; }
+        .panel-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .shop-item { width: 100%; background: rgba(255,255,255,0.1); border: none; color: white; padding: 12px; margin: 5px 0; border-radius: 10px; cursor: pointer; text-align: left; transition: 0.2s; }
+        .shop-item:hover:not(:disabled) { background: var(--primary); color: black; }
+        .shop-item:disabled { opacity: 0.3; cursor: not-allowed; }
+
+        .leaderboard-list { list-style: none; padding: 0; margin: 10px 0; font-size: 14px; }
+        .leaderboard-list li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .you { color: var(--primary); font-weight: bold; }
+
         #achievement {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: #fbbf24; color: #000; padding: 15px 30px; border-radius: 50px;
-            font-weight: bold; transition: 0.5s; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: #000;
+            padding: 15px 25px; border-radius: 15px; font-weight: bold; transform: translateX(200%); transition: 0.5s;
         }
-        #achievement.show { top: 20px; }
+        #achievement.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <div id="achievement">🏆 Достижение разблокировано!</div>
+    <div id="achievement">🏆 Достижение!</div>
 
+    <!-- ТИТУЛЬНЫЙ ЛИСТ (МАТЕМАТИКА) -->
     <div id="math-ui">
-        <h1>Принципы тригонометрии</h1>
-        <p>Синус угла — это отношение противолежащего катета к гипотенузе...</p>
-        <hr>
-        <p>Введите данные для проверки:</p>
-        <input type="text" placeholder="sin(x) = "> <button>Проверить</button>
+        <h1 style="font-size: 48px;">Исследование функций</h1>
+        <p>В данном разделе рассматриваются логарифмические преобразования и их влияние на комплексные числа...</p>
+        <div class="formula">f(x) = log<sub>a</sub>(x) + √(π * sin²θ)</div>
+        <p>Нажмите <b>Esc</b> для открытия справочника (игры).</p>
     </div>
 
+    <!-- ИГРА -->
     <div id="game-ui" class="hidden">
-        <div class="stats-panel">
-            <div style="font-size: 2rem;">🧠 <span id="score">0</span></div>
-            <div style="font-size: 0.9rem; opacity: 0.7;">Авто-клик: <span id="bps">0</span>/сек</div>
-        </div>
+        <div class="main-container">
+            <!-- Магазин -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>🛒 Магазин</h3>
+                    <button class="shop-item" id="btn-click">💪 Клик +1 (Цена: <span id="c-click">15</span>)</button>
+                    <button class="shop-item" id="btn-cursor">🖱️ Курсор +0.1/с (Цена: <span id="c-cursor">10</span>)</button>
+                    <button class="shop-item" id="btn-eraser">🧽 Ластик +0.5/с (Цена: <span id="c-eraser">50</span>)</button>
+                </div>
+            </div>
 
-        <div id="big-brain">🫠</div>
+            <!-- Кликер -->
+            <div class="clicker-section">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🧠 <span id="score">0</span></div>
+                <div style="color: var(--primary); margin-bottom: 30px;">Авто-сбор: <span id="bps">0</span>/сек</div>
+                <div id="big-brain">🫠</div>
+                <p style="margin-top: 30px; opacity: 0.5; font-size: 12px;">ESC - Вернуться к учебе | SPACE - Клик</p>
+            </div>
 
-        <div class="shop" style="margin-top: 30px;">
-            <button id="btn-click">💪 Клик +1 (Цена: <span id="c-click">15</span>)</button>
-            <button id="btn-cursor">🖱️ Курсор +0.1/с (Цена: <span id="c-cursor">10</span>)</button>
-            <button id="btn-eraser">🧽 Ластик +0.5/с (Цена: <span id="c-eraser">50</span>)</button>
+            <!-- Лидерборд -->
+            <div class="side-panel">
+                <div class="panel-card">
+                    <h3>🏆 Топ Учеников</h3>
+                    <ul class="leaderboard-list">
+                        <li><span>1. Сын Маминой Подруги</span> <span>999k</span></li>
+                        <li class="you"><span>2. ВЫ (Легенда)</span> <span id="lb-score">0</span></li>
+                        <li><span>3. Ботаник из 9Б</span> <span>500</span></li>
+                        <li><span>4. Тот, кто списал</span> <span>120</span></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <p style="margin-top: 20px; font-size: 12px;">Ctrl+Shift+6 — Скрыть улики</p>
     </div>
 
     <script>
-        // Загрузка данных
-        let data = JSON.parse(localStorage.getItem('brain_save')) || {
+        let data = JSON.parse(localStorage.getItem('hyper_clicker_save')) || {
             score: 0, power: 1, auto: 0, 
             costs: { click: 15, cursor: 10, eraser: 50 },
-            achievements: []
+            achieved: []
         };
 
-        const updateData = () => {
-            document.getElementById('score').innerText = Math.floor(data.score);
+        let spacePressed = false;
+
+        const update = () => {
+            const s = Math.floor(data.score);
+            document.getElementById('score').innerText = s;
+            document.getElementById('lb-score').innerText = s;
             document.getElementById('bps').innerText = data.auto.toFixed(1);
             document.getElementById('c-click').innerText = data.costs.click;
             document.getElementById('c-cursor').innerText = data.costs.cursor;
             document.getElementById('c-eraser').innerText = data.costs.eraser;
             
-            // Блокировка кнопок
             document.getElementById('btn-click').disabled = data.score < data.costs.click;
             document.getElementById('btn-cursor').disabled = data.score < data.costs.cursor;
             document.getElementById('btn-eraser').disabled = data.score < data.costs.eraser;
-            
-            checkAchievements();
-            localStorage.setItem('brain_save', JSON.stringify(data));
+
+            checkAchs();
+            localStorage.setItem('hyper_clicker_save', JSON.stringify(data));
         };
 
-        // Логика клика
-        document.getElementById('big-brain').onclick = () => {
-            data.score += data.power;
-            updateData();
-        };
+        const doClick = () => { data.score += data.power; update(); };
 
-        // Покупка улучшений
+        // Управление клавиатурой
+        window.onkeydown = (e) => {
+            if (e.key === "Escape") {
+                document.getElementById('game-ui').classList.toggle('hidden');
+                document.getElementById('math-ui').classList.toggle('hidden');
+            }
+            if (e.code === "Space" && !spacePressed && !document.getElementById('game-ui').classList.contains('hidden')) {
+                spacePressed = true;
+                doClick();
+            }
+        };
+        window.onkeyup = (e) => { if (e.code === "Space") spacePressed = false; };
+
+        document.getElementById('big-brain').onclick = doClick;
+
         document.getElementById('btn-click').onclick = () => buy('click', 1, 0);
         document.getElementById('btn-cursor').onclick = () => buy('cursor', 0, 0.1);
         document.getElementById('btn-eraser').onclick = () => buy('eraser', 0, 0.5);
 
-        function buy(type, pAdd, aAdd) {
-            if (data.score >= data.costs[type]) {
-                data.score -= data.costs[type];
-                data.power += pAdd;
-                data.auto += aAdd;
-                data.costs[type] = Math.floor(data.costs[type] * 1.6);
-                updateData();
-                if (window.va) window.va('event', { name: `buy_${type}` });
+        function buy(t, p, a) {
+            if (data.score >= data.costs[t]) {
+                data.score -= data.costs[t];
+                data.power += p;
+                data.auto += a;
+                data.costs[t] = Math.floor(data.costs[t] * 1.5);
+                update();
+                if (window.va) window.va('event', { name: `buy_${t}` });
             }
         }
 
-        // Авто-клик (каждые 100мс для плавности)
-        setInterval(() => {
-            if (data.auto > 0) {
-                data.score += data.auto / 10;
-                updateData();
+        setInterval(() => { if (data.auto > 0) { data.score += data.auto/10; update(); } }, 100);
+
+        function checkAchs() {
+            if (data.score >= 1000 && !data.achieved.includes('1k')) {
+                data.achieved.push('1k');
+                showAch('Умнее калькулятора!');
             }
-        }, 100);
-
-        // Система достижений
-        const achievementsList = [
-            { id: 'first_100', text: '🤓 Новичок (100 очков)', check: () => data.score >= 100 },
-            { id: 'auto_pro', text: '🤖 Авто-магнат (1.0/сек)', check: () => data.auto >= 1.0 },
-            { id: 'millionaire', text: '💎 Кликер-Миллионер', check: () => data.score >= 1000000 }
-        ];
-
-        function checkAchievements() {
-            achievementsList.forEach(ach => {
-                if (!data.achievements.includes(ach.id) && ach.check()) {
-                    data.achievements.push(ach.id);
-                    showAchievement(ach.text);
-                }
-            });
         }
 
-        function showAchievement(text) {
+        function showAch(txt) {
             const el = document.getElementById('achievement');
-            el.innerText = `🏆 ${text}`;
+            el.innerText = "🏆 " + txt;
             el.classList.add('show');
             setTimeout(() => el.classList.remove('show'), 3000);
         }
 
-        // Секретный вход
-        window.onkeydown = (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === '6') {
-                document.getElementById('game-ui').classList.toggle('hidden');
-                document.getElementById('math-ui').classList.toggle('hidden');
-            }
-        };
-
-        updateData();
+        update();
     </script>
 </body>
 </html>
