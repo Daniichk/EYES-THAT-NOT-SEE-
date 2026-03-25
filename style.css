@@ -1,0 +1,267 @@
+/* Основные переменные и сброс */
+:root {
+    --neon: #00f2ff;
+    --gold: #ffd700;
+    --bg: #050a14;
+    --card: #111827;
+    --danger: #f43f5e;
+    --success: #10b981;
+    --text: #ffffff;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: #fff;
+    overflow: hidden;
+    color: var(--text);
+    transition: background 0.4s ease;
+}
+
+.hidden { display: none !important; }
+
+/* Маскировка под математику */
+#math-ui {
+    padding: 50px;
+    color: #333;
+    max-width: 850px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+.formula {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+    font-family: 'Courier New', monospace;
+    margin: 20px 0;
+}
+
+.hint { color: #94a3b8; font-size: 0.8rem; margin-top: 50px; }
+
+/* Игровой интерфейс */
+#game-ui {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    z-index: 10;
+}
+
+.click-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Измерения (Dimensions) */
+.dim-cyber { background: radial-gradient(circle, #0f172a 0%, #020617 100%); }
+.dim-candy { background: radial-gradient(circle, #f472b6 0%, #be185d 100%); }
+.dim-void { background: radial-gradient(circle, #171717 0%, #000000 100%); }
+
+#big-brain {
+    font-size: 150px;
+    cursor: pointer;
+    filter: drop-shadow(0 0 30px var(--neon));
+    transition: transform 0.1s ease;
+    user-select: none;
+    z-index: 5;
+}
+
+#big-brain:active { transform: scale(0.9); }
+
+/* Частицы при клике */
+.particle {
+    position: absolute;
+    pointer-events: none;
+    font-weight: bold;
+    color: var(--neon);
+    font-size: 20px;
+    z-index: 100;
+    animation: particle-fly 0.7s ease-out forwards;
+}
+
+@keyframes particle-fly {
+    to {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
+}
+
+/* Сайдбар */
+.sidebar {
+    background: var(--card);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.stat-card {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #334155;
+    text-align: center;
+}
+
+.stat-val { font-size: 36px; color: var(--neon); font-weight: bold; }
+.bps-label { font-size: 14px; color: var(--success); }
+
+/* Табы */
+.tabs { display: flex; gap: 5px; }
+.tab-btn {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.tab-btn.active { background: #334155; color: #fff; border-color: var(--neon); }
+.tab-btn.danger { color: var(--danger); border-color: var(--danger); }
+
+/* Магазин */
+.item {
+    background: #1f2937;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: 0.2s;
+}
+
+.item:hover:not(.disabled) { border-color: var(--neon); background: #374151; }
+.item.disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Казино */
+#casino-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: #161b33;
+    border: 2px solid var(--neon);
+    padding: 30px;
+    border-radius: 25px;
+    width: 450px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0,242,255,0.2);
+}
+
+.casino-btn, .cas-action {
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.success { background: var(--success); }
+.danger { background: var(--danger); }
+
+#bet-val {
+    background: #0f172a;
+    border: 1px solid var(--neon);
+    color: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    width: 80%;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Башня */
+#t-visual {
+    height: 150px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+.tower-block {
+    width: 100px;
+    height: 15px;
+    background: var(--neon);
+    border-radius: 3px;
+    animation: block-in 0.2s ease-out;
+}
+
+@keyframes block-in { from { transform: scaleX(0); opacity: 0; } }
+
+/* Рулетка */
+.r-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: #000;
+    height: 60px;
+    border: 2px solid var(--gold);
+    position: relative;
+    margin: 20px 0;
+}
+
+#r-track { display: flex; width: fit-content; }
+.r-slot { min-width: 60px; height: 60px; border-right: 1px solid #111; }
+.r-red { background: var(--danger); }
+.r-black { background: #1f2937; }
+.r-green { background: var(--success); }
+.r-pin {
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 4px; background: #fff;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* Блэкджек */
+.bj-zone {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+#bj-p-cards, #bj-d-cards {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.bj-card {
+    width: 45px;
+    height: 65px;
+    background: #fff;
+    color: #000;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    animation: card-deal 0.3s ease-out;
+}
+
+@keyframes card-deal { from { transform: translateY(-50px); opacity: 0; } }
+
