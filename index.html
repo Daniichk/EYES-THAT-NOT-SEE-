@@ -3,346 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Probability & Neural Dynamics</title>
+    <title>Neural Analytics Module</title>
+    <link rel="stylesheet" href="style.css">
     <script defer src="/_vercel/insights/script.js"></script>
-    <style>
-        :root { --neon: #00f2ff; --gold: #ffd700; --bg: #050a14; --card: #111827; --danger: #f43f5e; --success: #10b981; }
-        body { font-family: 'Inter', sans-serif; background: #fff; margin: 0; overflow: hidden; transition: 0.5s; }
-        .hidden { display: none !important; }
-        
-        /* Mask */
-        #math-ui { padding: 40px; color: #333; max-width: 800px; margin: auto; }
-        .formula { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; font-family: monospace; margin: 15px 0; }
-
-        /* Game UI */
-        #game-ui { position: fixed; inset: 0; background: var(--bg); color: white; display: grid; grid-template-columns: 1fr 380px; z-index: 10; }
-        .click-area { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
-        #big-brain { font-size: 140px; z-index: 10; cursor: pointer; filter: drop-shadow(0 0 20px var(--neon)); transition: 0.1s; user-select: none; }
-        #big-brain:active { transform: scale(0.85); }
-
-        /* Particles */
-        .particle { position: absolute; pointer-events: none; animation: fly 0.8s ease-out forwards; color: var(--neon); font-weight: bold; z-index: 100; }
-        @keyframes fly { to { transform: translate(var(--x), var(--y)); opacity: 0; } }
-
-        /* Sidebar */
-        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .stat-card { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #334155; }
-        .stat-val { font-size: 32px; color: var(--neon); font-weight: bold; }
-        .tab-row { display: flex; gap: 5px; margin: 10px 0; }
-        .tab-btn { flex: 1; background: #1e293b; color: white; border: 1px solid #444; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 11px; }
-        .tab-btn.active { border-color: var(--neon); background: #334155; }
-
-        /* Shop Items */
-        .item { background: #1f2937; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; margin-bottom: 5px; }
-        .item:hover:not(.disabled) { border-color: var(--neon); }
-        .item.disabled { opacity: 0.3; cursor: not-allowed; }
-
-        /* Casino & Games */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 1000; display: flex; align-items: center; justify-content: center; }
-        .modal { background: #161b33; border: 2px solid var(--neon); padding: 30px; border-radius: 25px; width: 480px; text-align: center; max-height: 90vh; overflow-y: auto; }
-        .casino-btn { background: #3b82f6; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 5px; }
-        
-        /* Roulette Track */
-        #r-wrap { width: 100%; overflow: hidden; background: #000; height: 60px; border: 2px solid var(--gold); position: relative; margin: 15px 0; }
-        #r-track { display: flex; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); width: fit-content; }
-        .r-slot { min-width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        
-        /* Blackjack Cards */
-        .card-row { display: flex; justify-content: center; gap: 8px; margin: 10px 0; }
-        .card { width: 45px; height: 65px; background: white; color: black; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid #ccc; animation: deal 0.3s; }
-        @keyframes deal { from { transform: translateY(-50px); opacity: 0; } }
-
-        /* Dimensions */
-        .dim-cyber { background: radial-gradient(circle, #0f172a, #020617); }
-        .dim-candy { background: radial-gradient(circle, #f472b6, #be185d); }
-        .dim-void { background: radial-gradient(circle, #262626, #000); }
-    </style>
 </head>
 <body>
+    <!-- Math Mask -->
+    <div id="math-ui">
+        <h1>Unit 14: Probability Theory</h1>
+        <div class="formula">P(A|B) = [P(B|A) * P(A)] / P(B)</div>
+        <p>Bayes' theorem describes the probability of an event, based on prior knowledge...</p>
+        <p class="hint">Press [ESC] to toggle focus mode.</p>
+    </div>
 
-<div id="math-ui">
-    <h1>Advanced Probability Distributions</h1>
-    <p>A random variable X has a Gaussian distribution if its probability density function follows:</p>
-    <div class="formula">f(x) = (1/σ√(2π)) e^(-(x-μ)²/2σ²)</div>
-    <p>Standard deviation and variance are fundamental to the central limit theorem...</p>
-    <p style="color:#999">Press ESC to toggle advanced visualization.</p>
-</div>
+    <!-- Main Game -->
+    <div id="game-ui" class="hidden">
+        <div class="click-area" id="main-bg">
+            <div id="big-brain">🫠</div>
+            <div class="hud">
+                <h2 id="dim-label">CYBER CORE</h2>
+                <small>Diplomas: <span id="pres-val">0</span></small>
+            </div>
+        </div>
 
-<div id="game-ui" class="hidden">
-    <div class="click-area" id="main-bg">
-        <div id="big-brain">🫠</div>
-        <div style="z-index: 10; text-align: center; margin-top: 20px;">
-            <h2 id="dim-label">CYBER CORE</h2>
-            <small>Diplomas: <span id="pres-val">0</span></small>
+        <div class="sidebar">
+            <div class="stat-card">
+                <div class="stat-val" id="score">0</div>
+                <div class="bps-label">+<span id="bps">0</span>/sec</div>
+            </div>
+
+            <button class="daily-btn" onclick="claimDaily()">🎁 DAILY BONUS</button>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="shop">SHOP</button>
+                <button class="tab-btn" data-tab="skins">SKINS</button>
+                <button class="tab-btn" data-tab="dims">WORLDS</button>
+                <button class="tab-btn danger" onclick="toggleCasino(true)">🎰 GAMES</button>
+            </div>
+
+            <div id="tab-shop" class="tab-content"></div>
+            <div id="tab-skins" class="tab-content hidden"></div>
+            <div id="tab-dims" class="tab-content hidden"></div>
         </div>
     </div>
 
-    <div class="sidebar">
-        <div class="stat-card">
-            <div class="stat-val" id="score">0</div>
-            <div style="color: var(--neon); font-size: 14px;">+<span id="bps">0</span>/sec</div>
-        </div>
-
-        <button class="casino-btn" style="background:var(--gold); color:black; width:100%" onclick="claimDaily()">🎁 DAILY BONUS</button>
-
-        <div class="tab-row">
-            <button class="tab-btn active" onclick="setTab('shop')">ITEMS</button>
-            <button class="tab-btn" onclick="setTab('skins')">SKINS</button>
-            <button class="tab-btn" onclick="setTab('dims')">WORLDS</button>
-            <button class="tab-btn" style="background:var(--danger)" onclick="toggleCasino(true)">🎰 GAMES</button>
-        </div>
-
-        <div id="tab-shop"></div>
-        <div id="tab-skins" class="hidden"></div>
-        <div id="tab-dims" class="hidden"></div>
-    </div>
-</div>
-
-<!-- Casino Modal -->
-<div id="casino-overlay" class="hidden overlay">
-    <div class="modal">
-        <h2 id="cas-title" style="color:var(--gold); margin:0;">CASINO HUB</h2>
-        
-        <div id="cas-lobby">
-            <input type="number" id="bet-val" style="background:#000; color:white; border:1px solid var(--neon); padding:12px; width:80%; margin:15px 0; text-align:center;" placeholder="Bet Amount">
-            <button class="casino-btn" style="width:90%" onclick="enterGame('tower')">🏗️ THE TOWER</button>
-            <button class="casino-btn" style="width:90%" onclick="enterGame('roulette')">🎡 ROULETTE</button>
-            <button class="casino-btn" style="width:90%" onclick="enterGame('bj')">🃏 BLACKJACK</button>
-            <button class="casino-btn" style="width:90%" onclick="enterGame('coin')">🪙 COINFLIP</button>
-            <br><button class="casino-btn" style="background:#444;" onclick="toggleCasino(false)">EXIT</button>
-        </div>
-
-        <div id="cas-tower" class="hidden">
-            <div id="t-visual" style="height:120px; display:flex; flex-direction:column-reverse; align-items:center; gap:3px;"></div>
-            <div style="font-size:40px; color:var(--gold)" id="t-mult">x1.0</div>
-            <button class="casino-btn" style="background:var(--success)" onclick="towerBuild()">BUILD FLOOR (75%)</button>
-            <button class="casino-btn" style="background:var(--danger)" onclick="towerCashOut()">CASH OUT</button>
-        </div>
-
-        <div id="cas-roulette" class="hidden">
-            <div id="r-wrap"><div id="r-track"></div><div style="position:absolute; left:50%; top:0; bottom:0; width:3px; background:white; z-index:10; transform:translateX(-50%)"></div></div>
-            <p id="r-status">Choose Color</p>
-            <button class="casino-btn" style="background:#ef4444" onclick="spinR('red')">RED (x2)</button>
-            <button class="casino-btn" style="background:#1f2937" onclick="spinR('black')">BLACK (x2)</button>
-            <button class="casino-btn" style="background:var(--success)" onclick="spinR('green')">GREEN (x14)</button>
-        </div>
-
-        <div id="cas-bj" class="hidden">
-            <div style="background:#064e3b; padding:15px; border-radius:10px; margin-bottom:10px;">
-                <small>Dealer: <span id="bj-d-score">?</span></small>
-                <div id="bj-d-cards" class="card-row"></div>
+    <!-- Casino Overlay -->
+    <div id="casino-overlay" class="hidden">
+        <div class="modal">
+            <h2 id="cas-title">NEURAL CASINO</h2>
+            
+            <div id="cas-lobby">
+                <input type="number" id="bet-val" placeholder="Enter Bet...">
+                <div class="quick-bets">
+                    <button onclick="setBet(0.1)">10%</button>
+                    <button onclick="setBet(0.5)">50%</button>
+                    <button onclick="setBet(1)">ALL IN</button>
+                </div>
+                <div class="game-grid">
+                    <button onclick="enterGame('tower')">🏗️ TOWER</button>
+                    <button onclick="enterGame('roulette')">🎡 ROULETTE</button>
+                    <button onclick="enterGame('bj')">🃏 BLACKJACK</button>
+                </div>
+                <button class="exit-btn" onclick="toggleCasino(false)">EXIT</button>
             </div>
-            <div style="background:#064e3b; padding:15px; border-radius:10px;">
-                <small>You: <span id="bj-p-score">0</span></small>
-                <div id="bj-p-cards" class="card-row"></div>
+
+            <div id="cas-tower" class="hidden">
+                <div id="t-visual"></div>
+                <div class="mult-display" id="t-mult">x1.0</div>
+                <button class="cas-action success" onclick="towerBuild()">BUILD</button>
+                <button class="cas-action danger" onclick="towerCashOut()">CASH OUT</button>
             </div>
-            <div id="bj-ctrls" style="margin-top:15px;">
-                <button class="casino-btn" onclick="bjAction('hit')">HIT</button>
-                <button class="casino-btn" onclick="bjAction('stand')">STAND</button>
+
+            <div id="cas-roulette" class="hidden">
+                <div class="r-wrap"><div id="r-track"></div><div class="r-pin"></div></div>
+                <div class="r-btns">
+                    <button class="r-red" onclick="spinR('red')">RED x2</button>
+                    <button class="r-black" onclick="spinR('black')">BLACK x2</button>
+                    <button class="r-green" onclick="spinR('green')">GREEN x14</button>
+                </div>
+            </div>
+
+            <div id="cas-bj" class="hidden">
+                <div class="bj-zone dealer">Dealer: <span id="bj-d-score">?</span><div id="bj-d-cards"></div></div>
+                <div class="bj-zone player">You: <span id="bj-p-score">0</span><div id="bj-p-cards"></div></div>
+                <div id="bj-ctrls">
+                    <button class="cas-action" onclick="bjAction('hit')">HIT</button>
+                    <button class="cas-action" onclick="bjAction('stand')">STAND</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    let state = JSON.parse(localStorage.getItem('neu_ultimate_v1')) || {
-        cells: 0, auto: 0, mult: 1, prestige: 0, lastDaily: 0,
-        currentSkin: '🫠', currentDim: 'cyber',
-        items: { cursor: 0, eraser: 0, ruler: 0, prot: 0, ai: 0 },
-        ownedSkins: ['🫠'], ownedDims: ['cyber']
-    };
-
-    const config = {
-        items: {
-            cursor: { n: 'Auto-Cursor', i: '🖱️', b: 15, p: 0.2, d: 110 },
-            eraser: { n: 'Eraser', i: '🧽', b: 100, p: 1.5, d: 150 },
-            ruler: { n: 'Ruler', i: '📏', b: 600, p: 8, d: 190 },
-            prot: { n: 'Protractor', i: '📐', b: 3000, p: 30, d: 230 },
-            ai: { n: 'AI Tutor', i: '🤖', b: 50000, p: 400, d: 270 }
-        },
-        skins: [{id:'🫠',c:0},{id:'🤡',c:5000},{id:'👽',c:25000},{id:'🤖',c:100000}],
-        dims: [{id:'cyber',n:'Cyber',c:0,cls:'dim-cyber'},{id:'candy',n:'Candy',c:50000,cls:'dim-candy'},{id:'void',n:'Void',c:200000,cls:'dim-void'}]
-    };
-
-    window.onkeydown = (e) => {
-        if (e.key === 'Escape') {
-            document.getElementById('game-ui').classList.toggle('hidden');
-            document.body.style.background = document.getElementById('game-ui').classList.contains('hidden') ? '#fff' : 'black';
-        }
-    };
-
-    // Particles & Click
-    function spawnParticle(x, y) {
-        const p = document.createElement('div');
-        p.className = 'particle'; p.innerText = '+1';
-        p.style.left = x + 'px'; p.style.top = y + 'px';
-        p.style.setProperty('--x', (Math.random() - 0.5) * 100 + 'px');
-        p.style.setProperty('--y', -Math.random() * 100 - 50 + 'px');
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 800);
-    }
-
-    document.getElementById('big-brain').onclick = (e) => {
-        let b = 1 + (state.prestige * 0.25);
-        state.cells += (state.mult * b);
-        spawnParticle(e.clientX, e.clientY);
-        update();
-    };
-
-    function update() {
-        let b = 1 + (state.prestige * 0.25);
-        document.getElementById('score').innerText = Math.floor(state.cells).toLocaleString();
-        document.getElementById('bps').innerText = (state.auto * b).toFixed(1);
-        document.getElementById('big-brain').innerText = state.currentSkin;
-        document.getElementById('pres-val').innerText = state.prestige;
-        
-        const dim = config.dims.find(d => d.id === state.currentDim);
-        document.getElementById('main-bg').className = 'click-area ' + dim.cls;
-        document.getElementById('dim-label').innerText = dim.n.toUpperCase() + ' CORE';
-
-        // Shop Items
-        let sh = '';
-        for(let id in config.items) {
-            let p = Math.floor(config.items[id].b * Math.pow(1.15, state.items[id]));
-            sh += `<div class="item ${state.cells < p ? 'disabled' : ''}" onclick="buyItem('${id}')">
-                <b>${config.items[id].n} (x${state.items[id]})</b><br><small>Cost: ${p} | +${config.items[id].p}/s</small>
-            </div>`;
-        }
-        document.getElementById('tab-shop').innerHTML = sh;
-
-        // Skins
-        let sk = '';
-        config.skins.forEach(s => {
-            let own = state.ownedSkins.includes(s.id);
-            sk += `<div class="item" onclick="buySkin('${s.id}', ${s.c})">${s.id} ${own ? 'EQUIP' : 'Buy: '+s.c}</div>`;
-        });
-        document.getElementById('tab-skins').innerHTML = sk;
-
-        // Dims
-        let dm = '';
-        config.dims.forEach(d => {
-            let own = state.ownedDims.includes(d.id);
-            dm += `<div class="item" onclick="buyDim('${d.id}', ${d.c})">${d.n} ${own ? 'TRAVEL' : 'Buy: '+d.c}</div>`;
-        });
-        document.getElementById('tab-dims').innerHTML = dm;
-
-        localStorage.setItem('neu_ultimate_v1', JSON.stringify(state));
-    }
-
-    function buyItem(id) {
-        let p = Math.floor(config.items[id].b * Math.pow(1.15, state.items[id]));
-        if(state.cells >= p) { state.cells -= p; state.items[id]++; state.auto += config.items[id].p; addOrbit(id); update(); }
-    }
-    function buySkin(id, cost) {
-        if(state.ownedSkins.includes(id)) state.currentSkin = id;
-        else if(state.cells >= cost) { state.cells -= cost; state.ownedSkins.push(id); state.currentSkin = id; }
-        update();
-    }
-    function buyDim(id, cost) {
-        if(state.ownedDims.includes(id)) state.currentDim = id;
-        else if(state.cells >= cost) { state.cells -= cost; state.ownedDims.push(id); state.currentDim = id; }
-        update();
-    }
-
-    // Casino System
-    let curBet = 0; let tMult = 1.0;
-    const rCols = ['green','red','black','red','black','red','black','red','black','red','black','red','black','red','black'];
-    
-    function toggleCasino(s) { document.getElementById('casino-overlay').classList.toggle('hidden', !s); enterGame('lobby'); }
-    function enterGame(g) {
-        ['cas-lobby','cas-tower','cas-roulette','cas-bj'].forEach(id => document.getElementById(id).classList.add('hidden'));
-        let b = parseInt(document.getElementById('bet-val').value);
-        if(g === 'lobby') { document.getElementById('cas-lobby').classList.remove('hidden'); return; }
-        if(b > 0 && b <= state.cells) {
-            state.cells -= b; curBet = b;
-            document.getElementById('cas-'+g).classList.remove('hidden');
-            if(g === 'tower') { tMult = 1.0; document.getElementById('t-visual').innerHTML = ''; document.getElementById('t-mult').innerText = 'x1.0'; }
-            if(g === 'roulette') initR();
-            if(g === 'bj') startBj();
-            if(g === 'coin') { if(Math.random() > 0.5) state.cells += b * 2; toggleCasino(false); }
-        } else alert("Invalid Bet!");
-        update();
-    }
-
-    // Tower
-    function towerBuild() {
-        if(Math.random() > 0.25) {
-            tMult += 0.5; document.getElementById('t-mult').innerText = 'x'+tMult.toFixed(1);
-            const blk = document.createElement('div'); blk.style = "width:80px; height:12px; background:var(--neon); border-radius:2px;";
-            document.getElementById('t-visual').appendChild(blk);
-        } else { alert("CRASH!"); toggleCasino(false); }
-        update();
-    }
-    function towerCashOut() { state.cells += Math.floor(curBet * tMult); toggleCasino(false); update(); }
-
-    // Roulette
-    function initR() {
-        const track = document.getElementById('r-track'); track.innerHTML = ''; track.style.transform = 'translateX(0)';
-        for(let i=0; i<60; i++) {
-            rCols.forEach(c => {
-                const s = document.createElement('div'); s.className = 'r-slot'; s.style.background = c === 'red' ? '#f43f5e' : (c === 'black' ? '#1f2937' : '#10b981');
-                track.appendChild(s);
-            });
-        }
-    }
-    function spinR(choice) {
-        const track = document.getElementById('r-track');
-        const target = Math.floor(Math.random() * 15) + 600;
-        const win = rCols[target % 15];
-        track.style.transform = `translateX(-${target * 60 - 210}px)`;
-        setTimeout(() => {
-            if(choice === win) state.cells += (win === 'green' ? curBet * 14 : curBet * 2);
-            toggleCasino(false); update();
-        }, 4100);
-    }
-
-    // Blackjack
-    let dHand = [], pHand = [], deck = [];
-    function startBj() {
-        deck = []; for(let i=0; i<4; i++) for(let v=2; v<=11; v++) deck.push(v > 10 ? 10 : v);
-        deck.sort(() => Math.random() - 0.5);
-        pHand = [deck.pop(), deck.pop()]; dHand = [deck.pop(), deck.pop()];
-        renderBj(false);
-    }
-    function renderBj(rev) {
-        document.getElementById('bj-p-cards').innerHTML = pHand.map(c => `<div class="card">${c}</div>`).join('');
-        document.getElementById('bj-p-score').innerText = getBjS(pHand);
-        document.getElementById('bj-d-cards').innerHTML = rev ? dHand.map(c => `<div class="card">${c}</div>`).join('') : `<div class="card">${dHand[0]}</div><div class="card">?</div>`;
-    }
-    function getBjS(h) { let s = h.reduce((a,b)=>a+b,0); if(s>21 && h.includes(11)) s-=10; return s; }
-    function bjAction(a) {
-        if(a === 'hit') { pHand.push(deck.pop()); renderBj(false); if(getBjS(pHand) > 21) { alert("Bust!"); toggleCasino(false); } }
-        else {
-            while(getBjS(dHand) < 17) dHand.push(deck.pop());
-            renderBj(true); let ps = getBjS(pHand), ds = getBjS(dHand);
-            if(ds > 21 || ps > ds) state.cells += curBet * 2;
-            else if(ps === ds) state.cells += curBet;
-            toggleCasino(false);
-        }
-        update();
-    }
-
-    function claimDaily() {
-        if(Date.now() - state.lastDaily > 86400000) { state.cells += 2000; state.lastDaily = Date.now(); update(); }
-        else alert("Tomorrow!");
-    }
-
-    function setTab(t) {
-        ['shop','skins','dims'].forEach(id => document.getElementById('tab-'+id).classList.add('hidden'));
-        document.getElementById('tab-'+t).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-    }
-
-    function addOrbit(id) {
-        const el = document.createElement('div'); el.className = 'orbit-item'; el.innerText = config.items[id].i;
-        el.style.setProperty('--dist', config.items[id].d + 'px'); el.style.setProperty('--speed', (Math.random() * 5 + 4) + 's');
-        document.getElementById('orbit-container').appendChild(el);
-    }
-
-    setInterval(() => { if(state.auto > 0) { state.cells += (state.auto * (1 + state.prestige * 0.25)) / 10; update(); } }, 100);
-    for(let id in state.items) { for(let i=0; i<state.items[id]; i++) addOrbit(id); }
-    update();
-</script>
+    <script src="script.js"></script>
+    <script src="casino.js"></script>
 </body>
 </html>
