@@ -2,28 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advanced Math Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Math & Logic Module</title>
+    <!-- Vercel Analytics -->
     <script defer src="/_vercel/insights/script.js"></script>
     <style>
-        :root { --neon: #00f2ff; --bg: #050a14; --card: #111827; }
+        :root { --neon: #00f2ff; --gold: #ffd700; --bg: #050a14; --card: #111827; --danger: #f43f5e; }
         body { font-family: 'Segoe UI', sans-serif; background: #fff; margin: 0; overflow: hidden; transition: 0.3s; }
         .hidden { display: none !important; }
         
-        /* Math Mode */
-        #math-ui { padding: 50px; color: #333; max-width: 900px; margin: auto; }
-        .formula { background: #eee; padding: 15px; border-radius: 5px; font-family: monospace; }
+        /* Math UI */
+        #math-ui { padding: 50px; color: #333; max-width: 800px; margin: auto; line-height: 1.6; }
+        .formula { background: #f0f0f0; padding: 15px; border-radius: 5px; font-family: monospace; border-left: 4px solid #007bff; margin: 20px 0; }
 
-        /* Game Mode */
+        /* Game UI */
         #game-ui { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
             background: var(--bg); color: white; display: grid; grid-template-columns: 1fr 380px;
         }
         
-        .click-area { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
-        #big-brain { font-size: 120px; z-index: 10; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 20px var(--neon)); }
+        .click-area { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; border-right: 1px solid #1f2937; }
+        #big-brain { font-size: 130px; z-index: 10; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 25px var(--neon)); }
         #big-brain:active { transform: scale(0.9); }
 
-        /* Orbit System */
+        /* Orbit Visuals */
         .orbit-item {
             position: absolute; font-size: 24px; pointer-events: none;
             animation: rotate var(--speed) linear infinite;
@@ -32,8 +34,12 @@
         }
         @keyframes rotate { from { transform: rotate(0deg) translate(var(--dist)) rotate(0deg); } to { transform: rotate(360deg) translate(var(--dist)) rotate(-360deg); } }
 
-        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; border-left: 1px solid #1f2937; }
-        .stat-card { background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        /* Golden Bonus */
+        #golden-grade { position: absolute; font-size: 50px; cursor: pointer; z-index: 100; filter: drop-shadow(0 0 15px var(--gold)); user-select: none; }
+
+        /* Sidebar & Cards */
+        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; }
+        .stat-card { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; border: 1px solid #334155; }
         .stat-val { font-size: 32px; color: var(--neon); font-weight: bold; }
 
         .item { 
@@ -45,163 +51,249 @@
         .item h4 { margin: 0; font-size: 14px; display: flex; justify-content: space-between; }
         .item p { margin: 5px 0 0; font-size: 11px; color: #9ca3af; }
 
-        #ach {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-            background: var(--neon); color: #000; padding: 10px 30px; border-radius: 30px;
-            font-weight: bold; transition: 0.5s; z-index: 1000;
+        /* Casino Modal */
+        #casino-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; }
+        #casino-ui { background: #1e1b4b; border: 3px solid var(--neon); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; }
+        .casino-btn { background: #4338ca; border: none; color: white; padding: 12px 25px; margin: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .casino-btn:hover { background: #6366f1; }
+        
+        #prestige-btn {
+            background: linear-gradient(45deg, #7c3aed, #db2777); color: white;
+            border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold;
+            cursor: pointer; margin-bottom: 20px; display: none;
         }
-        #ach.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <div id="ach">🏆 Achievement!</div>
-
+    <!-- Math Mask -->
     <div id="math-ui">
-        <h1>Lecture: Numerical Integration</h1>
-        <p>Simpson's rule is a method for numerical integration, the numerical approximation of definite integrals.</p>
-        <div class="formula">∫ f(x) dx ≈ Δx/3 [f(x₀) + 4f(x₁) + f(x₂)]</div>
-        <p style="margin-top:20px; color: gray;"><i>Press Escape to toggle interactive focus mode.</i></p>
+        <h1>Lecture 7: Calculus and Limits</h1>
+        <p>In mathematics, a limit is the value that a function "approaches" as the input "approaches" some value. Limits are essential to calculus and mathematical analysis.</p>
+        <div class="formula">lim (x→c) f(x) = L</div>
+        <p>Consider the derivative as the fundamental tool of calculus...</p>
+        <p style="color: #999; font-size: 12px; margin-top: 50px;">Note: Press ESC to focus on interactive elements.</p>
     </div>
 
+    <!-- Main Game -->
     <div id="game-ui" class="hidden">
         <div class="click-area" id="orbit-container">
+            <div id="golden-grade" class="hidden">⭐5</div>
             <div id="big-brain">🫠</div>
-            <div style="z-index:11; margin-top:20px; text-align:center;">
-                <h2 style="margin:0;">BRAIN TYCOON</h2>
-                <small style="color: #64748b;">ESC to Hide | SPACE to Click</small>
+            <div style="z-index:10; margin-top:40px; text-align:center;">
+                <h2 style="margin:0; letter-spacing: 2px;">NEURAL TYCOON</h2>
+                <small style="color: #64748b; font-weight: bold;">DIPLOMAS: <span id="pres-val">0</span> (+<span id="pres-boost">0</span>% power)</small>
             </div>
         </div>
 
         <div class="sidebar">
             <div class="stat-card">
                 <div class="stat-val" id="score">0</div>
-                <div style="font-size: 12px; opacity:0.8;">Total Brain Cells</div>
-                <div style="font-size: 14px; margin-top:10px; color:var(--neon);">+<span id="bps">0</span>/sec</div>
+                <div style="font-size: 14px; color: var(--neon);">+<span id="bps">0</span> neurons/sec</div>
             </div>
 
-            <h3 style="font-size: 14px; color: #6b7280; text-transform: uppercase;">Stationery (Auto-Items)</h3>
+            <button id="prestige-btn" onclick="doPrestige()">🎓 GRADUATE (Reset for Diploma)</button>
+
+            <div class="stat-card" style="border-color: var(--danger); background: #2d0a1a;">
+                <div style="color: var(--danger); font-weight: bold; font-size: 12px;">RISK ZONE</div>
+                <button onclick="toggleCasino(true)" style="background: var(--danger); border:none; color:white; padding:8px; width:100%; border-radius:5px; cursor:pointer; margin-top:5px;">ENTER CASINO</button>
+            </div>
+
+            <h3 style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Stationery</h3>
             <div id="shop-auto"></div>
 
-            <h3 style="font-size: 14px; color: #6b7280; text-transform: uppercase; margin-top:20px;">Upgrades (Multipliers)</h3>
+            <h3 style="font-size: 12px; color: #6b7280; text-transform: uppercase; margin-top:20px;">Upgrades</h3>
             <div id="shop-upgrades"></div>
         </div>
     </div>
 
+    <!-- Casino Modal -->
+    <div id="casino-overlay" class="hidden">
+        <div id="casino-ui">
+            <h1 style="color: var(--gold); margin:0;">TOWER GAMLBE</h1>
+            <p>Risk 10% of your neurons. Each floor adds <b>+0.5x</b> to prize. 25% chance to lose everything!</p>
+            <div style="font-size: 60px; margin: 20px 0;" id="t-mult">x1.0</div>
+            
+            <div id="c-start-view">
+                <button class="casino-btn" onclick="startTower()">START (Cost: <span id="c-cost">0</span>)</button>
+                <button class="casino-btn" style="background:#444;" onclick="toggleCasino(false)">EXIT</button>
+            </div>
+            
+            <div id="c-game-view" class="hidden">
+                <button class="casino-btn" style="background:#10b981;" onclick="buildFloor()">BUILD NEXT FLOOR</button>
+                <button class="casino-btn" style="background:var(--danger);" onclick="cashOut()">CASH OUT</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let state = JSON.parse(localStorage.getItem('galaxy_math_save')) || {
-            cells: 0, power: 1, autoBps: 0, mult: 1.0,
+        let state = JSON.parse(localStorage.getItem('ultimate_school_save')) || {
+            cells: 0, power: 1, autoBps: 0, mult: 1.0, prestige: 0,
             items: { cursor: 0, eraser: 0, ruler: 0, protractor: 0 },
-            upgrades: { coffee: 0, neural: 0, cheat: 0 },
-            achieved: []
+            upgrades: { coffee: 0, cheat: 0 }
         };
 
         const config = {
             items: {
-                cursor: { name: 'Cursor', icon: '🖱️', base: 15, p: 0.2, dist: 120, spd: '5s' },
-                eraser: { name: 'Eraser', icon: '🧽', base: 100, p: 1.5, dist: 180, spd: '8s' },
-                ruler: { name: 'Ruler', icon: '📏', base: 600, p: 8, dist: 240, spd: '12s' },
-                protractor: { name: 'Protractor', icon: '📐', base: 3000, p: 30, dist: 300, spd: '15s' }
+                cursor: { name: 'Auto-Cursor', icon: '🖱️', base: 15, p: 0.2, d: 120 },
+                eraser: { name: 'Magic Eraser', icon: '🧽', base: 100, p: 1.5, d: 170 },
+                ruler: { name: 'Steel Ruler', icon: '📏', base: 600, p: 8, d: 230 },
+                protractor: { name: 'Protractor', icon: '📐', base: 3000, p: 30, d: 290 }
             },
             upgrades: {
-                coffee: { name: 'Coffee Shot', base: 500, m: 0.05, desc: '+5% Production' },
-                neural: { name: 'Neural Link', base: 5000, m: 0.15, desc: '+15% Production' },
-                cheat: { name: 'Cheat Sheet', base: 200, powerAdd: 2, desc: '+2 Click Power' }
+                coffee: { name: 'Energy Drink', base: 500, m: 0.05, desc: '+5% Production' },
+                cheat: { name: 'Cheat Sheet', base: 200, pAdd: 2, desc: '+2 Click Power' }
             }
         };
 
+        // Inputs
+        let spaceDown = false;
         window.onkeydown = (e) => {
             if (e.key === 'Escape') {
                 document.getElementById('game-ui').classList.toggle('hidden');
                 document.body.style.background = document.getElementById('game-ui').classList.contains('hidden') ? '#fff' : '#050a14';
             }
-            if (e.code === 'Space' && !e.repeat && !document.getElementById('game-ui').classList.contains('hidden')) {
-                doClick();
+            if (e.code === 'Space' && !spaceDown && !document.getElementById('game-ui').classList.contains('hidden')) {
+                spaceDown = true; doClick();
             }
         };
+        window.onkeyup = (e) => { if(e.code === 'Space') spaceDown = false; };
 
         function doClick() {
-            state.cells += (state.power * state.mult);
+            let boost = 1 + (state.prestige * 0.25);
+            state.cells += (state.power * state.mult * boost);
             update();
         }
 
+        // Shop & Items
         function buyItem(id) {
             let price = Math.floor(config.items[id].base * Math.pow(1.15, state.items[id]));
             if (state.cells >= price) {
-                state.cells -= price;
-                state.items[id]++;
+                state.cells -= price; state.items[id]++;
                 state.autoBps += config.items[id].p;
-                addOrbitVisual(id);
-                update();
+                addOrbit(id); update();
             }
         }
 
         function buyUpgrade(id) {
             let price = Math.floor(config.upgrades[id].base * Math.pow(2.5, state.upgrades[id]));
             if (state.cells >= price) {
-                state.cells -= price;
-                state.upgrades[id]++;
+                state.cells -= price; state.upgrades[id]++;
                 if(config.upgrades[id].m) state.mult += config.upgrades[id].m;
-                if(config.upgrades[id].powerAdd) state.power += config.upgrades[id].powerAdd;
+                if(config.upgrades[id].pAdd) state.power += config.upgrades[id].pAdd;
                 update();
             }
         }
 
-        function addOrbitVisual(id) {
-            const container = document.getElementById('orbit-container');
-            const el = document.createElement('div');
-            el.className = 'orbit-item';
-            el.innerText = config.items[id].icon;
-            el.style.setProperty('--dist', config.items[id].dist + 'px');
-            el.style.setProperty('--speed', (Math.random() * 5 + 3) + 's');
-            // Random start position
-            el.style.animationDelay = `-${Math.random() * 10}s`;
-            container.appendChild(el);
+        // Casino Logic
+        let tMult = 1.0; let tBet = 0;
+        function toggleCasino(show) {
+            document.getElementById('casino-overlay').classList.toggle('hidden', !show);
+            if(show) {
+                tBet = Math.floor(state.cells * 0.1);
+                document.getElementById('c-cost').innerText = tBet;
+                resetTowerUI();
+            }
+        }
+        function startTower() {
+            if(state.cells < tBet || tBet <= 0) return alert("Not enough neurons!");
+            state.cells -= tBet;
+            document.getElementById('c-start-view').classList.add('hidden');
+            document.getElementById('c-game-view').classList.remove('hidden');
+            update();
+        }
+        function buildFloor() {
+            if(Math.random() > 0.25) {
+                tMult += 0.5; document.getElementById('t-mult').innerText = `x${tMult.toFixed(1)}`;
+            } else {
+                alert("TOWER COLLAPSED!"); resetTowerUI(); toggleCasino(false);
+            }
+        }
+        function cashOut() {
+            state.cells += Math.floor(tBet * tMult);
+            resetTowerUI(); toggleCasino(false); update();
+        }
+        function resetTowerUI() {
+            tMult = 1.0; document.getElementById('t-mult').innerText = "x1.0";
+            document.getElementById('c-start-view').classList.remove('hidden');
+            document.getElementById('c-game-view').classList.add('hidden');
         }
 
+        // Prestige
+        function doPrestige() {
+            if(confirm("Ready to graduate? Reset all progress for a permanent +25% Diploma boost!")) {
+                state.prestige++; state.cells = 0; state.autoBps = 0; state.power = 1; state.mult = 1.0;
+                state.items = { cursor: 0, eraser: 0, ruler: 0, protractor: 0 };
+                state.upgrades = { coffee: 0, cheat: 0 };
+                localStorage.setItem('ultimate_school_save', JSON.stringify(state));
+                location.reload();
+            }
+        }
+
+        // Visuals
+        function addOrbit(id) {
+            const el = document.createElement('div');
+            el.className = 'orbit-item'; el.innerText = config.items[id].icon;
+            el.style.setProperty('--dist', config.items[id].d + 'px');
+            el.style.setProperty('--speed', (Math.random() * 5 + 3) + 's');
+            el.style.animationDelay = `-${Math.random() * 10}s`;
+            document.getElementById('orbit-container').appendChild(el);
+        }
+
+        function spawnGolden() {
+            const g = document.getElementById('golden-grade');
+            if(!document.getElementById('game-ui').classList.contains('hidden')) {
+                g.style.left = Math.random() * 80 + '%'; g.style.top = Math.random() * 80 + '%';
+                g.classList.remove('hidden');
+                setTimeout(() => g.classList.add('hidden'), 4000);
+            }
+            setTimeout(spawnGolden, 40000);
+        }
+        document.getElementById('golden-grade').onclick = function() {
+            state.cells += Math.max(100, state.autoBps * 60); this.classList.add('hidden'); update();
+        };
+
         function update() {
+            let boost = 1 + (state.prestige * 0.25);
             document.getElementById('score').innerText = Math.floor(state.cells).toLocaleString();
-            document.getElementById('bps').innerText = (state.autoBps * state.mult).toFixed(1);
-            
-            // Auto Items Shop
-            let html = '';
-            for (let id in config.items) {
+            document.getElementById('bps').innerText = (state.autoBps * state.mult * boost).toFixed(1);
+            document.getElementById('pres-val').innerText = state.prestige;
+            document.getElementById('pres-boost').innerText = state.prestige * 25;
+            document.getElementById('prestige-btn').style.display = state.cells >= 50000 ? 'block' : 'none';
+
+            let h1 = '';
+            for(let id in config.items) {
                 let price = Math.floor(config.items[id].base * Math.pow(1.15, state.items[id]));
-                html += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyItem('${id}')">
+                h1 += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyItem('${id}')">
                     <h4>${config.items[id].name} <span>x${state.items[id]}</span></h4>
-                    <p>Price: ${price} | +${config.items[id].p}/s</p>
+                    <p>Cost: ${price} | +${config.items[id].p}/s</p>
                 </div>`;
             }
-            document.getElementById('shop-auto').innerHTML = html;
+            document.getElementById('shop-auto').innerHTML = h1;
 
-            // Upgrades Shop
-            let uHtml = '';
-            for (let id in config.upgrades) {
+            let h2 = '';
+            for(let id in config.upgrades) {
                 let price = Math.floor(config.upgrades[id].base * Math.pow(2.5, state.upgrades[id]));
-                uHtml += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyUpgrade('${id}')">
-                    <h4>${config.upgrades[id].name} <span>Lvl ${state.upgrades[id]}</span></h4>
-                    <p>Price: ${price} | ${config.upgrades[id].desc}</p>
+                h2 += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyUpgrade('${id}')">
+                    <h4>${config.upgrades[id].name} <span>Lv ${state.upgrades[id]}</span></h4>
+                    <p>Cost: ${price} | ${config.upgrades[id].desc}</p>
                 </div>`;
             }
-            document.getElementById('shop-upgrades').innerHTML = uHtml;
-
-            localStorage.setItem('galaxy_math_save', JSON.stringify(state));
+            document.getElementById('shop-upgrades').innerHTML = h2;
+            localStorage.setItem('ultimate_school_save', JSON.stringify(state));
         }
 
         // Loop
         setInterval(() => {
-            if (state.autoBps > 0) {
-                state.cells += (state.autoBps * state.mult) / 10;
+            if(state.autoBps > 0) {
+                state.cells += (state.autoBps * state.mult * (1 + state.prestige * 0.25)) / 10;
                 update();
             }
         }, 100);
 
-        // Load existing visuals
         document.getElementById('big-brain').onclick = doClick;
-        for (let id in state.items) {
-            for(let i=0; i<state.items[id]; i++) addOrbitVisual(id);
-        }
-        update();
+        for(let id in state.items) { for(let i=0; i<state.items[id]; i++) addOrbit(id); }
+        spawnGolden(); update();
     </script>
 </body>
 </html>
