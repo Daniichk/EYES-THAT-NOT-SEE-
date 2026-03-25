@@ -2,197 +2,205 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advanced Mathematics - Study Module</title>
+    <title>Advanced Math Module</title>
     <script defer src="/_vercel/insights/script.js"></script>
     <style>
-        :root { --neon: #00f2ff; --bg: #0a0f1e; --card: #161e31; }
-        body { font-family: 'Inter', sans-serif; background: #f8f9fa; margin: 0; overflow: hidden; transition: 0.3s; }
+        :root { --neon: #00f2ff; --bg: #050a14; --card: #111827; }
+        body { font-family: 'Segoe UI', sans-serif; background: #fff; margin: 0; overflow: hidden; transition: 0.3s; }
         .hidden { display: none !important; }
         
         /* Math Mode */
-        #math-ui { padding: 60px; color: #2d3436; max-width: 800px; margin: auto; }
-        .math-box { border-left: 5px solid #0984e3; padding-left: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        #math-ui { padding: 50px; color: #333; max-width: 900px; margin: auto; }
+        .formula { background: #eee; padding: 15px; border-radius: 5px; font-family: monospace; }
 
         /* Game Mode */
         #game-ui { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: var(--bg); color: white; display: grid; grid-template-columns: 1fr 350px;
+            background: var(--bg); color: white; display: grid; grid-template-columns: 1fr 380px;
         }
         
-        .click-area { display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #2d3436; }
-        #big-brain { font-size: 150px; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 30px var(--neon)); }
+        .click-area { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        #big-brain { font-size: 120px; z-index: 10; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 20px var(--neon)); }
         #big-brain:active { transform: scale(0.9); }
 
-        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; }
-        .stat-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d3436; }
-        .stat-val { font-size: 24px; color: var(--neon); font-weight: bold; }
+        /* Orbit System */
+        .orbit-item {
+            position: absolute; font-size: 24px; pointer-events: none;
+            animation: rotate var(--speed) linear infinite;
+            transform-origin: var(--dist) 0;
+            left: 50%; top: 50%;
+        }
+        @keyframes rotate { from { transform: rotate(0deg) translate(var(--dist)) rotate(0deg); } to { transform: rotate(360deg) translate(var(--dist)) rotate(-360deg); } }
+
+        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; border-left: 1px solid #1f2937; }
+        .stat-card { background: #1e293b; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        .stat-val { font-size: 32px; color: var(--neon); font-weight: bold; }
 
         .item { 
-            background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 10px; 
-            margin-bottom: 10px; cursor: pointer; transition: 0.2s;
+            background: #1f2937; border: 1px solid #374151; padding: 12px; border-radius: 10px; 
+            margin-bottom: 8px; cursor: pointer; transition: 0.2s;
         }
-        .item:hover:not(.disabled) { background: #334155; border-color: var(--neon); }
-        .item.disabled { opacity: 0.5; cursor: not-allowed; }
-        .item h4 { margin: 0; font-size: 14px; }
-        .item p { margin: 5px 0 0; font-size: 12px; color: #94a3b8; }
+        .item:hover:not(.disabled) { border-color: var(--neon); background: #374151; }
+        .item.disabled { opacity: 0.4; cursor: not-allowed; }
+        .item h4 { margin: 0; font-size: 14px; display: flex; justify-content: space-between; }
+        .item p { margin: 5px 0 0; font-size: 11px; color: #9ca3af; }
 
         #ach {
-            position: fixed; bottom: 20px; right: 20px; background: var(--neon); color: #000;
-            padding: 15px 25px; border-radius: 10px; font-weight: bold; transform: translateX(200%); transition: 0.5s;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: var(--neon); color: #000; padding: 10px 30px; border-radius: 30px;
+            font-weight: bold; transition: 0.5s; z-index: 1000;
         }
-        #ach.show { transform: translateX(0); }
+        #ach.show { transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
-    <div id="ach">🏆 Achievement Unlocked!</div>
+    <div id="ach">🏆 Achievement!</div>
 
     <div id="math-ui">
-        <h1>Module 4: Differential Equations</h1>
-        <div class="math-box">
-            <p>A differential equation is a mathematical equation that relates some function with its derivatives. In applications, the functions usually represent physical quantities...</p>
-            <code>dy/dx = f(x, y)</code>
-        </div>
-        <p style="margin-top: 20px; color: #636e72; font-size: 13px;">Press F12 for developer console or check variables.</p>
+        <h1>Lecture: Numerical Integration</h1>
+        <p>Simpson's rule is a method for numerical integration, the numerical approximation of definite integrals.</p>
+        <div class="formula">∫ f(x) dx ≈ Δx/3 [f(x₀) + 4f(x₁) + f(x₂)]</div>
+        <p style="margin-top:20px; color: gray;"><i>Press Escape to toggle interactive focus mode.</i></p>
     </div>
 
     <div id="game-ui" class="hidden">
-        <div class="click-area">
+        <div class="click-area" id="orbit-container">
             <div id="big-brain">🫠</div>
-            <h2 style="margin-top: 20px;">LAST BRAIN CELL</h2>
-            <p style="color: #64748b;">Click or Spacebar (Esc to Study)</p>
+            <div style="z-index:11; margin-top:20px; text-align:center;">
+                <h2 style="margin:0;">BRAIN TYCOON</h2>
+                <small style="color: #64748b;">ESC to Hide | SPACE to Click</small>
+            </div>
         </div>
 
         <div class="sidebar">
             <div class="stat-card">
-                <div>Brain Cells</div>
                 <div class="stat-val" id="score">0</div>
-                <div style="font-size: 12px; margin-top: 5px;">Production: <span id="bps">0</span>/s (+<span id="mult">0</span>% bonus)</div>
+                <div style="font-size: 12px; opacity:0.8;">Total Brain Cells</div>
+                <div style="font-size: 14px; margin-top:10px; color:var(--neon);">+<span id="bps">0</span>/sec</div>
             </div>
 
-            <h3 style="font-size: 16px; color: #94a3b8;">STATIONERY (Auto-click)</h3>
+            <h3 style="font-size: 14px; color: #6b7280; text-transform: uppercase;">Stationery (Auto-Items)</h3>
             <div id="shop-auto"></div>
 
-            <h3 style="font-size: 16px; color: #94a3b8; margin-top: 20px;">UPGRADES (Multipliers)</h3>
+            <h3 style="font-size: 14px; color: #6b7280; text-transform: uppercase; margin-top:20px;">Upgrades (Multipliers)</h3>
             <div id="shop-upgrades"></div>
         </div>
     </div>
 
     <script>
-        let state = JSON.parse(localStorage.getItem('idle_math_save')) || {
-            cells: 0, power: 1, autoBps: 0, multiplier: 1.0,
+        let state = JSON.parse(localStorage.getItem('galaxy_math_save')) || {
+            cells: 0, power: 1, autoBps: 0, mult: 1.0,
             items: { cursor: 0, eraser: 0, ruler: 0, protractor: 0 },
-            upgrades: { brain_exp: 0 },
+            upgrades: { coffee: 0, neural: 0, cheat: 0 },
             achieved: []
         };
 
         const config = {
             items: {
-                cursor: { name: 'Cursor', basePrice: 15, power: 0.1, desc: 'Taps the screen for you.' },
-                eraser: { name: 'Eraser', basePrice: 100, power: 1, desc: 'Erases bad thoughts.' },
-                ruler: { name: 'Steel Ruler', basePrice: 500, power: 5, desc: 'Measures your potential.' },
-                protractor: { name: 'Protractor', basePrice: 2500, power: 20, desc: 'Perfect angles for clicking.' }
+                cursor: { name: 'Cursor', icon: '🖱️', base: 15, p: 0.2, dist: 120, spd: '5s' },
+                eraser: { name: 'Eraser', icon: '🧽', base: 100, p: 1.5, dist: 180, spd: '8s' },
+                ruler: { name: 'Ruler', icon: '📏', base: 600, p: 8, dist: 240, spd: '12s' },
+                protractor: { name: 'Protractor', icon: '📐', base: 3000, p: 30, dist: 300, spd: '15s' }
             },
             upgrades: {
-                brain_exp: { name: 'Brain Expansion', basePrice: 1000, mult: 0.05, desc: '+5% Total Income' }
+                coffee: { name: 'Coffee Shot', base: 500, m: 0.05, desc: '+5% Production' },
+                neural: { name: 'Neural Link', base: 5000, m: 0.15, desc: '+15% Production' },
+                cheat: { name: 'Cheat Sheet', base: 200, powerAdd: 2, desc: '+2 Click Power' }
             }
         };
 
-        // Key Logic
-        let spacePressed = false;
         window.onkeydown = (e) => {
             if (e.key === 'Escape') {
                 document.getElementById('game-ui').classList.toggle('hidden');
-                document.body.style.background = document.getElementById('game-ui').classList.contains('hidden') ? '#f8f9fa' : '#0a0f1e';
+                document.body.style.background = document.getElementById('game-ui').classList.contains('hidden') ? '#fff' : '#050a14';
             }
-            if (e.code === 'Space' && !spacePressed && !document.getElementById('game-ui').classList.contains('hidden')) {
-                spacePressed = true;
+            if (e.code === 'Space' && !e.repeat && !document.getElementById('game-ui').classList.contains('hidden')) {
                 doClick();
             }
         };
-        window.onkeyup = (e) => { if (e.code === 'Space') spacePressed = false; };
 
         function doClick() {
-            state.cells += (state.power * state.multiplier);
+            state.cells += (state.power * state.mult);
             update();
         }
 
         function buyItem(id) {
-            let price = Math.floor(config.items[id].basePrice * Math.pow(1.15, state.items[id]));
+            let price = Math.floor(config.items[id].base * Math.pow(1.15, state.items[id]));
             if (state.cells >= price) {
                 state.cells -= price;
                 state.items[id]++;
-                state.autoBps += config.items[id].power;
+                state.autoBps += config.items[id].p;
+                addOrbitVisual(id);
                 update();
             }
         }
 
         function buyUpgrade(id) {
-            let price = Math.floor(config.upgrades[id].basePrice * Math.pow(2, state.upgrades[id]));
+            let price = Math.floor(config.upgrades[id].base * Math.pow(2.5, state.upgrades[id]));
             if (state.cells >= price) {
                 state.cells -= price;
                 state.upgrades[id]++;
-                state.multiplier += config.upgrades[id].mult;
+                if(config.upgrades[id].m) state.mult += config.upgrades[id].m;
+                if(config.upgrades[id].powerAdd) state.power += config.upgrades[id].powerAdd;
                 update();
             }
+        }
+
+        function addOrbitVisual(id) {
+            const container = document.getElementById('orbit-container');
+            const el = document.createElement('div');
+            el.className = 'orbit-item';
+            el.innerText = config.items[id].icon;
+            el.style.setProperty('--dist', config.items[id].dist + 'px');
+            el.style.setProperty('--speed', (Math.random() * 5 + 3) + 's');
+            // Random start position
+            el.style.animationDelay = `-${Math.random() * 10}s`;
+            container.appendChild(el);
         }
 
         function update() {
             document.getElementById('score').innerText = Math.floor(state.cells).toLocaleString();
-            document.getElementById('bps').innerText = (state.autoBps * state.multiplier).toFixed(1);
-            document.getElementById('mult').innerText = Math.round((state.multiplier - 1) * 100);
+            document.getElementById('bps').innerText = (state.autoBps * state.mult).toFixed(1);
             
-            // Render Shop
-            let autoHtml = '';
+            // Auto Items Shop
+            let html = '';
             for (let id in config.items) {
-                let price = Math.floor(config.items[id].basePrice * Math.pow(1.15, state.items[id]));
-                autoHtml += `
-                    <div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyItem('${id}')">
-                        <h4>${config.items[id].name} (x${state.items[id]})</h4>
-                        <p>${config.items[id].desc} | Cost: ${price}</p>
-                    </div>`;
+                let price = Math.floor(config.items[id].base * Math.pow(1.15, state.items[id]));
+                html += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyItem('${id}')">
+                    <h4>${config.items[id].name} <span>x${state.items[id]}</span></h4>
+                    <p>Price: ${price} | +${config.items[id].p}/s</p>
+                </div>`;
             }
-            document.getElementById('shop-auto').innerHTML = autoHtml;
+            document.getElementById('shop-auto').innerHTML = html;
 
-            let upgHtml = '';
+            // Upgrades Shop
+            let uHtml = '';
             for (let id in config.upgrades) {
-                let price = Math.floor(config.upgrades[id].basePrice * Math.pow(2, state.upgrades[id]));
-                upgHtml += `
-                    <div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyUpgrade('${id}')">
-                        <h4>${config.upgrades[id].name} LVL ${state.upgrades[id]}</h4>
-                        <p>${config.upgrades[id].desc} | Cost: ${price}</p>
-                    </div>`;
+                let price = Math.floor(config.upgrades[id].base * Math.pow(2.5, state.upgrades[id]));
+                uHtml += `<div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyUpgrade('${id}')">
+                    <h4>${config.upgrades[id].name} <span>Lvl ${state.upgrades[id]}</span></h4>
+                    <p>Price: ${price} | ${config.upgrades[id].desc}</p>
+                </div>`;
             }
-            document.getElementById('shop-upgrades').innerHTML = upgHtml;
+            document.getElementById('shop-upgrades').innerHTML = uHtml;
 
-            checkAch();
-            localStorage.setItem('idle_math_save', JSON.stringify(state));
+            localStorage.setItem('galaxy_math_save', JSON.stringify(state));
         }
 
-        function checkAch() {
-            if (state.cells >= 1000 && !state.achieved.includes('k')) {
-                state.achieved.push('k');
-                showAch("Smarty Pants: Reach 1,000 cells");
-            }
-        }
-
-        function showAch(txt) {
-            const el = document.getElementById('ach');
-            el.innerText = "🏆 " + txt;
-            el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 4000);
-        }
-
-        document.getElementById('big-brain').onclick = doClick;
-
-        // Game Loop
+        // Loop
         setInterval(() => {
             if (state.autoBps > 0) {
-                state.cells += (state.autoBps * state.multiplier) / 10;
+                state.cells += (state.autoBps * state.mult) / 10;
                 update();
             }
         }, 100);
 
+        // Load existing visuals
+        document.getElementById('big-brain').onclick = doClick;
+        for (let id in state.items) {
+            for(let i=0; i<state.items[id]; i++) addOrbitVisual(id);
+        }
         update();
     </script>
 </body>
