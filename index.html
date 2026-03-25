@@ -1,172 +1,197 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Advanced Math Analytics</title>
+    <title>Advanced Mathematics - Study Module</title>
     <script defer src="/_vercel/insights/script.js"></script>
     <style>
-        :root { --primary: #00f2ff; --bg: #0b0e14; --card: rgba(255, 255, 255, 0.05); }
-        body { font-family: 'Inter', sans-serif; background: #f8f9fa; margin: 0; transition: 0.3s; }
+        :root { --neon: #00f2ff; --bg: #0a0f1e; --card: #161e31; }
+        body { font-family: 'Inter', sans-serif; background: #f8f9fa; margin: 0; overflow: hidden; transition: 0.3s; }
         .hidden { display: none !important; }
-
-        /* Математический вид */
+        
+        /* Math Mode */
         #math-ui { padding: 60px; color: #2d3436; max-width: 800px; margin: auto; }
-        .formula { background: #eee; padding: 20px; border-radius: 10px; font-family: serif; font-style: italic; }
+        .math-box { border-left: 5px solid #0984e3; padding-left: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
-        /* Игровой интерфейс (Cyberpunk Glass) */
+        /* Game Mode */
         #game-ui { 
-            position: fixed; inset: 0; background: var(--bg); color: white;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background-image: radial-gradient(circle at center, #1e293b 0%, #0b0e14 100%);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: var(--bg); color: white; display: grid; grid-template-columns: 1fr 350px;
         }
-
-        .main-container { display: flex; gap: 40px; align-items: flex-start; }
-
-        /* Кликер */
-        .clicker-section { text-align: center; background: var(--card); padding: 40px; border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        #big-brain { font-size: 140px; cursor: pointer; user-select: none; transition: 0.1s; display: inline-block; filter: drop-shadow(0 0 30px var(--primary)); }
+        
+        .click-area { display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid #2d3436; }
+        #big-brain { font-size: 150px; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 30px var(--neon)); }
         #big-brain:active { transform: scale(0.9); }
 
-        /* Магазин и лидерборд */
-        .side-panel { width: 300px; display: flex; flex-direction: column; gap: 20px; }
-        .panel-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        
-        .shop-item { width: 100%; background: rgba(255,255,255,0.1); border: none; color: white; padding: 12px; margin: 5px 0; border-radius: 10px; cursor: pointer; text-align: left; transition: 0.2s; }
-        .shop-item:hover:not(:disabled) { background: var(--primary); color: black; }
-        .shop-item:disabled { opacity: 0.3; cursor: not-allowed; }
+        .sidebar { background: var(--card); padding: 20px; overflow-y: auto; }
+        .stat-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #2d3436; }
+        .stat-val { font-size: 24px; color: var(--neon); font-weight: bold; }
 
-        .leaderboard-list { list-style: none; padding: 0; margin: 10px 0; font-size: 14px; }
-        .leaderboard-list li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .you { color: var(--primary); font-weight: bold; }
-
-        #achievement {
-            position: fixed; bottom: 30px; right: 30px; background: var(--primary); color: #000;
-            padding: 15px 25px; border-radius: 15px; font-weight: bold; transform: translateX(200%); transition: 0.5s;
+        .item { 
+            background: #1e293b; border: 1px solid #334155; padding: 12px; border-radius: 10px; 
+            margin-bottom: 10px; cursor: pointer; transition: 0.2s;
         }
-        #achievement.show { transform: translateX(0); }
+        .item:hover:not(.disabled) { background: #334155; border-color: var(--neon); }
+        .item.disabled { opacity: 0.5; cursor: not-allowed; }
+        .item h4 { margin: 0; font-size: 14px; }
+        .item p { margin: 5px 0 0; font-size: 12px; color: #94a3b8; }
+
+        #ach {
+            position: fixed; bottom: 20px; right: 20px; background: var(--neon); color: #000;
+            padding: 15px 25px; border-radius: 10px; font-weight: bold; transform: translateX(200%); transition: 0.5s;
+        }
+        #ach.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <div id="achievement">🏆 Достижение!</div>
+    <div id="ach">🏆 Achievement Unlocked!</div>
 
-    <!-- ТИТУЛЬНЫЙ ЛИСТ (МАТЕМАТИКА) -->
     <div id="math-ui">
-        <h1 style="font-size: 48px;">Исследование функций</h1>
-        <p>В данном разделе рассматриваются логарифмические преобразования и их влияние на комплексные числа...</p>
-        <div class="formula">f(x) = log<sub>a</sub>(x) + √(π * sin²θ)</div>
-        <p>Нажмите <b>Esc</b> для открытия справочника (игры).</p>
+        <h1>Module 4: Differential Equations</h1>
+        <div class="math-box">
+            <p>A differential equation is a mathematical equation that relates some function with its derivatives. In applications, the functions usually represent physical quantities...</p>
+            <code>dy/dx = f(x, y)</code>
+        </div>
+        <p style="margin-top: 20px; color: #636e72; font-size: 13px;">Press F12 for developer console or check variables.</p>
     </div>
 
-    <!-- ИГРА -->
     <div id="game-ui" class="hidden">
-        <div class="main-container">
-            <!-- Магазин -->
-            <div class="side-panel">
-                <div class="panel-card">
-                    <h3>🛒 Магазин</h3>
-                    <button class="shop-item" id="btn-click">💪 Клик +1 (Цена: <span id="c-click">15</span>)</button>
-                    <button class="shop-item" id="btn-cursor">🖱️ Курсор +0.1/с (Цена: <span id="c-cursor">10</span>)</button>
-                    <button class="shop-item" id="btn-eraser">🧽 Ластик +0.5/с (Цена: <span id="c-eraser">50</span>)</button>
-                </div>
+        <div class="click-area">
+            <div id="big-brain">🫠</div>
+            <h2 style="margin-top: 20px;">LAST BRAIN CELL</h2>
+            <p style="color: #64748b;">Click or Spacebar (Esc to Study)</p>
+        </div>
+
+        <div class="sidebar">
+            <div class="stat-card">
+                <div>Brain Cells</div>
+                <div class="stat-val" id="score">0</div>
+                <div style="font-size: 12px; margin-top: 5px;">Production: <span id="bps">0</span>/s (+<span id="mult">0</span>% bonus)</div>
             </div>
 
-            <!-- Кликер -->
-            <div class="clicker-section">
-                <div style="font-size: 3rem; margin-bottom: 10px;">🧠 <span id="score">0</span></div>
-                <div style="color: var(--primary); margin-bottom: 30px;">Авто-сбор: <span id="bps">0</span>/сек</div>
-                <div id="big-brain">🫠</div>
-                <p style="margin-top: 30px; opacity: 0.5; font-size: 12px;">ESC - Вернуться к учебе | SPACE - Клик</p>
-            </div>
+            <h3 style="font-size: 16px; color: #94a3b8;">STATIONERY (Auto-click)</h3>
+            <div id="shop-auto"></div>
 
-            <!-- Лидерборд -->
-            <div class="side-panel">
-                <div class="panel-card">
-                    <h3>🏆 Топ Учеников</h3>
-                    <ul class="leaderboard-list">
-                        <li><span>1. Сын Маминой Подруги</span> <span>999k</span></li>
-                        <li class="you"><span>2. ВЫ (Легенда)</span> <span id="lb-score">0</span></li>
-                        <li><span>3. Ботаник из 9Б</span> <span>500</span></li>
-                        <li><span>4. Тот, кто списал</span> <span>120</span></li>
-                    </ul>
-                </div>
-            </div>
+            <h3 style="font-size: 16px; color: #94a3b8; margin-top: 20px;">UPGRADES (Multipliers)</h3>
+            <div id="shop-upgrades"></div>
         </div>
     </div>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('hyper_clicker_save')) || {
-            score: 0, power: 1, auto: 0, 
-            costs: { click: 15, cursor: 10, eraser: 50 },
+        let state = JSON.parse(localStorage.getItem('idle_math_save')) || {
+            cells: 0, power: 1, autoBps: 0, multiplier: 1.0,
+            items: { cursor: 0, eraser: 0, ruler: 0, protractor: 0 },
+            upgrades: { brain_exp: 0 },
             achieved: []
         };
 
-        let spacePressed = false;
-
-        const update = () => {
-            const s = Math.floor(data.score);
-            document.getElementById('score').innerText = s;
-            document.getElementById('lb-score').innerText = s;
-            document.getElementById('bps').innerText = data.auto.toFixed(1);
-            document.getElementById('c-click').innerText = data.costs.click;
-            document.getElementById('c-cursor').innerText = data.costs.cursor;
-            document.getElementById('c-eraser').innerText = data.costs.eraser;
-            
-            document.getElementById('btn-click').disabled = data.score < data.costs.click;
-            document.getElementById('btn-cursor').disabled = data.score < data.costs.cursor;
-            document.getElementById('btn-eraser').disabled = data.score < data.costs.eraser;
-
-            checkAchs();
-            localStorage.setItem('hyper_clicker_save', JSON.stringify(data));
+        const config = {
+            items: {
+                cursor: { name: 'Cursor', basePrice: 15, power: 0.1, desc: 'Taps the screen for you.' },
+                eraser: { name: 'Eraser', basePrice: 100, power: 1, desc: 'Erases bad thoughts.' },
+                ruler: { name: 'Steel Ruler', basePrice: 500, power: 5, desc: 'Measures your potential.' },
+                protractor: { name: 'Protractor', basePrice: 2500, power: 20, desc: 'Perfect angles for clicking.' }
+            },
+            upgrades: {
+                brain_exp: { name: 'Brain Expansion', basePrice: 1000, mult: 0.05, desc: '+5% Total Income' }
+            }
         };
 
-        const doClick = () => { data.score += data.power; update(); };
-
-        // Управление клавиатурой
+        // Key Logic
+        let spacePressed = false;
         window.onkeydown = (e) => {
-            if (e.key === "Escape") {
+            if (e.key === 'Escape') {
                 document.getElementById('game-ui').classList.toggle('hidden');
-                document.getElementById('math-ui').classList.toggle('hidden');
+                document.body.style.background = document.getElementById('game-ui').classList.contains('hidden') ? '#f8f9fa' : '#0a0f1e';
             }
-            if (e.code === "Space" && !spacePressed && !document.getElementById('game-ui').classList.contains('hidden')) {
+            if (e.code === 'Space' && !spacePressed && !document.getElementById('game-ui').classList.contains('hidden')) {
                 spacePressed = true;
                 doClick();
             }
         };
-        window.onkeyup = (e) => { if (e.code === "Space") spacePressed = false; };
+        window.onkeyup = (e) => { if (e.code === 'Space') spacePressed = false; };
 
-        document.getElementById('big-brain').onclick = doClick;
+        function doClick() {
+            state.cells += (state.power * state.multiplier);
+            update();
+        }
 
-        document.getElementById('btn-click').onclick = () => buy('click', 1, 0);
-        document.getElementById('btn-cursor').onclick = () => buy('cursor', 0, 0.1);
-        document.getElementById('btn-eraser').onclick = () => buy('eraser', 0, 0.5);
-
-        function buy(t, p, a) {
-            if (data.score >= data.costs[t]) {
-                data.score -= data.costs[t];
-                data.power += p;
-                data.auto += a;
-                data.costs[t] = Math.floor(data.costs[t] * 1.5);
+        function buyItem(id) {
+            let price = Math.floor(config.items[id].basePrice * Math.pow(1.15, state.items[id]));
+            if (state.cells >= price) {
+                state.cells -= price;
+                state.items[id]++;
+                state.autoBps += config.items[id].power;
                 update();
-                if (window.va) window.va('event', { name: `buy_${t}` });
             }
         }
 
-        setInterval(() => { if (data.auto > 0) { data.score += data.auto/10; update(); } }, 100);
+        function buyUpgrade(id) {
+            let price = Math.floor(config.upgrades[id].basePrice * Math.pow(2, state.upgrades[id]));
+            if (state.cells >= price) {
+                state.cells -= price;
+                state.upgrades[id]++;
+                state.multiplier += config.upgrades[id].mult;
+                update();
+            }
+        }
 
-        function checkAchs() {
-            if (data.score >= 1000 && !data.achieved.includes('1k')) {
-                data.achieved.push('1k');
-                showAch('Умнее калькулятора!');
+        function update() {
+            document.getElementById('score').innerText = Math.floor(state.cells).toLocaleString();
+            document.getElementById('bps').innerText = (state.autoBps * state.multiplier).toFixed(1);
+            document.getElementById('mult').innerText = Math.round((state.multiplier - 1) * 100);
+            
+            // Render Shop
+            let autoHtml = '';
+            for (let id in config.items) {
+                let price = Math.floor(config.items[id].basePrice * Math.pow(1.15, state.items[id]));
+                autoHtml += `
+                    <div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyItem('${id}')">
+                        <h4>${config.items[id].name} (x${state.items[id]})</h4>
+                        <p>${config.items[id].desc} | Cost: ${price}</p>
+                    </div>`;
+            }
+            document.getElementById('shop-auto').innerHTML = autoHtml;
+
+            let upgHtml = '';
+            for (let id in config.upgrades) {
+                let price = Math.floor(config.upgrades[id].basePrice * Math.pow(2, state.upgrades[id]));
+                upgHtml += `
+                    <div class="item ${state.cells < price ? 'disabled' : ''}" onclick="buyUpgrade('${id}')">
+                        <h4>${config.upgrades[id].name} LVL ${state.upgrades[id]}</h4>
+                        <p>${config.upgrades[id].desc} | Cost: ${price}</p>
+                    </div>`;
+            }
+            document.getElementById('shop-upgrades').innerHTML = upgHtml;
+
+            checkAch();
+            localStorage.setItem('idle_math_save', JSON.stringify(state));
+        }
+
+        function checkAch() {
+            if (state.cells >= 1000 && !state.achieved.includes('k')) {
+                state.achieved.push('k');
+                showAch("Smarty Pants: Reach 1,000 cells");
             }
         }
 
         function showAch(txt) {
-            const el = document.getElementById('achievement');
+            const el = document.getElementById('ach');
             el.innerText = "🏆 " + txt;
             el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 3000);
+            setTimeout(() => el.classList.remove('show'), 4000);
         }
+
+        document.getElementById('big-brain').onclick = doClick;
+
+        // Game Loop
+        setInterval(() => {
+            if (state.autoBps > 0) {
+                state.cells += (state.autoBps * state.multiplier) / 10;
+                update();
+            }
+        }, 100);
 
         update();
     </script>
