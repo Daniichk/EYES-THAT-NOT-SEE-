@@ -1,3 +1,37 @@
+// Ждем полной загрузки DOM, чтобы кнопки и элементы были доступны
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Проверка: загрузились ли данные
+    console.log("System initialized. Press ESC to toggle.");
+
+    window.addEventListener('keydown', (e) => {
+        // Проверяем клавишу Escape (Esc)
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            const gameUI = document.getElementById('game-ui');
+            const mathUI = document.getElementById('math-ui');
+
+            if (gameUI && mathUI) {
+                // Переключаем видимость
+                gameUI.classList.toggle('hidden');
+                
+                // Если игра открыта, меняем фон на темный, если нет - на белый (маскировка)
+                if (!gameUI.classList.contains('hidden')) {
+                    document.body.style.background = 'black';
+                } else {
+                    document.body.style.background = 'white';
+                }
+                
+                // Отправляем событие в Vercel Analytics (если подключено)
+                if (window.va) {
+                    window.va('event', { name: 'toggle_game' });
+                }
+            } else {
+                console.error("UI Elements not found! Check IDs in HTML.");
+            }
+        }
+    });
+});
+
 // --- ИНИЦИАЛИЗАЦИЯ ДАННЫХ ---
 let state = JSON.parse(localStorage.getItem('neu_v3')) || {
     cells: 0, auto: 0, mult: 1, prestige: 0, lastDaily: 0,
