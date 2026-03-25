@@ -2,95 +2,154 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Math Concept - Study Guide</title>
-    <script defer src="/_vercel/insights/script.js"></script> <!-- Vercel Analytics -->
+    <title>Math Concept - Pythagorean Theorem</title>
+    <script defer src="/_vercel/insights/script.js"></script>
     <style>
-        body { font-family: 'Courier New', Courier, monospace; background: #f0f0f0; margin: 0; overflow: hidden; }
-        /* Скучный математический вид */
-        #math-ui { padding: 50px; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f4f4; margin: 0; overflow: hidden; }
         .hidden { display: none !important; }
+        #math-ui { padding: 40px; color: #444; line-height: 1.6; }
 
-        /* Игровой интерфейс (Кликер) */
+        /* Игровой интерфейс */
         #game-ui { 
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: #1a1a1a; color: #00ff00; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #0f172a; color: #38bdf8; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        #big-brain { font-size: 100px; cursor: pointer; user-select: none; transition: transform 0.1s; }
-        #big-brain:active { transform: scale(0.9); }
-        .stats { font-size: 24px; margin: 20px; }
-        button { background: #333; color: #0f0; border: 1px solid #0f0; padding: 10px; cursor: pointer; }
+        #big-brain { font-size: 120px; cursor: pointer; user-select: none; transition: 0.1s; filter: drop-shadow(0 0 20px #38bdf8); }
+        #big-brain:active { transform: scale(0.85); }
+        
+        .stats-panel { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; min-width: 300px; }
+        .shop { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        
+        button { 
+            background: #1e293b; color: #38bdf8; border: 2px solid #38bdf8; padding: 10px 20px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        button:hover:not(:disabled) { background: #38bdf8; color: #0f172a; }
+        button:disabled { border-color: #475569; color: #475569; cursor: not-allowed; }
+
+        /* Достижения */
+        #achievement {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: #fbbf24; color: #000; padding: 15px 30px; border-radius: 50px;
+            font-weight: bold; transition: 0.5s; z-index: 1000; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        #achievement.show { top: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- ВИД ДЛЯ УЧИТЕЛЯ -->
+    <div id="achievement">🏆 Достижение разблокировано!</div>
+
     <div id="math-ui">
-        <h1>Теорема Пифагора и её применение</h1>
-        <p>Для прямоугольного треугольника выполняется: a² + b² = c²...</p>
-        <div id="calculator">
-            <input type="number" placeholder="Сторона A">
-            <input type="number" placeholder="Сторона B">
-            <button onclick="alert('Результат вычислен в логах')">Вычислить гипотенузу</button>
-        </div>
+        <h1>Принципы тригонометрии</h1>
+        <p>Синус угла — это отношение противолежащего катета к гипотенузе...</p>
+        <hr>
+        <p>Введите данные для проверки:</p>
+        <input type="text" placeholder="sin(x) = "> <button>Проверить</button>
     </div>
 
-    <!-- СКРЫТЫЙ КЛИКЕР -->
     <div id="game-ui" class="hidden">
-        <div class="stats">Нервные клетки: <span id="score">0</span></div>
+        <div class="stats-panel">
+            <div style="font-size: 2rem;">🧠 <span id="score">0</span></div>
+            <div style="font-size: 0.9rem; opacity: 0.7;">Авто-клик: <span id="bps">0</span>/сек</div>
+        </div>
+
         <div id="big-brain">🫠</div>
-        <div class="stats">Уровень клика: <span id="click-lvl">1</span></div>
-        <button id="upgrade-btn">Купить "Кофе" (Цена: <span id="cost">10</span>)</button>
-        <p style="font-size: 10px; color: #555;">Нажми Ctrl+Shift+6 чтобы спрятать</p>
+
+        <div class="shop" style="margin-top: 30px;">
+            <button id="btn-click">💪 Клик +1 (Цена: <span id="c-click">15</span>)</button>
+            <button id="btn-cursor">🖱️ Курсор +0.1/с (Цена: <span id="c-cursor">10</span>)</button>
+            <button id="btn-eraser">🧽 Ластик +0.5/с (Цена: <span id="c-eraser">50</span>)</button>
+        </div>
+        <p style="margin-top: 20px; font-size: 12px;">Ctrl+Shift+6 — Скрыть улики</p>
     </div>
 
     <script>
-        let score = parseInt(localStorage.getItem('brain_score')) || 0;
-        let power = parseInt(localStorage.getItem('brain_power')) || 1;
-        let cost = parseInt(localStorage.getItem('brain_cost')) || 10;
+        // Загрузка данных
+        let data = JSON.parse(localStorage.getItem('brain_save')) || {
+            score: 0, power: 1, auto: 0, 
+            costs: { click: 15, cursor: 10, eraser: 50 },
+            achievements: []
+        };
 
-        const mathUI = document.getElementById('math-ui');
-        const gameUI = document.getElementById('game-ui');
+        const updateData = () => {
+            document.getElementById('score').innerText = Math.floor(data.score);
+            document.getElementById('bps').innerText = data.auto.toFixed(1);
+            document.getElementById('c-click').innerText = data.costs.click;
+            document.getElementById('c-cursor').innerText = data.costs.cursor;
+            document.getElementById('c-eraser').innerText = data.costs.eraser;
+            
+            // Блокировка кнопок
+            document.getElementById('btn-click').disabled = data.score < data.costs.click;
+            document.getElementById('btn-cursor').disabled = data.score < data.costs.cursor;
+            document.getElementById('btn-eraser').disabled = data.score < data.costs.eraser;
+            
+            checkAchievements();
+            localStorage.setItem('brain_save', JSON.stringify(data));
+        };
 
-        // Секретная комбинация Ctrl + Shift + 6
-        window.addEventListener('keydown', (e) => {
+        // Логика клика
+        document.getElementById('big-brain').onclick = () => {
+            data.score += data.power;
+            updateData();
+        };
+
+        // Покупка улучшений
+        document.getElementById('btn-click').onclick = () => buy('click', 1, 0);
+        document.getElementById('btn-cursor').onclick = () => buy('cursor', 0, 0.1);
+        document.getElementById('btn-eraser').onclick = () => buy('eraser', 0, 0.5);
+
+        function buy(type, pAdd, aAdd) {
+            if (data.score >= data.costs[type]) {
+                data.score -= data.costs[type];
+                data.power += pAdd;
+                data.auto += aAdd;
+                data.costs[type] = Math.floor(data.costs[type] * 1.6);
+                updateData();
+                if (window.va) window.va('event', { name: `buy_${type}` });
+            }
+        }
+
+        // Авто-клик (каждые 100мс для плавности)
+        setInterval(() => {
+            if (data.auto > 0) {
+                data.score += data.auto / 10;
+                updateData();
+            }
+        }, 100);
+
+        // Система достижений
+        const achievementsList = [
+            { id: 'first_100', text: '🤓 Новичок (100 очков)', check: () => data.score >= 100 },
+            { id: 'auto_pro', text: '🤖 Авто-магнат (1.0/сек)', check: () => data.auto >= 1.0 },
+            { id: 'millionaire', text: '💎 Кликер-Миллионер', check: () => data.score >= 1000000 }
+        ];
+
+        function checkAchievements() {
+            achievementsList.forEach(ach => {
+                if (!data.achievements.includes(ach.id) && ach.check()) {
+                    data.achievements.push(ach.id);
+                    showAchievement(ach.text);
+                }
+            });
+        }
+
+        function showAchievement(text) {
+            const el = document.getElementById('achievement');
+            el.innerText = `🏆 ${text}`;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // Секретный вход
+        window.onkeydown = (e) => {
             if (e.ctrlKey && e.shiftKey && e.key === '6') {
-                gameUI.classList.toggle('hidden');
-                mathUI.classList.toggle('hidden');
-                // Vercel Analytics custom event
-                if (window.va) window.va('event', { name: 'secret_open' });
+                document.getElementById('game-ui').classList.toggle('hidden');
+                document.getElementById('math-ui').classList.toggle('hidden');
             }
-        });
+        };
 
-        // Логика кликера
-        document.getElementById('big-brain').addEventListener('click', () => {
-            score += power;
-            updateDisplay();
-            save();
-        });
-
-        document.getElementById('upgrade-btn').addEventListener('click', () => {
-            if (score >= cost) {
-                score -= cost;
-                power++;
-                cost = Math.floor(cost * 1.5);
-                updateDisplay();
-                save();
-            }
-        });
-
-        function updateDisplay() {
-            document.getElementById('score').innerText = score;
-            document.getElementById('click-lvl').innerText = power;
-            document.getElementById('cost').innerText = cost;
-        }
-
-        function save() {
-            localStorage.setItem('brain_score', score);
-            localStorage.setItem('brain_power', power);
-            localStorage.setItem('brain_cost', cost);
-        }
-
-        updateDisplay();
+        updateData();
     </script>
 </body>
 </html>
