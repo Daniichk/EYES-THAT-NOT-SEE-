@@ -1,24 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Llama Study & Clicker Pro</title>
+    <title>Llama Empire: Grand Edition</title>
     <style>
-        body { background: #1a1a2e; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; overflow: hidden; user-select: none; }
+        body { background: #0a0a12; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; user-select: none; }
         
-        /* Экран "Математика" (Прикрытие) */
+        /* Anti-Teacher Screen */
         #study-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #ffffff; color: #333; z-index: 1000; padding: 100px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: left; box-sizing: border-box;
         }
-        .formula { font-family: 'Times New Roman', serif; font-size: 28px; margin: 20px; color: #000; }
+        .formula { font-family: 'Times New Roman', serif; font-size: 26px; margin: 8px; color: #000; }
 
-        /* Игровое поле */
-        #game-container { position: relative; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: filter 0.5s; }
+        /* Main Game */
+        #game-container { position: relative; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* Центральная Лама */
         #llama-wrapper { 
             position: relative; width: 180px; height: 180px; cursor: pointer; 
             z-index: 10; font-size: 120px; display: flex; align-items: center; justify-content: center;
@@ -26,97 +24,102 @@
         }
         #llama-wrapper:active { transform: scale(0.9); }
 
-        /* Орбитальные элементы */
-        .orbit-item { position: absolute; font-size: 35px; pointer-events: none; z-index: 5; transition: top 0.1s, left 0.1s; }
+        .orbit-item { position: absolute; font-size: 30px; pointer-events: none; z-index: 5; }
 
-        /* Интерфейс */
-        #stats { 
-            position: absolute; top: 20px; background: rgba(0,0,0,0.7); 
-            padding: 20px; border-radius: 15px; border: 2px solid #f1c40f; text-align: center;
+        /* Floating +Numbers */
+        .click-num {
+            position: absolute; color: #f1c40f; font-weight: bold; font-size: 28px;
+            pointer-events: none; animation: floatUp 0.7s ease-out forwards; z-index: 100;
         }
-        .ui-panel { position: absolute; background: rgba(0,0,0,0.85); padding: 20px; border-radius: 12px; width: 240px; border: 1px solid #555; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
+
+        /* UI Panels */
+        .ui-panel { position: absolute; background: rgba(0,0,0,0.85); padding: 15px; border-radius: 12px; width: 220px; border: 1px solid #444; }
+        #stats-bar { position: absolute; top: 20px; background: rgba(0,0,0,0.7); padding: 10px 40px; border-radius: 50px; border: 2px solid #f1c40f; text-align: center; }
+        
         #casino { left: 20px; top: 20px; }
-        #shop { right: 20px; top: 20px; }
+        #shop { right: 20px; top: 20px; max-height: 50vh; overflow-y: auto; }
+        #inventory { right: 20px; bottom: 20px; height: 30vh; overflow-y: auto; border-color: #3498db; }
 
+        h3 { margin: 0 0 10px 0; color: #f1c40f; text-transform: uppercase; font-size: 13px; text-align: center; }
         button { 
-            width: 100%; padding: 10px; margin: 8px 0; cursor: pointer; 
-            background: #27ae60; color: white; border: none; border-radius: 6px; 
-            font-weight: bold; transition: 0.2s;
+            width: 100%; padding: 7px; margin: 3px 0; cursor: pointer; 
+            background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold;
         }
-        button:hover { background: #2ecc71; }
-        button:disabled { background: #7f8c8d; cursor: not-allowed; }
+        button:hover { opacity: 0.9; }
+        input { width: 90%; padding: 5px; margin-bottom: 5px; border-radius: 4px; border: none; text-align: center; display: block; margin: 0 auto; }
 
-        #roulette-visual { width: 100%; height: 20px; border: 2px solid gold; margin: 10px 0; background: #333; }
+        .btn-red { background: #e74c3c; } .btn-black { background: #2c3e50; } .btn-green { background: #2ecc71; }
+        #roulette-visual { width: 100%; height: 10px; border: 1px solid gold; margin: 8px 0; background: #222; }
 
-        /* Золотая Лама */
-        .golden-llama {
-            position: fixed; font-size: 80px; cursor: pointer; z-index: 500;
-            filter: drop-shadow(0 0 15px gold); animation: float 2s infinite alternate;
-        }
-        @keyframes float { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+        .inv-item { display: inline-block; font-size: 20px; margin: 2px; }
+        .golden-llama { position: fixed; font-size: 70px; cursor: pointer; z-index: 500; filter: drop-shadow(0 0 15px gold); animation: pulse 0.8s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-<!-- Режим учебы -->
 <div id="study-screen">
-    <h1 style="color: #2c3e50;">Theoretical Physics & Advanced Calculus</h1>
-    <div class="formula">∮ E · dA = Q / ε₀</div>
-    <div class="formula">iℏ ∂/∂t Ψ(r,t) = [ -ℏ²/2m ∇² + V(r,t) ] Ψ(r,t)</div>
-    <div class="formula">L = T - V = ½m(ẋ² + ẏ² + ż²) - V(x,y,z)</div>
-    <p style="color: #7f8c8d; margin-top: 50px;">Press <b>ESC</b> to resume "research"...</p>
+    <h1>Mathematical Physics: Analysis</h1>
+    <div class="formula">∇ · B = 0</div>
+    <div class="formula">x = (-b ± √(b² - 4ac)) / 2a</div>
+    <div class="formula">∫ sin(x) dx = -cos(x) + C</div>
+    <p><i>Focusing... Press <b>ESC</b> to return.</i></p>
 </div>
 
 <div id="game-container">
-    <div id="stats">
-        <h2 style="margin: 0; color: #f1c40f;">🦙 <span id="count">0</span></h2>
-        <small>LPS (в сек): <span id="lps">0</span></small><br>
-        <strong>Измерение: <span id="dim">1</span>/5</strong>
+    <div id="stats-bar">
+        <h2 style="margin: 0;">💰 <span id="count">0</span></h2>
+        <small>LPS: <span id="lps">0</span> | DIM: <span id="dim">1</span>/5</small>
     </div>
 
-    <!-- Казино -->
+    <!-- CASINO -->
     <div id="casino" class="ui-panel">
-        <h3 style="margin-top: 0;">🎰 Казино</h3>
-        Ставка:
-        <div style="display: flex; gap: 5px;">
-            <button onclick="setBet(10)">10%</button>
-            <button onclick="setBet(50)">50%</button>
-            <button onclick="setBet(100)">MAX</button>
+        <h3>🎰 Roulette</h3>
+        <input type="number" id="bet-input" placeholder="Amount">
+        <div style="display: flex; gap: 2px;">
+            <button onclick="setQ(10)">10%</button><button onclick="setQ(50)">50%</button><button onclick="setQ(100)">MAX</button>
         </div>
         <div id="roulette-visual"></div>
-        <button onclick="spin()" style="background: #e74c3c;">КРУТИТЬ</button>
+        <div style="display: flex; gap: 2px;">
+            <button class="btn-red" onclick="spin('red')">R</button>
+            <button class="btn-black" onclick="spin('black')">B</button>
+            <button class="btn-green" onclick="spin('green')">G</button>
+        </div>
+        <button id="daily-btn" onclick="claimDaily()" style="background: #f39c12; margin-top: 10px;">Daily Bonus</button>
     </div>
 
-    <!-- Центральная кнопка -->
-    <div id="llama-wrapper" onclick="clickLlama()">🦙</div>
-
-    <!-- Магазин -->
+    <!-- SHOP -->
     <div id="shop" class="ui-panel">
-        <h3 style="margin-top: 0;">📦 Магазин</h3>
-        <button id="btn-cursor" onclick="buyUpgrade('cursor')">Курсор (10) [0]</button>
-        <button id="btn-farm" onclick="buyUpgrade('farm')">Ферма (100) [0]</button>
-        <button id="btn-dim" onclick="changeDimension()" style="background: #8e44ad;">След. Мир (1000)</button>
-        <hr>
-        <button onclick="resetGame()" style="background: #34495e; font-size: 10px;">Сброс данных</button>
+        <h3>🛒 Market</h3>
+        <button id="btn-cursor" onclick="buy('cursor')">Cursor (10)</button>
+        <button id="btn-farm" onclick="buy('farm')">Farm (100)</button>
+        <button id="btn-car" onclick="buy('car')">Sport Car (500)</button>
+        <button id="btn-house" onclick="buy('house')">Villa (2500)</button>
+        <button id="btn-dim" onclick="changeDim()" style="background: #8e44ad;">Next Dim (10k)</button>
     </div>
+
+    <!-- INVENTORY -->
+    <div id="inventory" class="ui-panel">
+        <h3>🎒 Inventory</h3>
+        <div id="inv-list"></div>
+    </div>
+
+    <div id="llama-wrapper" onclick="clickLlama(event)">🦙</div>
+    
+    <button onclick="resetGame()" style="position:fixed; bottom:10px; left:10px; width:80px; font-size:9px; background:#333;">Reset</button>
 </div>
 
 <script>
-    // --- ПЕРЕМЕННЫЕ ---
-    let score = 0;
-    let lps = 0;
-    let dimension = 1;
-    let betPercent = 0;
-    let isGameActive = false;
-    let spacePressed = false;
-    let lastDaily = 0;
-
+    let score = 0, lps = 0, dimension = 1, isGameActive = false, spacePressed = false, lastDaily = 0;
+    
     const upgrades = {
-        cursor: { count: 0, cost: 10, power: 0.1, emoji: '🖱️', radius: 130, speed: 0.05 },
-        farm: { count: 0, cost: 100, power: 1, emoji: '🏠', radius: 190, speed: 0.02 }
+        cursor: { count: 0, cost: 10, power: 0.1, emoji: '🖱️', r: 120, s: 0.05 },
+        farm: { count: 0, cost: 100, power: 1, emoji: '🚜', r: 170, s: 0.02 },
+        car: { count: 0, cost: 500, power: 5, emoji: '🏎️', r: 230, s: 0.03 },
+        house: { count: 0, cost: 2500, power: 25, emoji: '🏰', r: 290, s: 0.015 }
     };
 
-    // --- ЛОГИКА ЭКРАНОВ (ESC) ---
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Escape') {
             isGameActive = !isGameActive;
@@ -124,134 +127,128 @@
         }
     });
 
-    // --- КЛИКИ (Мышь + Пробел) ---
-    function clickLlama() {
+    function clickLlama(e) {
         if (!isGameActive) return;
         score += dimension;
+        showNum(e ? e.clientX : window.innerWidth/2, e ? e.clientY : window.innerHeight/2);
         updateUI();
+    }
+
+    function showNum(x, y) {
+        const n = document.createElement('div');
+        n.className = 'click-num'; n.innerText = '+' + dimension;
+        n.style.left = x + 'px'; n.style.top = y + 'px';
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), 700);
     }
 
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' && !spacePressed && isGameActive) {
-            spacePressed = true;
-            clickLlama();
+            spacePressed = true; clickLlama();
         }
     });
     window.addEventListener('keyup', (e) => { if (e.code === 'Space') spacePressed = false; });
 
-    // --- МАГАЗИН ---
-    function buyUpgrade(id) {
-        let upg = upgrades[id];
-        if (score >= upg.cost) {
-            score -= upg.cost;
-            upg.count++;
-            lps += upg.power;
-            upg.cost = Math.floor(upg.cost * 1.15);
-            createOrbitElement(upg);
-            updateUI();
+    function buy(id) {
+        let u = upgrades[id];
+        if (score >= u.cost) {
+            score -= u.cost; u.count++; lps += u.power;
+            u.cost = Math.floor(u.cost * 1.3);
+            createOrbit(u); updateUI(); updateInv();
         }
     }
 
-    function createOrbitElement(upg) {
+    function createOrbit(u) {
         const el = document.createElement('div');
-        el.className = 'orbit-item';
-        el.innerText = upg.emoji;
+        el.className = 'orbit-item'; el.innerText = u.emoji;
         document.getElementById('llama-wrapper').appendChild(el);
-        
-        let angle = Math.random() * Math.PI * 2;
-        let s = upg.speed * (0.8 + Math.random() * 0.4);
-
-        function animate() {
-            angle += s;
-            el.style.left = (Math.cos(angle) * upg.radius + 75) + 'px';
-            el.style.top = (Math.sin(angle) * upg.radius + 75) + 'px';
-            requestAnimationFrame(animate);
+        let angle = Math.random() * 6.28, speed = u.s * (0.8 + Math.random() * 0.4);
+        function anim() {
+            angle += speed;
+            el.style.left = (Math.cos(angle) * u.r + 75) + 'px';
+            el.style.top = (Math.sin(angle) * u.r + 75) + 'px';
+            requestAnimationFrame(anim);
         }
-        animate();
+        anim();
     }
 
-    // --- КАЗИНО ---
-    function setBet(p) { betPercent = p; }
-    function spin() {
-        if (betPercent === 0 || score <= 0) return;
-        let amount = Math.floor(score * (betPercent / 100));
-        let win = Math.random() > 0.65;
-        document.getElementById('roulette-visual').style.background = win ? '#2ecc71' : '#e74c3c';
-        score = win ? score + amount : score - amount;
+    function setQ(p) { document.getElementById('bet-input').value = Math.floor(score * (p/100)); }
+    
+    function spin(choice) {
+        let amt = parseInt(document.getElementById('bet-input').value);
+        if (isNaN(amt) || amt <= 0 || amt > score) return;
+        let rand = Math.random() * 100, res = "";
+        if (rand < 47) res = "red"; else if (rand < 94) res = "black"; else res = "green";
+        document.getElementById('roulette-visual').style.background = (res==="red"?"#e74c3c":(res==="black"?"#2c3e50":"#2ecc71"));
+        if (choice === res) {
+            let m = (choice === "green") ? 14 : 2;
+            score += amt * (m - 1); alert("WIN! Result: " + res.toUpperCase());
+        } else { score -= amt; alert("LOST! Result: " + res.toUpperCase()); }
         updateUI();
     }
 
-    // --- МИРЫ ---
-    function changeDimension() {
-        if (score >= 1000 && dimension < 5) {
-            score -= 1000;
-            dimension++;
-            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 50}deg)`;
-            updateUI();
-        }
+    function claimDaily() {
+        if (Date.now() - lastDaily > 86400000) {
+            score += 1000 * dimension; lastDaily = Date.now();
+            alert("Daily Bonus Claimed!"); updateUI();
+        } else alert("Not ready yet!");
     }
 
-    // --- БОНУСЫ (Золотая лама + Награда) ---
-    function spawnGoldenLlama() {
+    function spawnGolden() {
         if (!isGameActive) return;
         const g = document.createElement('div');
-        g.className = 'golden-llama';
-        g.innerText = '✨🦙';
-        g.style.left = Math.random() * 80 + '%';
-        g.style.top = Math.random() * 80 + '%';
+        g.className = 'golden-llama'; g.innerText = '✨🦙';
+        g.style.left = Math.random() * 80 + '%'; g.style.top = Math.random() * 80 + '%';
         g.onclick = () => { score += 100; g.remove(); updateUI(); };
         document.body.appendChild(g);
-        setTimeout(() => g.remove(), 8000);
+        setTimeout(() => g.remove(), 10000);
     }
 
-    function checkDaily() {
-        const now = Date.now();
-        if (now - lastDaily > 86400000) {
-            let reward = 500 * dimension;
-            score += reward;
-            lastDaily = now;
-            alert(`Ежедневный бонус: +${reward} лам!`);
+    function changeDim() {
+        if (score >= 10000 && dimension < 5) {
+            score -= 10000; dimension++;
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
             updateUI();
         }
     }
 
-    // --- СОХРАНЕНИЕ ---
-    function save() {
-        const data = { score, dimension, lps, upgrades, lastDaily };
-        localStorage.setItem('llama_save', JSON.stringify(data));
-    }
-
-    function load() {
-        const saved = localStorage.getItem('llama_save');
-        if (saved) {
-            const d = JSON.parse(saved);
-            score = d.score; dimension = d.dimension; lps = d.lps;
-            lastDaily = d.lastDaily || 0;
-            Object.assign(upgrades, d.upgrades);
-            for(let k in upgrades) {
-                for(let i=0; i<upgrades[k].count; i++) createOrbitElement(upgrades[k]);
+    function updateInv() {
+        const list = document.getElementById('inv-list');
+        list.innerHTML = "";
+        for (let k in upgrades) {
+            if (upgrades[k].count > 0) {
+                list.innerHTML += `<div class="inv-item">${upgrades[k].emoji} x${upgrades[k].count}</div> `;
             }
-            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 50}deg)`;
         }
-        updateUI();
-        checkDaily();
     }
 
-    function resetGame() { if(confirm("Сбросить всё?")) { localStorage.clear(); location.reload(); } }
+    function save() { localStorage.setItem('llama_final_v5', JSON.stringify({ score, dimension, lps, upgrades, lastDaily })); }
+    function load() {
+        const s = JSON.parse(localStorage.getItem('llama_final_v5'));
+        if (s) {
+            score = s.score; dimension = s.dimension; lps = s.lps; lastDaily = s.lastDaily || 0;
+            Object.assign(upgrades, s.upgrades);
+            for(let k in upgrades) for(let i=0; i<upgrades[k].count; i++) createOrbit(upgrades[k]);
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
+        }
+        updateUI(); updateInv();
+    }
+
+    function resetGame() { if(confirm("Reset all?")) { localStorage.clear(); location.reload(); } }
 
     function updateUI() {
         document.getElementById('count').innerText = Math.floor(score);
         document.getElementById('lps').innerText = lps.toFixed(1);
         document.getElementById('dim').innerText = dimension;
-        document.getElementById('btn-cursor').innerText = `Курсор (${upgrades.cursor.cost}) [${upgrades.cursor.count}]`;
-        document.getElementById('btn-farm').innerText = `Ферма (${upgrades.farm.cost}) [${upgrades.farm.count}]`;
+        document.getElementById('btn-cursor').innerText = `Cursor (${upgrades.cursor.cost})`;
+        document.getElementById('btn-farm').innerText = `Farm (${upgrades.farm.cost})`;
+        document.getElementById('btn-car').innerText = `Car (${upgrades.car.cost})`;
+        document.getElementById('btn-house').innerText = `House (${upgrades.house.cost})`;
     }
 
-    // ТАЙМЕРЫ
     setInterval(() => { if(isGameActive) score += lps/10; updateUI(); }, 100);
     setInterval(save, 5000);
-    setInterval(spawnGoldenLlama, 600000); // 10 минут
-
+    setInterval(spawnGolden, 600000);
     window.onload = load;
 </script>
 </body>
