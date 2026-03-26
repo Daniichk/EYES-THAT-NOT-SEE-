@@ -3,370 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LLAMA VANGUARD: NEON EMPIRE</title>
+    <title>LLAMA VANGUARD: OVERLORD EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon: #00ffbd;
-            --accent: #ff007a;
-            --gold: #ffcc00;
-            --bg: #050508;
-            --glass: rgba(15, 15, 25, 0.7);
-            --border: rgba(255, 255, 255, 0.08);
-            --glow: 0 0 20px rgba(0, 255, 189, 0.3);
+            --neon: #00ffbd; --accent: #ff007a; --gold: #ffcc00; --bg: #050508;
+            --glass: rgba(15, 15, 25, 0.8); --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0; background: var(--bg); color: white;
             font-family: 'Inter', sans-serif; overflow: hidden;
             height: 100vh; display: flex; flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 0, 122, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 255, 189, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 50% 50%, #111 0%, #050508 100%);
         }
 
-        /* HEADER SECTION */
-        header {
-            padding: 30px; text-align: center; z-index: 100;
-            background: linear-gradient(to bottom, rgba(5,5,8,1), transparent);
+        /* ACHIEVEMENT NOTIFICATION */
+        #notif-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
         }
+        .notif {
+            background: var(--glass); border: 2px solid var(--neon);
+            padding: 15px 25px; border-radius: 15px; display: flex; align-items: center;
+            gap: 15px; animation: slideIn 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            box-shadow: 0 0 30px rgba(0, 255, 189, 0.3);
+        }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
+        .notif-icon { font-size: 2rem; }
+        .notif-text b { display: block; color: var(--neon); font-family: 'Orbitron'; font-size: 0.8rem; }
+
+        /* HEADER & SCORE */
+        header { padding: 40px 20px 20px; text-align: center; position: relative; }
         #rank-badge { 
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            color: var(--gold); padding: 6px 18px; border-radius: 8px;
-            font-size: 0.7rem; font-weight: 900; font-family: 'Orbitron';
-            letter-spacing: 2px; text-transform: uppercase;
-            box-shadow: var(--glow); margin-bottom: 10px; display: inline-block;
+            background: var(--accent); color: white; padding: 5px 20px; border-radius: 50px;
+            font-family: 'Orbitron'; font-size: 0.7rem; font-weight: 900;
+            box-shadow: 0 0 20px var(--accent); margin-bottom: 15px; display: inline-block;
         }
         #score {
-            font-family: 'Orbitron', sans-serif; font-size: 4.5rem; margin: 10px 0;
-            font-weight: 900; letter-spacing: -2px;
-            background: linear-gradient(180deg, #fff 30%, var(--neon) 100%);
+            font-family: 'Orbitron'; font-size: 5rem; margin: 0; font-weight: 900;
+            background: linear-gradient(180deg, #fff, var(--neon));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(0, 255, 189, 0.2));
+            filter: drop-shadow(0 0 20px rgba(0,255,189,0.3));
         }
 
-        /* MAIN GRID */
-        .container {
-            display: grid; grid-template-columns: 350px 1fr 350px;
-            gap: 25px; padding: 0 30px 30px; height: calc(100vh - 200px);
-            max-width: 1800px; margin: 0 auto; width: 100%; box-sizing: border-box;
+        /* COMBO SYSTEM */
+        #combo-meter {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            top: 160px; font-family: 'Orbitron'; color: var(--accent);
+            font-size: 1.5rem; font-weight: 900; opacity: 0; transition: 0.2s;
         }
 
+        /* LAYOUT */
+        .main-grid {
+            display: grid; grid-template-columns: 340px 1fr 340px;
+            gap: 20px; padding: 0 20px 20px; height: calc(100vh - 220px);
+            width: 100%; box-sizing: border-box;
+        }
         .panel {
-            background: var(--glass); backdrop-filter: blur(30px);
-            border: 1px solid var(--border); border-radius: 24px;
-            padding: 25px; display: flex; flex-direction: column;
-            overflow: hidden; box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 30px;
+            padding: 20px; overflow: hidden; display: flex; flex-direction: column;
         }
+        .scrollable { overflow-y: auto; flex: 1; padding-right: 5px; }
+        .scrollable::-webkit-scrollbar { width: 0; }
 
-        .scrollable { overflow-y: auto; flex: 1; padding-right: 10px; }
-        .scrollable::-webkit-scrollbar { width: 4px; }
-        .scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        /* AURA SYSTEM (THE FLEX) */
+        #llama-zone { display: flex; justify-content: center; align-items: center; position: relative; }
+        #aura {
+            position: absolute; width: 350px; height: 350px; border-radius: 50%;
+            background: radial-gradient(circle, var(--neon) 0%, transparent 70%);
+            opacity: 0.2; filter: blur(40px); transition: 1s; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
+        #llama-main { font-size: 180px; cursor: pointer; user-select: none; z-index: 10; transition: 0.05s; }
+        #llama-main:active { transform: scale(0.85) rotate(5deg); }
 
-        h2 { font-family: 'Orbitron'; font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 20px; color: rgba(255,255,255,0.5); }
-
-        /* CARDS & GAMES */
+        /* SHOP & ACHIEVEMENTS */
         .card {
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            border-radius: 16px; padding: 20px; margin-bottom: 15px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 15px; padding: 15px; margin-bottom: 10px; cursor: pointer;
+            transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
         }
-        .card:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .card:hover { border-color: var(--neon); background: rgba(0,255,189,0.05); }
+        .locked { opacity: 0.2; cursor: not-allowed; }
 
         .btn {
-            background: var(--neon); color: #000; border: none; padding: 14px;
-            border-radius: 12px; font-weight: 800; cursor: pointer; font-family: 'Orbitron';
-            width: 100%; transition: 0.2s; font-size: 0.8rem;
-            box-shadow: 0 4px 15px rgba(0, 255, 189, 0.2);
-        }
-        .btn:hover { transform: scale(1.02); box-shadow: 0 6px 25px rgba(0, 255, 189, 0.4); }
-        .btn:active { transform: scale(0.98); }
-        .btn-risk { background: linear-gradient(45deg, var(--accent), #ff00ff); color: white; }
-
-        /* CENTER AREA */
-        #stage { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; 
-        }
-        #llama-wrapper {
-            position: relative; transition: 0.3s;
-        }
-        #llama-main { 
-            font-size: 200px; cursor: pointer; user-select: none; z-index: 5;
-            filter: drop-shadow(0 0 50px rgba(0, 255, 189, 0.1));
-            animation: breathe 4s ease-in-out infinite;
-        }
-        @keyframes breathe {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.02); }
+            background: var(--neon); color: #000; border: none; padding: 15px;
+            border-radius: 15px; font-weight: 900; cursor: pointer; font-family: 'Orbitron';
+            width: 100%; box-shadow: 0 10px 20px rgba(0,255,189,0.2);
         }
 
-        /* TOWER GAME UI */
-        .tower-grid { display: grid; gap: 6px; margin-bottom: 15px; }
-        .tower-row { 
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; 
-            opacity: 0.3; transition: 0.3s;
+        /* TEXT FLOAT ANIMATION */
+        .f-text {
+            position: fixed; pointer-events: none; font-family: 'Orbitron';
+            font-weight: 900; z-index: 1000; animation: float 0.7s ease-out forwards;
         }
-        .tower-row.active { opacity: 1; transform: scale(1.02); }
-        .tower-cell { 
-            background: rgba(255,255,255,0.05); height: 30px; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: bold;
-        }
+        @keyframes float { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-120px) scale(1.5); } }
 
-        /* SHOP ITEMS */
-        .shop-item {
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px;
-            margin-bottom: 10px; cursor: pointer; border: 1px solid transparent;
-            transition: 0.2s;
-        }
-        .shop-item:hover { background: rgba(0, 255, 189, 0.05); border-color: var(--neon); }
-        .shop-icon { font-size: 1.5rem; margin-right: 15px; }
-        .shop-info b { font-family: 'Orbitron'; font-size: 0.8rem; display: block; }
-        .shop-info small { color: rgba(255,255,255,0.5); }
-
-        /* FLOATING TEXT */
-        .tap-text {
-            position: fixed; pointer-events: none; color: var(--neon);
-            font-family: 'Orbitron'; font-weight: 900; z-index: 1000;
-            animation: floatUp 0.8s ease-out forwards;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-100px); opacity: 0; }
-        }
+        .frenzy { animation: shake 0.1s infinite !important; color: var(--accent) !important; }
+        @keyframes shake { 0% { margin-left: 0; } 25% { margin-left: 5px; } 50% { margin-left: 0; } 75% { margin-left: -5px; } }
     </style>
 </head>
 <body>
 
-<header>
-    <div id="rank-badge">Tier: Broke Student</div>
+<div id="notif-container"></div>
+
+<header id="header">
+    <div id="rank-badge">UNRANKED</div>
     <h1 id="score">0</h1>
-    <div style="font-family:'Orbitron'; color:var(--neon); font-size:0.7rem; letter-spacing:2px;">
-        GENERATING <span id="lps-val">0</span> LP/S
+    <div id="combo-meter">COMBO X1</div>
+    <div style="font-family:'Orbitron'; color:var(--neon); font-size:0.7rem; margin-top:10px;">
+        POWER: <span id="lps-val">0</span> LP/S | MULT: <span id="mult-val">1.0</span>x
     </div>
 </header>
 
-<div class="container">
+<div class="main-grid">
     <div class="panel">
-        <h2>🎰 GAMBLE CORE</h2>
+        <h2 style="font-family:'Orbitron'; font-size:0.8rem; color:var(--accent);">🎰 RISK ZONE</h2>
         <div class="scrollable">
-            <div class="card">
-                <span style="font-size:0.6rem; color:var(--accent); font-weight:900; letter-spacing:1px;">🗼 HIGH RISK TOWER</span>
-                <div id="tower" class="tower-grid">
-                    <div class="tower-row" id="tr-4"><div class="tower-cell">x12</div><div class="tower-cell">x12</div><div class="tower-cell">x12</div></div>
-                    <div class="tower-row" id="tr-3"><div class="tower-cell">x5</div><div class="tower-cell">x5</div><div class="tower-cell">x5</div></div>
-                    <div class="tower-row" id="tr-2"><div class="tower-cell">x3</div><div class="tower-cell">x3</div><div class="tower-cell">x3</div></div>
-                    <div class="tower-row" id="tr-1"><div class="tower-cell">x2</div><div class="tower-cell">x2</div><div class="tower-cell">x2</div></div>
-                    <div class="tower-row" id="tr-0" class="active"><div class="tower-cell">x1.5</div><div class="tower-cell">x1.5</div><div class="tower-cell">x1.5</div></div>
-                </div>
-                <button class="btn btn-risk" onclick="playTower()">STAKE 500 🦙</button>
+            <button class="btn" style="background:var(--accent); color:white; margin-bottom:15px;" onclick="allIn()">ALL IN (50/50)</button>
+            <div class="card" onclick="gambleRoulette('red')" style="border-left:5px solid #ff0055;">
+                <b>RED NEON</b> <span>x2.5</span>
             </div>
-
-            <div class="card">
-                <span style="font-size:0.6rem; color:var(--neon); font-weight:900; letter-spacing:1px;">🔴 NEON ROULETTE</span>
-                <div id="roulette-res" style="font-size:2rem; margin:15px; text-align:center;">❓</div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn" style="background:#ff3366; color:white;" onclick="gambleRoulette('red')">RED</button>
-                    <button class="btn" style="background:#1a1a1a; color:white; border:1px solid #333;" onclick="gambleRoulette('black')">BLACK</button>
-                </div>
+            <div class="card" onclick="playTower()">
+                <b>TOWER CLIMB</b> <span>x50</span>
             </div>
-
-            <div class="card">
-                <span style="font-size:0.6rem; color:var(--gold); font-weight:900; letter-spacing:1px;">🃏 LLAMA JACK</span>
-                <div id="bj-status" style="font-size:0.7rem; margin:15px 0; text-align:center; color:rgba(255,255,255,0.6);">
-                    Dealer stands on 17. 3x Payout.
-                </div>
-                <button class="btn" style="background:var(--gold)" onclick="playBlackjack()">BET 1,000 🦙</button>
-            </div>
+        </div>
+        <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:10px;">
+            <h2 style="font-family:'Orbitron'; font-size:0.7rem;">🏆 ACHIEVEMENTS</h2>
+            <div id="ach-list" class="scrollable" style="height:150px;"></div>
         </div>
     </div>
 
-    <div id="stage">
-        <div id="llama-wrapper">
-            <div id="llama-main" onclick="tap(event)">🦙</div>
-        </div>
-        <div style="margin-top:40px; text-align:center;">
-            <button class="btn btn-risk" style="width:260px; padding:20px; font-size:1rem;" onclick="allIn()">ALL IN</button>
-            <p style="font-size:0.6rem; opacity:0.4; margin-top:15px; letter-spacing:1px;">50% CHANCE TO DOUBLE OR WIPE</p>
-        </div>
+    <div id="llama-zone">
+        <div id="aura"></div>
+        <div id="llama-main" onclick="tap(event)">🦙</div>
     </div>
 
     <div class="panel">
-        <h2>⚡ ENHANCEMENTS</h2>
-        <div class="scrollable">
-            <div id="shop-list"></div>
-        </div>
-        
-        <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border);">
-            <h2>📈 EVOLUTION</h2>
-            <div id="rank-progress" style="background:rgba(255,255,255,0.03); border-radius:12px; padding:15px;">
-                <div style="font-size:0.6rem; color:rgba(255,255,255,0.5); margin-bottom:5px;">NEXT RANK AT:</div>
-                <div id="next-rank-val" style="font-family:'Orbitron'; color:var(--gold); font-size:0.8rem;">1,000</div>
-            </div>
-        </div>
+        <h2 style="font-family:'Orbitron'; font-size:0.8rem; color:var(--neon);">⚡ UPGRADES</h2>
+        <div id="shop-list" class="scrollable"></div>
     </div>
 </div>
 
 <script>
     let state = {
-        score: 0,
-        lps: 0,
-        rankIndex: 0
+        score: 0, lps: 0, mult: 1, 
+        clicks: 0, combo: 0, lastClick: 0,
+        unlockedAch: []
     };
 
-    const ranks = [
-        { n: "Broke Student", req: 0 },
-        { n: "Street Hustler", req: 1000 },
-        { n: "Crypto Bro", req: 10000 },
-        { n: "Casino Manager", req: 50000 },
-        { n: "Llama Whale", req: 250000 },
-        { n: "Vanguard Alpha", req: 1000000 },
-        { n: "Intergalactic God", req: 10000000 }
+    const upgrades = [
+        { id: 0, n: "Click Booster", c: 15, p: 0.5, i: "🖱️" },
+        { id: 1, n: "Llama Bot", c: 100, p: 4, i: "🤖" },
+        { id: 2, n: "Neon Farm", c: 1000, p: 25, i: "🏭" },
+        { id: 3, n: "Hype Reactor", c: 10000, p: 150, i: "🚀" },
+        { id: 4, n: "God Mode AI", c: 100000, p: 1200, i: "🌌" }
     ];
 
-    const upgrades = [
-        { n: "Neural Link", c: 20, p: 1, i: "🖱️" },
-        { n: "Quantum Rig", c: 150, p: 10, i: "💻" },
-        { n: "Llama Farm", c: 1000, p: 50, i: "⛓️" },
-        { n: "Galactic AI", c: 5000, p: 200, i: "🧠" },
-        { n: "Time Warp", c: 25000, p: 1000, i: "⏳" }
+    const achs = [
+        { id: 'c100', n: "Fast Hands", d: "100 Clicks", req: () => state.clicks >= 100, bonus: 0.1 },
+        { id: 's1000', n: "First K", d: "Reach 1,000", req: () => state.score >= 1000, bonus: 0.2 },
+        { id: 's1m', n: "Millionaire", d: "Reach 1M", req: () => state.score >= 1000000, bonus: 1.0 },
+        { id: 'cb50', n: "Insane Combo", d: "Reach x50 Combo", req: () => state.combo >= 50, bonus: 0.5 }
+    ];
+
+    const ranks = [
+        { n: "BROKE", req: 0, color: "#aaa" },
+        { n: "HUSTLER", req: 1000, color: "#00ffbd" },
+        { n: "BALLER", req: 50000, color: "#ff007a" },
+        { n: "OVERLORD", req: 1000000, color: "#ffcc00" },
+        { n: "LLAMA GOD", req: 100000000, color: "#fff" }
     ];
 
     function tap(e) {
-        state.score += 1;
-        spawnText(e.clientX, e.clientY, "+1");
-        // Эффект нажатия
-        document.getElementById('llama-wrapper').style.transform = "scale(0.9)";
-        setTimeout(() => document.getElementById('llama-wrapper').style.transform = "scale(1)", 50);
+        let now = Date.now();
+        if (now - state.lastClick < 300) {
+            state.combo++;
+        } else {
+            state.combo = 0;
+        }
+        state.lastClick = now;
+
+        // Combo Logic
+        let comboMult = 1 + (state.combo * 0.05);
+        let gain = 1 * state.mult * comboMult;
+        state.score += gain;
+        state.clicks++;
+
+        // Frenzy mode
+        if (state.combo > 20) {
+            document.getElementById('header').classList.add('frenzy');
+            document.getElementById('combo-meter').style.opacity = 1;
+            document.getElementById('combo-meter').innerText = `COMBO X${state.combo} (HOT!)`;
+        } else {
+            document.getElementById('header').classList.remove('frenzy');
+            document.getElementById('combo-meter').style.opacity = state.combo > 5 ? 1 : 0;
+            document.getElementById('combo-meter').innerText = `COMBO X${state.combo}`;
+        }
+
+        spawnText(e.clientX, e.clientY, `+${gain.toFixed(1)}`);
         update();
     }
 
     function update() {
         document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('lps-val').innerText = state.lps.toLocaleString();
-        
-        let currentRank = ranks[0];
-        for(let r of ranks) { if(state.score >= r.req) currentRank = r; }
-        document.getElementById('rank-badge').innerText = `Tier: ${currentRank.n}`;
-        
-        const next = ranks[ranks.indexOf(currentRank) + 1] || {n: "MAX", req: "∞"};
-        document.getElementById('next-rank-val').innerText = `${next.req.toLocaleString()} (${next.n})`;
+        document.getElementById('lps-val').innerText = (state.lps * state.mult).toFixed(1);
+        document.getElementById('mult-val').innerText = state.mult.toFixed(1);
 
-        const shopHTML = upgrades.map((u, i) => `
-            <div class="shop-item" onclick="buy(${i})">
-                <div style="display:flex; align-items:center;">
-                    <div class="shop-icon">${u.i}</div>
-                    <div class="shop-info">
-                        <b>${u.n}</b>
-                        <small>Cost: ${u.c.toLocaleString()}</small>
-                    </div>
-                </div>
-                <div style="color:var(--neon); font-family:'Orbitron'; font-weight:900;">+${u.p}</div>
+        // Update Rank & Aura
+        let r = ranks[0];
+        ranks.forEach(rank => { if(state.score >= rank.req) r = rank; });
+        const rb = document.getElementById('rank-badge');
+        rb.innerText = r.n;
+        rb.style.background = r.color;
+        document.getElementById('aura').style.background = `radial-gradient(circle, ${r.color} 0%, transparent 70%)`;
+
+        // Achievements check
+        achs.forEach(a => {
+            if(!state.unlockedAch.includes(a.id) && a.req()) {
+                state.unlockedAch.push(a.id);
+                state.mult += a.bonus;
+                notify(a.n, a.d);
+            }
+        });
+
+        // Render Lists
+        renderShop();
+        renderAchs();
+    }
+
+    function renderShop() {
+        document.getElementById('shop-list').innerHTML = upgrades.map(u => `
+            <div class="card ${state.score < u.c ? 'locked' : ''}" onclick="buy(${u.id})">
+                <div><b>${u.i} ${u.n}</b><br><small>Cost: ${u.c.toLocaleString()}</small></div>
+                <div style="color:var(--neon); font-weight:900;">+${u.p}</div>
             </div>
         `).join('');
-        document.getElementById('shop-list').innerHTML = shopHTML;
     }
 
-    function buy(i) {
-        if(state.score >= upgrades[i].c) {
-            state.score -= upgrades[i].c;
-            state.lps += upgrades[i].p;
-            upgrades[i].c = Math.floor(upgrades[i].c * 1.5);
+    function renderAchs() {
+        document.getElementById('ach-list').innerHTML = achs.map(a => `
+            <div class="card" style="opacity: ${state.unlockedAch.includes(a.id) ? 1 : 0.1}">
+                <div style="font-size:0.7rem;"><b>${a.n}</b><br>${a.d}</div>
+                <div style="color:var(--gold)">+${(a.bonus*100)}%</div>
+            </div>
+        `).join('');
+    }
+
+    function buy(id) {
+        let u = upgrades[id];
+        if(state.score >= u.c) {
+            state.score -= u.c;
+            state.lps += u.p;
+            u.c = Math.floor(u.c * 1.5);
             update();
         }
     }
 
-    function gambleRoulette(choice) {
-        if(state.score < 100) return alert("Insufficient funds!");
-        state.score -= 100;
-        const res = Math.random() > 0.5 ? 'red' : 'black';
-        const display = document.getElementById('roulette-res');
-        display.innerText = res === 'red' ? '🔴' : '⚫';
-        display.style.transform = "scale(1.5)";
-        setTimeout(() => display.style.transform = "scale(1)", 200);
-
-        if(choice === res) {
-            state.score += 250;
-            spawnText(window.innerWidth/2, window.innerHeight/2, "+250", "var(--neon)");
-        }
-        update();
+    function notify(title, desc) {
+        const container = document.getElementById('notif-container');
+        const n = document.createElement('div');
+        n.className = 'notif';
+        n.innerHTML = `<div class="notif-icon">🏆</div><div class="notif-text"><b>${title}</b>${desc}</div>`;
+        container.appendChild(n);
+        setTimeout(() => n.remove(), 4000);
     }
 
-    function playTower() {
-        if(state.score < 500) return alert("Min bet 500!");
-        state.score -= 500;
-        let level = 0;
-        resetTower();
-        const interval = setInterval(() => {
-            if(level > 4) { 
-                clearInterval(interval); state.score += 25000; 
-                alert("🏆 TOWER MASTER! +25,000"); update(); return; 
-            }
-            const row = document.getElementById(`tr-${level}`);
-            row.classList.add('active');
-            if(Math.random() > 0.45) {
-                row.style.background = "rgba(0,255,189,0.15)";
-                level++;
-            } else {
-                clearInterval(interval);
-                row.style.background = "rgba(255,0,122,0.2)";
-                setTimeout(resetTower, 1000);
-                update();
-            }
-        }, 600);
+    function spawnText(x, y, txt) {
+        const div = document.createElement('div');
+        div.className = 'f-text';
+        div.style.left = x + 'px'; div.style.top = y + 'px';
+        div.style.color = state.combo > 20 ? 'var(--accent)' : 'var(--neon)';
+        div.innerText = txt;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 700);
     }
 
-    function resetTower() {
-        for(let i=0; i<5; i++) {
-            const row = document.getElementById(`tr-${i}`);
-            row.classList.remove('active');
-            row.style.background = "none";
-        }
-    }
-
-    function playBlackjack() {
-        if(state.score < 1000) return alert("Min bet 1000!");
-        state.score -= 1000;
-        const player = Math.floor(Math.random() * 10) + 14;
-        const dealer = Math.floor(Math.random() * 10) + 14;
-        if(player <= 21 && (player > dealer || dealer > 21)) {
-            state.score += 3000;
-            alert(`WIN! You: ${player} | Dealer: ${dealer}`);
-        } else {
-            alert(`LOSS! You: ${player} | Dealer: ${dealer}`);
-        }
-        update();
-    }
-
+    // GAMBLE
     function allIn() {
-        if(state.score <= 0) return;
-        if(confirm("THIS WILL WIPE YOUR PROGRESS OR DOUBLE IT. CONTINUE?")) {
+        if(confirm("ALL IN? Real legends don't hesitate.")) {
             if(Math.random() > 0.5) {
                 state.score *= 2;
-                alert("GODLIKE! DOUBLE REWARD.");
+                notify("JACKPOT", "Doubled your life savings!");
             } else {
                 state.score = 0;
-                alert("WIPED.");
+                notify("RIP", "Back to zero, kid.");
             }
             update();
         }
-    }
-
-    function spawnText(x, y, txt, color) {
-        const div = document.createElement('div');
-        div.className = 'tap-text';
-        div.innerText = txt;
-        if(color) div.style.color = color;
-        div.style.left = x + 'px';
-        div.style.top = y + 'px';
-        document.body.appendChild(div);
-        setTimeout(() => div.remove(), 800);
     }
 
     setInterval(() => {
-        state.score += state.lps / 10;
+        state.score += (state.lps * state.mult) / 10;
         update();
     }, 100);
 
