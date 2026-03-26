@@ -12,6 +12,7 @@
             --accent: #00ff87; /* Neo Mint */
             --accent-glow: rgba(0, 255, 135, 0.3);
             --glass: rgba(255, 255, 255, 0.03);
+            --nav-glass: rgba(10, 10, 10, 0.7);
             --border: rgba(255, 255, 255, 0.08);
             --text-dim: #94a3b8;
         }
@@ -35,6 +36,49 @@
             z-index: -1;
             opacity: 0.4;
         }
+
+        /* --- GLASS NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1100px;
+            height: 60px;
+            background: var(--nav-glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .logo { 
+            font-weight: 900; 
+            font-size: 1rem; 
+            letter-spacing: -0.5px; 
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links { display: flex; gap: 25px; }
+        .nav-links a { 
+            color: var(--text-dim); 
+            text-decoration: none; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--accent); }
 
         /* Контейнер контента */
         .content-wrapper {
@@ -147,7 +191,7 @@
         }
 
         .member-name { font-weight: 600; font-size: 1.2rem; display: block; }
-        .member-role { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .member-role { color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; display: block; }
 
         /* --- JOIN BUTTON CARD --- */
         .cta-card {
@@ -160,6 +204,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            padding: 40px;
         }
 
         .cta-card::after {
@@ -200,6 +245,16 @@
 
 <div class="bg-glow"></div>
 
+<!-- NAVIGATION -->
+<nav>
+    <div class="logo">HEALTH COLLECTIVE</div>
+    <div class="nav-links">
+        <a href="#mission">Mission</a>
+        <a href="#team">Team</a>
+        <a href="https://classroom.google.com" target="_blank">Classroom</a>
+    </div>
+</nav>
+
 <div class="content-wrapper">
     
     <!-- HERO -->
@@ -225,20 +280,20 @@
         <h2 style="font-size: 2.5rem; margin-bottom: 40px; font-weight: 200;">The <span style="color: var(--accent); font-weight: 700;">Founders</span></h2>
         <div class="team-grid">
             <div class="member-card">
-                <span class="member-name">Alex Gomez Lobo</span>
-                <span class="member-role">Campaign Director</span>
+                <span class="member-name">Alex Gomez-Lobo</span>
+                <span class="member-role">Editor</span>
             </div>
             <div class="member-card">
                 <span class="member-name">Pablo Ferriol Pareja</span>
-                <span class="member-role">Growth Strategist</span>
+                <span class="member-role">Second editor and writer</span>
             </div>
             <div class="member-card">
-                <span class="member-name">Vicente Linguesa</span>
-                <span class="member-role">Creative Lead</span>
+                <span class="member-name">Vicente Linuesa Higón</span>
+                <span class="member-role">Script writer helper</span>
             </div>
             <div class="member-card">
                 <span class="member-name">Daniil Derzhakov</span>
-                <span class="member-role">Digital Architect</span>
+                <span class="member-role">Script writer</span>
             </div>
 
             <!-- КНОПКА JOIN THE MOVEMENT -->
@@ -255,7 +310,7 @@
     <!-- FOOTER -->
     <section class="footer">
         <p class="footer-info">Fortune 500 Health Collective // Encrypted Access</p>
-        <p style="font-size: 0.6rem; color: #475569; margin-top: 10px;">SHIFT + CTRL + 6 TO BYPASS</p>
+        <p style="font-size: 0.6rem; color: #475569; margin-top: 10px;">MADE BY DANIIL DERZHAKOV // SHIFT + CTRL + 6</p>
     </section>
 
 </div>
@@ -278,7 +333,6 @@
     // 2. Секретный переход в игру (Shift + Ctrl + 6)
     window.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.shiftKey && (e.key === '6' || e.code === 'Digit6')) {
-            // Звуковой эффект
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = ctx.createOscillator();
@@ -290,7 +344,6 @@
                 osc.start(); osc.stop(ctx.currentTime + 0.1);
             } catch(err) {}
 
-            // Эффект исчезновения страницы
             document.body.style.transition = 'opacity 0.5s ease';
             document.body.style.opacity = '0';
             
@@ -303,3 +356,4 @@
 
 </body>
 </html>
+sdf
