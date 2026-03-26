@@ -3,191 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LLAMA VANGUARD: THE FINAL IMPERIUM</title>
+    <title>LLAMA VANGUARD: INFINITY IMPERIUM</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon: #00ffcc; --accent: #ff0055; --gold: #ffd700; --bg: #050508;
             --glass: rgba(15, 15, 25, 0.85); --border: rgba(0, 255, 204, 0.2);
-            --crt-blue: rgba(18, 16, 16, 0.1);
         }
-
         body {
             margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif;
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
             background-image: radial-gradient(circle at 50% 100%, #1a0033 0%, var(--bg) 80%);
         }
-
-        /* CRT Effect Overlay */
         body::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
             z-index: 999; background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
-
-        header { padding: 20px; text-align: center; z-index: 100; position: relative; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
+        header { padding: 20px; text-align: center; z-index: 100; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
         #score {
-            font-family: 'Orbitron'; font-size: 4.5rem; margin: 0; font-weight: 900;
+            font-family: 'Orbitron'; font-size: 4rem; margin: 0; font-weight: 900;
             background: linear-gradient(180deg, #fff, var(--neon));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 20px rgba(0,255,204,0.5));
         }
-
         .main-grid {
             display: grid; grid-template-columns: 420px 1fr 420px; gap: 20px;
             padding: 20px; height: calc(100vh - 160px); box-sizing: border-box; z-index: 10;
         }
-
         .panel {
             background: var(--glass); border: 1px solid var(--border); border-radius: 24px;
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 0 40px rgba(0,0,0,1); position: relative;
+            display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,1);
         }
-
         .tab-nav { display: flex; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border); }
         .tab-btn {
-            flex: 1; padding: 18px; background: none; border: none; color: #555;
-            font-family: 'Orbitron'; font-weight: 900; font-size: 0.85rem; cursor: pointer; transition: 0.3s;
+            flex: 1; padding: 15px; background: none; border: none; color: #555;
+            font-family: 'Orbitron'; font-weight: 900; font-size: 0.75rem; cursor: pointer; transition: 0.3s;
         }
         .tab-btn.active { color: var(--neon); background: rgba(0,255,204,0.1); box-shadow: inset 0 -3px 0 var(--neon); }
+        .tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; scroll-behavior: smooth; }
-        .tab-content.active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        #stage { display: flex; justify-content: center; align-items: center; position: relative; }
+        #llama-main { font-size: 180px; cursor: pointer; user-select: none; z-index: 10; transition: 0.1s; }
+        #llama-main:active { transform: scale(0.9); }
+        #aura { position: absolute; width: 450px; height: 450px; border-radius: 50%; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); opacity: 0.1; filter: blur(50px); animation: pulse 4s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
 
-        /* Stage */
-        #stage { display: flex; justify-content: center; align-items: center; position: relative; flex-direction: column; }
-        #aura {
-            position: absolute; width: 500px; height: 500px; border-radius: 50%;
-            background: radial-gradient(circle, var(--neon) 0%, transparent 70%);
-            opacity: 0.1; filter: blur(60px); animation: pulse 4s infinite alternate; pointer-events: none;
-        }
-        @keyframes pulse { from { transform: scale(1); opacity: 0.1; } to { transform: scale(1.2); opacity: 0.2; } }
-        #llama-main { font-size: 190px; cursor: pointer; user-select: none; z-index: 10; transition: 0.1s; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
-        #llama-main:active { transform: scale(0.85) rotate(5deg); }
-
-        /* Games UI */
-        .game-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .game-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
         .btn {
-            background: var(--neon); color: #000; border: none; padding: 14px;
-            border-radius: 12px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
-            width: 100%; transition: 0.2s; text-transform: uppercase; margin-top: 10px;
+            background: var(--neon); color: #000; border: none; padding: 12px;
+            border-radius: 10px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
+            width: 100%; transition: 0.2s; text-transform: uppercase; margin-top: 8px;
         }
-        .btn:hover { filter: brightness(1.2); transform: translateY(-2px); }
-        .btn:active { transform: translateY(0); }
-        .btn-risk { background: var(--accent); color: white; }
-
-        /* Specific Game Styles */
-        #crash-chart { height: 100px; border-bottom: 2px solid var(--neon); position: relative; overflow: hidden; margin: 15px 0; background: rgba(0,255,204,0.02); }
-        #crash-line { position: absolute; bottom: 0; left: 0; width: 0%; height: 3px; background: var(--neon); box-shadow: 0 0 15px var(--neon); transition: 0.1s linear; }
-        .mines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
-        .mine-cell { background: #1a1a25; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; border: 1px solid transparent; }
-        .mine-cell:hover { border-color: var(--neon); background: rgba(0,255,204,0.1); }
-        .mine-cell.revealed { background: rgba(0,255,204,0.3); pointer-events: none; }
-        .mine-cell.bomb { background: var(--accent); animation: shake 0.3s; }
-
-        /* Cards */
         .card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex;
-            align-items: center; cursor: pointer; transition: 0.3s;
+            border-radius: 16px; padding: 12px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; transition: 0.2s;
         }
-        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.08); transform: scale(1.02); }
-        .card.locked { opacity: 0.3; filter: blur(2px); pointer-events: none; }
-        .b-icon { font-size: 2.2rem; margin-right: 15px; }
+        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.08); }
+        .card.locked { opacity: 0.25; filter: grayscale(1); pointer-events: none; }
+        .b-icon { font-size: 2rem; margin-right: 15px; }
         .b-info { flex: 1; }
-        .b-info b { display: block; font-family: 'Orbitron'; color: var(--neon); font-size: 0.9rem; }
-        .b-info small { color: #888; font-size: 0.75rem; }
-        .b-lvl { color: var(--gold); font-family: 'Orbitron'; font-size: 0.8rem; text-align: right; }
+        .b-info b { display: block; font-family: 'Orbitron'; color: var(--neon); font-size: 0.85rem; }
+        .b-lvl { color: var(--gold); font-family: 'Orbitron'; font-size: 0.75rem; text-align: right; }
 
-        /* Achievements Map */
-        .ach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .ach-node { background: #0a0a0f; border: 2px solid #1a1a25; border-radius: 16px; padding: 15px 5px; text-align: center; transition: 0.5s; opacity: 0.4; }
-        .ach-node.unlocked { border-color: var(--gold); background: rgba(255,215,0,0.05); opacity: 1; box-shadow: 0 0 20px rgba(255,215,0,0.15); }
-
-        /* Global Effects */
-        .float-text { position: fixed; font-family: 'Orbitron'; font-weight: 900; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 1000; text-shadow: 0 0 10px currentColor; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-120px) scale(1.6); } }
-        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
+        /* Roulette Animation */
+        #roulette-display { height: 60px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 10px; margin: 10px 0; overflow: hidden; position: relative; }
+        .roulette-ball { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 15px var(--gold); display: flex; align-items: center; justify-content: center; color: black; font-weight: 900; }
 
         #notif {
-            position: fixed; top: -120px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.95); border: 2px solid var(--gold); padding: 20px 40px;
-            border-radius: 60px; display: flex; align-items: center; gap: 20px; z-index: 10000;
-            transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 50px rgba(255,215,0,0.3);
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.95); border: 2px solid var(--gold); padding: 15px 30px;
+            border-radius: 50px; z-index: 10000; transition: 0.5s; display: flex; align-items: center; gap: 15px;
         }
-        #notif.show { top: 40px; }
-
-        .rank-bar { font-family: 'Orbitron'; font-size: 0.7rem; letter-spacing: 3px; background: #111; padding: 4px 12px; border-radius: 10px; color: #555; display: inline-block; margin-bottom: 10px; }
-        #rank-name { color: var(--gold); font-weight: 900; }
+        #notif.show { top: 30px; }
+        .float-text { position: fixed; font-family: 'Orbitron'; font-weight: 900; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 1000; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
     </style>
 </head>
 <body>
 
-<div id="notif">
-    <span id="n-icon" style="font-size:2.5rem">🏆</span>
-    <div style="font-family:'Orbitron'">
-        <b id="n-title" style="color:var(--gold); font-size:1.1rem">ACHIEVEMENT UNLOCKED</b><br>
-        <span id="n-desc" style="color:#aaa">Вы стали легендой</span>
-    </div>
-</div>
+<div id="notif"><span id="n-icon" style="font-size:2rem">🏆</span> <div style="font-family:'Orbitron'"><b id="n-title" style="color:var(--gold)">ACHIEVEMENT</b><br><span id="n-desc">Unlocked!</span></div></div>
 
 <header>
-    <div class="rank-bar">STATUS: <span id="rank-name">UNRANKED</span></div>
+    <div style="font-family:'Orbitron'; font-size:0.7rem; color:#555; letter-spacing:2px;">STATUS: <span id="rank-name" style="color:var(--gold)">STREET RAT</span></div>
     <h1 id="score">0</h1>
-    <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--neon); opacity:0.8">
-        DPS: <span id="lps-val">0</span> | MULTI: x<span id="click-mult">1.0</span>
-    </div>
+    <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--neon)">LPS: <span id="lps-val">0</span> | MULTI: x<span id="click-mult">1.0</span></div>
 </header>
 
 <div class="main-grid">
     <div class="panel">
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('left', 't-casino')">🎰 NEON CASINO</button>
-            <button class="tab-btn" onclick="switchTab('left', 't-stats')">📊 STATISTICS</button>
+            <button class="tab-btn active" onclick="switchTab('left', 't-casino')">🎰 CASINO</button>
+            <button class="tab-btn" onclick="switchTab('left', 't-items')">📱 GADGETS</button>
         </div>
-        
         <div id="t-casino" class="tab-content active">
+            <div class="game-box">
+                <b style="font-family:'Orbitron'; color:var(--accent)">🔴 CYBER ROULETTE</b>
+                <div id="roulette-display"><div class="roulette-ball" id="r-ball">?</div></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+                    <button class="btn" style="background:#ff0055; color:white;" onclick="playRoulette('red')">RED (x2)</button>
+                    <button class="btn" style="background:#333; color:white;" onclick="playRoulette('black')">BLACK (x2)</button>
+                </div>
+                <button class="btn" style="background:var(--gold);" onclick="playRoulette('green')">GREEN (x14)</button>
+            </div>
             <div class="game-box" id="crash-box">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <b style="font-family:'Orbitron'; color:var(--neon)">🚀 CRASH.EXE</b>
-                    <span id="crash-mult" style="font-family:'Orbitron'; font-size:1.5rem">1.00x</span>
-                </div>
-                <div id="crash-chart"><div id="crash-line"></div></div>
-                <button id="btn-crash" class="btn" onclick="startCrash()">BET 1,000</button>
-                <button id="btn-cashout" class="btn btn-risk" style="display:none;" onclick="cashOut()">CASH OUT</button>
-            </div>
-
-            <div class="game-box">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <b style="font-family:'Orbitron'; color:var(--accent)">💣 MINES</b>
-                    <span id="mines-mult" style="font-family:'Orbitron'; color:var(--gold)">x1.0</span>
-                </div>
-                <div class="mines-grid" id="mines-grid"></div>
-                <button id="btn-start-mines" class="btn" onclick="startMines()">STAKE 5,000</button>
-                <button id="btn-cashout-mines" class="btn" style="display:none; background:var(--gold);" onclick="cashoutMines()">TAKE PROFIT</button>
-            </div>
-
-            <div class="game-box">
-                <b style="font-family:'Orbitron'; color:var(--gold)">🎰 CYBER SLOTS</b>
-                <div style="display:flex; justify-content:center; gap:15px; margin:15px 0;">
-                    <div class="slot-reel" id="s1" style="background:#111; width:60px; height:60px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:2rem; border:1px solid var(--border)">🍒</div>
-                    <div class="slot-reel" id="s2" style="background:#111; width:60px; height:60px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:2rem; border:1px solid var(--border)">🍒</div>
-                    <div class="slot-reel" id="s3" style="background:#111; width:60px; height:60px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:2rem; border:1px solid var(--border)">🍒</div>
-                </div>
-                <button class="btn" onclick="spinSlots()">SPIN (1,000)</button>
+                <div style="display:flex; justify-content:space-between; font-family:'Orbitron';"><b>🚀 CRASH</b> <span id="crash-mult">1.00x</span></div>
+                <div style="height:4px; background:rgba(255,255,255,0.1); margin:10px 0; border-radius:2px;"><div id="crash-line" style="height:100%; width:0%; background:var(--neon); transition: 0.1s linear;"></div></div>
+                <button id="btn-crash" class="btn" onclick="startCrash()">BET 5,000</button>
+                <button id="btn-cashout" class="btn" style="display:none; background:var(--accent); color:white;" onclick="cashOut()">CASH OUT</button>
             </div>
         </div>
-
-        <div id="t-stats" class="tab-content">
-            <div style="font-family:'Orbitron'; font-size:0.9rem;">
-                <p>All clicks: <span id="st-clicks">0</span></p>
-                <p>Wins in casino: <span id="st-win">0</span></p>
-                <p>Spend time: <span id="st-time">0</span> сек</p>
-                <button class="btn" onclick="resetGame()" style="margin-top:50px; background:#222; color:#555; font-size:0.6rem;">HARD RESET PROGRESS</button>
-            </div>
-        </div>
+        <div id="t-items" class="tab-content"><div id="item-list"></div></div>
     </div>
 
     <div id="stage">
@@ -197,269 +125,174 @@
 
     <div class="panel">
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="switchTab('right', 't-upgrades')">⚡ UPGRADES</button>
-            <button class="tab-btn" onclick="switchTab('right', 't-biz')">🏢 EMPIRE</button>
-            <button class="tab-btn" onclick="switchTab('right', 't-map')">🏆 MAP</button>
+            <button class="tab-btn active" onclick="switchTab('right', 't-biz')">🏢 EMPIRE</button>
+            <button class="tab-btn" onclick="switchTab('right', 't-skins')">🎭 SKINS</button>
+            <button class="tab-btn" onclick="switchTab('right', 't-assets')">🏰 LUXURY</button>
         </div>
-
-        <div id="t-upgrades" class="tab-content active"><div id="up-list"></div></div>
-        <div id="t-biz" class="tab-content"><div id="biz-list"></div></div>
-        <div id="t-map" class="tab-content"><div class="ach-grid" id="ach-map"></div></div>
+        <div id="t-biz" class="tab-content active"><div id="biz-list"></div></div>
+        <div id="t-skins" class="tab-content"><div id="skin-list"></div></div>
+        <div id="t-assets" class="tab-content"><div id="asset-list"></div></div>
     </div>
 </div>
 
 <script>
     // --- DATABASE ---
-    const upgData = [
-        { id: 'u1', n: "Click Stimulator", c: 100, p: 1, i: "💉" },
-        { id: 'u2', n: "Cyber Hand", c: 1000, p: 10, i: "🦾" },
-        { id: 'u3', n: "Neural Link", c: 10000, p: 120, i: "🧠" },
-        { id: 'u4', n: "Quantum Clicker", c: 100000, p: 1500, i: "🌌" }
-    ];
-
     const bizData = [
-        { id: 'b1', n: "Lemonade Server", c: 1500, lps: 25, i: "🥤" },
-        { id: 'b2', n: "Shadow Broker", c: 20000, lps: 300, i: "🕸️" },
-        { id: 'b3', n: "Crypto Farm", c: 150000, lps: 2500, i: "⛏️" },
-        { id: 'b4', n: "Stanford AI Lab", c: 2000000, lps: 45000, i: "🎓" },
-        { id: 'b5', n: "Intergalactic Corp", c: 50000000, lps: 1000000, i: "🌍" }
+        { id: 'b1', n: "Lemonade Stand", c: 1000, lps: 15, i: "🥤" },
+        { id: 'b2', n: "Cyber Cafe", c: 15000, lps: 250, i: "☕" },
+        { id: 'b3', n: "Crypto Mine", c: 250000, lps: 4500, i: "⛏️" },
+        { id: 'b4', n: "Stanford Lab", c: 5000000, lps: 85000, i: "🎓" },
+        { id: 'b5', n: "Moon Resort", c: 150000000, lps: 2000000, i: "🚀" },
+        { id: 'b6', n: "Galaxy Bank", c: 2000000000, lps: 50000000, i: "🏦" }
     ];
 
-    const achData = [
-        { id: 'a1', n: "HUSTLE", req: () => state.score >= 1000, i: "🔥" },
-        { id: 'a2', n: "GAMBLER", req: () => state.stats.casinoWins > 5, i: "🃏" },
-        { id: 'a3', n: "ACADEMIC", req: () => state.biz.b4 > 0, i: "🏛️" },
-        { id: 'a4', n: "TYCOON", req: () => state.score >= 10000000, i: "💰" },
-        { id: 'a5', n: "GOD MODE", req: () => state.biz.b5 > 5, i: "👑" },
-        { id: 'a6', n: "RISK TAKER", req: () => state.stats.maxMult > 5, i: "🚀" }
+    const itemData = [
+        { id: 'i1', n: "Nokia 3310", c: 500, p: 1, i: "📱" },
+        { id: 'i2', n: "iPhone 15 Pro", c: 10000, p: 25, i: "📲" },
+        { id: 'i3', n: "Neural Phone", c: 200000, p: 600, i: "🧠" },
+        { id: 'i4', n: "Quantum Link", c: 5000000, p: 15000, i: "📡" }
     ];
 
-    const ranks = [
-        { req: 0, n: "NOBODY", c: "#555" },
-        { req: 10000, n: "STREET RAT", c: "#00ffcc" },
-        { req: 250000, n: "CORPORATE", c: "#00aaff" },
-        { req: 1000000, n: "OVERLORD", c: "#ff0055" },
-        { req: 100000000, n: "ASCENDED", c: "#ffd700" }
+    const luxuryData = [
+        { id: 'l1', n: "Tesla Model S", c: 100000, b: 1.1, i: "🏎️" },
+        { id: 'l2', n: "Cyber Truck", c: 500000, b: 1.25, i: "🛻" },
+        { id: 'l3', n: "Bugatti Chiron", c: 3000000, b: 1.5, i: "🚗" },
+        { id: 'l4', n: "Neon Penthouse", c: 15000000, b: 2.0, i: "🏙️" },
+        { id: 'l5', n: "Private Island", c: 250000000, b: 5.0, i: "🏝️" },
+        { id: 'l6', n: "Cyber Castle", c: 5000000000, b: 10.0, i: "🏰" }
     ];
 
-    // --- GAME STATE ---
+    const skinData = [
+        { id: 's0', n: "Llama", c: 0, i: "🦙" },
+        { id: 's1', n: "Cool Cat", c: 50000, i: "🐱" },
+        { id: 's2', n: "Robo Llama", c: 500000, i: "🤖" },
+        { id: 's3', n: "Alien Boss", c: 10000000, i: "👽" },
+        { id: 's4', n: "Demon King", c: 500000000, i: "👹" },
+        { id: 's5', n: "Golden Idol", c: 5000000000, i: "🗿" }
+    ];
+
+    // --- STATE ---
     let state = {
-        score: 0, mult: 1, bizLps: 0,
-        upgrades: {}, biz: {}, achs: [],
-        stats: { clicks: 0, casinoWins: 0, time: 0, maxMult: 1 }
+        score: 0, mult: 1, bizLps: 0, globalMult: 1, currentSkin: "🦙",
+        upgrades: {}, biz: {}, luxury: {}, skins: ['s0'],
+        stats: { wins: 0, spins: 0 }
     };
 
-    // --- SYSTEM FUNCTIONS ---
-    function saveGame() {
-        localStorage.setItem('llamaImperium_Final', JSON.stringify(state));
-    }
-
-    function loadGame() {
-        const saved = localStorage.getItem('llamaImperium_Final');
-        if (saved) {
-            state = JSON.parse(saved);
-            recalculate();
-            updateUI();
-        }
-    }
-
-    function resetGame() {
-        if(confirm("ПОЛНЫЙ СБРОС? Ты потеряешь всё!")) {
-            localStorage.removeItem('llamaImperium_Final');
-            location.reload();
-        }
+    // --- CORE LOGIC ---
+    function save() { localStorage.setItem('llama_v3_save', JSON.stringify(state)); }
+    function load() {
+        let s = localStorage.getItem('llama_v3_save');
+        if(s) { state = JSON.parse(s); recalculate(); updateUI(); }
     }
 
     function recalculate() {
-        state.mult = 1;
-        state.bizLps = 0;
-        upgData.forEach(u => state.mult += (state.upgrades[u.id] || 0) * u.p);
+        state.mult = 1; state.bizLps = 0; state.globalMult = 1;
+        itemData.forEach(i => state.mult += (state.upgrades[i.id] || 0) * i.p);
         bizData.forEach(b => state.bizLps += (state.biz[b.id] || 0) * b.lps);
-        state.achs.forEach(() => state.mult *= 1.1); // 10% bonus per achievement
+        luxuryData.forEach(l => { if(state.luxury[l.id]) state.globalMult *= l.b; });
+        document.getElementById('llama-main').innerText = state.currentSkin;
     }
 
-    // --- CORE ---
     function tap(e) {
-        state.score += state.mult;
-        state.stats.clicks++;
-        spawnText(e.clientX, e.clientY, `+${Math.floor(state.mult)}`, 'var(--neon)');
+        let val = state.mult * state.globalMult;
+        state.score += val;
+        spawnText(e.clientX, e.clientY, `+${Math.floor(val)}`, 'var(--neon)');
         updateUI();
-        checkAchs();
     }
 
     function updateUI() {
         document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('lps-val').innerText = Math.floor(state.bizLps).toLocaleString();
-        document.getElementById('click-mult').innerText = state.mult.toFixed(1);
-        
-        // Rank
-        let r = ranks[0];
-        ranks.forEach(x => { if(state.score >= x.req) r = x; });
-        const rn = document.getElementById('rank-name');
-        rn.innerText = r.n; rn.style.color = r.c;
-        document.getElementById('aura').style.background = `radial-gradient(circle, ${r.c} 0%, transparent 70%)`;
-
-        // Stats
-        document.getElementById('st-clicks').innerText = state.stats.clicks;
-        document.getElementById('st-win').innerText = state.stats.casinoWins;
-        document.getElementById('st-time').innerText = state.stats.time;
-
+        document.getElementById('lps-val').innerText = Math.floor(state.bizLps * state.globalMult).toLocaleString();
+        document.getElementById('click-mult').innerText = (state.mult * state.globalMult).toFixed(1);
         renderLists();
     }
 
     function renderLists() {
-        document.getElementById('up-list').innerHTML = upgData.map(u => {
-            let lvl = state.upgrades[u.id] || 0;
-            let cost = Math.floor(u.c * Math.pow(1.6, lvl));
-            return `<div class="card ${state.score < cost ? 'locked' : ''}" onclick="buyUpg('${u.id}')">
-                <div class="b-icon">${u.i}</div>
-                <div class="b-info"><b>${u.n}</b><small>Cost: ${cost.toLocaleString()}</small></div>
-                <div class="b-lvl">Lvl ${lvl}</div>
-            </div>`;
-        }).join('');
+        const render = (data, target, type) => {
+            document.getElementById(target).innerHTML = data.map(d => {
+                let lvl = (type === 'biz' ? state.biz[d.id] : (type === 'upg' ? state.upgrades[d.id] : 0)) || 0;
+                let cost = Math.floor(d.c * Math.pow(1.5, lvl));
+                let isOwned = (type === 'lux' && state.luxury[d.id]) || (type === 'skin' && state.skins.includes(d.id));
+                let locked = state.score < cost && !isOwned;
+                
+                return `<div class="card ${locked ? 'locked' : ''}" onclick="buy('${type}', '${d.id}')">
+                    <div class="b-icon">${d.i}</div>
+                    <div class="b-info"><b>${d.n}</b><small>${isOwned ? 'OWNED' : 'Cost: ' + cost.toLocaleString()}</small></div>
+                    <div class="b-lvl">${lvl > 0 ? 'Lvl '+lvl : ''}</div>
+                </div>`;
+            }).join('');
+        };
 
-        document.getElementById('biz-list').innerHTML = bizData.map(b => {
-            let lvl = state.biz[b.id] || 0;
-            let cost = Math.floor(b.c * Math.pow(1.4, lvl));
-            return `<div class="card ${state.score < cost ? 'locked' : ''}" onclick="buyBiz('${b.id}')">
-                <div class="b-icon">${b.i}</div>
-                <div class="b-info"><b>${b.n}</b><small>Cost: ${cost.toLocaleString()}</small></div>
-                <div class="b-lvl">Lvl ${lvl}</div>
-            </div>`;
-        }).join('');
-
-        document.getElementById('ach-map').innerHTML = achData.map(a => {
-            let unl = state.achs.includes(a.id);
-            return `<div class="ach-node ${unl ? 'unlocked' : ''}"><div style="font-size:2rem">${a.i}</div><div style="font-size:0.6rem; font-family:'Orbitron'; margin-top:5px;">${a.n}</div></div>`;
-        }).join('');
+        render(bizData, 'biz-list', 'biz');
+        render(itemData, 'item-list', 'upg');
+        render(luxuryData, 'asset-list', 'lux');
+        render(skinData, 'skin-list', 'skin');
     }
 
-    function buyUpg(id) {
-        let u = upgData.find(x => x.id === id);
-        let lvl = state.upgrades[id] || 0;
-        let cost = Math.floor(u.c * Math.pow(1.6, lvl));
+    function buy(type, id) {
+        let d = [...bizData, ...itemData, ...luxuryData, ...skinData].find(x => x.id === id);
+        let lvl = (type === 'biz' ? state.biz[id] : (type === 'upg' ? state.upgrades[id] : 0)) || 0;
+        let cost = Math.floor(d.c * Math.pow(1.5, lvl));
+
         if(state.score >= cost) {
-            state.score -= cost; state.upgrades[id] = lvl + 1;
-            recalculate(); saveGame(); updateUI();
+            if(type === 'lux') { if(state.luxury[id]) return; state.luxury[id] = true; state.score -= cost; }
+            else if(type === 'skin') { if(state.skins.includes(id)) { state.currentSkin = d.i; } else { state.skins.push(id); state.score -= cost; state.currentSkin = d.i; } }
+            else if(type === 'biz') { state.biz[id] = lvl + 1; state.score -= cost; }
+            else if(type === 'upg') { state.upgrades[id] = lvl + 1; state.score -= cost; }
+            recalculate(); save(); updateUI();
         }
     }
 
-    function buyBiz(id) {
-        let b = bizData.find(x => x.id === id);
-        let lvl = state.biz[id] || 0;
-        let cost = Math.floor(b.c * Math.pow(1.4, lvl));
-        if(state.score >= cost) {
-            state.score -= cost; state.biz[id] = lvl + 1;
-            recalculate(); saveGame(); updateUI();
-        }
-    }
-
-    function checkAchs() {
-        achData.forEach(a => {
-            if(!state.achs.includes(a.id) && a.req()) {
-                state.achs.push(a.id);
-                showNotif(a.n, a.i);
-                recalculate(); saveGame();
+    // --- CASINO ---
+    function playRoulette(bet) {
+        if(state.score < 10000) return;
+        state.score -= 10000;
+        const ball = document.getElementById('r-ball');
+        ball.innerText = "...";
+        setTimeout(() => {
+            let res = Math.floor(Math.random() * 37); // 0-36
+            let color = res === 0 ? 'green' : (res % 2 === 0 ? 'black' : 'red');
+            ball.innerText = res;
+            ball.parentElement.style.background = color === 'red' ? '#ff0055' : (color === 'black' ? '#222' : '#00ffcc');
+            if(bet === color) {
+                let win = color === 'green' ? 140000 : 20000;
+                state.score += win;
+                showNotif(`WINNER! +${win.toLocaleString()}`, '🎰');
             }
-        });
+            updateUI(); save();
+        }, 1000);
     }
 
-    // --- CASINO ENGINE ---
-    
-    // CRASH
     let crashInt, cMult = 1.0, isCrashing = false;
     function startCrash() {
-        if(state.score < 1000 || isCrashing) return;
-        state.score -= 1000; isCrashing = true; updateUI();
+        if(state.score < 5000 || isCrashing) return;
+        state.score -= 5000; isCrashing = true; cMult = 1.0;
         document.getElementById('btn-crash').style.display = 'none';
         document.getElementById('btn-cashout').style.display = 'block';
-        cMult = 1.0; let crashPoint = 1.0 + Math.pow(Math.random() * 12, 2) / 10;
+        let crashPoint = 1.0 + Math.pow(Math.random() * 8, 2) / 10;
         crashInt = setInterval(() => {
-            cMult += 0.01 * cMult;
+            cMult += 0.02 * (cMult * 0.5);
             document.getElementById('crash-mult').innerText = cMult.toFixed(2) + "x";
             document.getElementById('crash-line').style.width = Math.min((cMult / 10) * 100, 100) + "%";
             if(cMult >= crashPoint) {
-                clearInterval(crashInt); document.body.classList.add('shake');
-                setTimeout(() => document.body.classList.remove('shake'), 400);
-                isCrashing = false;
+                clearInterval(crashInt); isCrashing = false;
                 document.getElementById('btn-crash').style.display = 'block';
                 document.getElementById('btn-cashout').style.display = 'none';
                 document.getElementById('crash-mult').style.color = 'var(--accent)';
-                saveGame();
+                save();
             }
-        }, 50);
+        }, 80);
     }
     function cashOut() {
         if(!isCrashing) return; clearInterval(crashInt);
-        let win = 1000 * cMult; state.score += win; state.stats.casinoWins++;
-        if(cMult > state.stats.maxMult) state.stats.maxMult = cMult;
-        isCrashing = false; document.getElementById('btn-crash').style.display = 'block';
+        let win = 5000 * cMult; state.score += win; isCrashing = false;
+        document.getElementById('btn-crash').style.display = 'block';
         document.getElementById('btn-cashout').style.display = 'none';
-        document.getElementById('crash-mult').style.color = 'var(--neon)';
-        spawnText(window.innerWidth/2, window.innerHeight/2, `+${Math.floor(win)}`, 'var(--gold)');
-        saveGame(); updateUI(); checkAchs();
+        showNotif(`CASHED OUT: +${Math.floor(win).toLocaleString()}`, '🚀');
+        updateUI(); save();
     }
 
-    // MINES
-    let minesActive = false, mMult = 1.0, bombIdx = -1;
-    function initMines() {
-        document.getElementById('mines-grid').innerHTML = Array.from({length:9}).map((_,i) => `<div class="mine-cell" onclick="pickMine(${i})">?</div>`).join('');
-    }
-    initMines();
-    function startMines() {
-        if(state.score < 5000 || minesActive) return;
-        state.score -= 5000; minesActive = true; mMult = 1.0; bombIdx = Math.floor(Math.random()*9);
-        document.getElementById('btn-start-mines').style.display = 'none';
-        document.getElementById('btn-cashout-mines').style.display = 'block';
-        initMines(); updateUI();
-    }
-    function pickMine(i) {
-        if(!minesActive) return;
-        let cell = document.getElementById('mines-grid').children[i];
-        if(i === bombIdx) {
-            cell.innerHTML = '💣'; cell.classList.add('bomb'); minesActive = false;
-            document.getElementById('btn-start-mines').style.display = 'block';
-            document.getElementById('btn-cashout-mines').style.display = 'none';
-            saveGame();
-        } else {
-            cell.innerHTML = '💎'; cell.classList.add('revealed'); mMult += 0.8;
-            document.getElementById('mines-mult').innerText = 'x' + mMult.toFixed(1);
-        }
-    }
-    function cashoutMines() {
-        if(!minesActive || mMult === 1.0) return;
-        let win = 5000 * mMult; state.score += win; state.stats.casinoWins++;
-        minesActive = false; document.getElementById('btn-start-mines').style.display = 'block';
-        document.getElementById('btn-cashout-mines').style.display = 'none';
-        spawnText(window.innerWidth/2, window.innerHeight/2, `+${Math.floor(win)}`, 'var(--gold)');
-        saveGame(); updateUI(); checkAchs();
-    }
-
-    // SLOTS
-    function spinSlots() {
-        if(state.score < 1000) return;
-        state.score -= 1000; updateUI();
-        const sym = ['🍒', '💎', '🦙', '⚡'];
-        let t = 0;
-        let int = setInterval(() => {
-            document.getElementById('s1').innerText = sym[Math.floor(Math.random()*4)];
-            document.getElementById('s2').innerText = sym[Math.floor(Math.random()*4)];
-            document.getElementById('s3').innerText = sym[Math.floor(Math.random()*4)];
-            if(++t > 15) {
-                clearInterval(int);
-                let r = [sym[Math.floor(Math.random()*4)], sym[Math.floor(Math.random()*4)], sym[Math.floor(Math.random()*4)]];
-                if(Math.random() < 0.1) r = [r[0], r[0], r[0]]; // 10% force win
-                document.getElementById('s1').innerText = r[0]; document.getElementById('s2').innerText = r[1]; document.getElementById('s3').innerText = r[2];
-                if(r[0]===r[1] && r[1]===r[2]) {
-                    state.score += 20000; state.stats.casinoWins++;
-                    spawnText(window.innerWidth/2, window.innerHeight/2, "+20,000", 'var(--gold)');
-                }
-                saveGame(); updateUI();
-            }
-        }, 50);
-    }
-
-    // --- UTILS ---
+    // --- HELPERS ---
     function switchTab(side, id) {
         const p = document.getElementById(id).parentElement;
         p.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -467,36 +300,21 @@
         event.target.classList.add('active');
         document.getElementById(id).classList.add('active');
     }
-
     function spawnText(x, y, txt, col) {
-        const d = document.createElement('div');
-        d.className = 'float-text'; d.style.left = x + 'px'; d.style.top = y + 'px';
+        const d = document.createElement('div'); d.className = 'float-text'; d.style.left = x + 'px'; d.style.top = y + 'px';
         d.style.color = col; d.innerText = txt; document.body.appendChild(d);
         setTimeout(() => d.remove(), 800);
     }
-
     function showNotif(title, icon) {
-        document.getElementById('n-title').innerText = title;
-        document.getElementById('n-icon').innerText = icon;
+        document.getElementById('n-title').innerText = title; document.getElementById('n-icon').innerText = icon;
         const n = document.getElementById('notif'); n.classList.add('show');
-        setTimeout(() => n.classList.remove('show'), 4000);
+        setTimeout(() => n.classList.remove('show'), 3000);
     }
 
-    // --- NAVIGATION & LOOPS ---
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            saveGame(); window.location.href = 'index.html';
-        }
-    });
-
-    setInterval(() => {
-        state.score += (state.bizLps / 10);
-        state.stats.time += 0.1;
-        updateUI();
-    }, 100);
-
-    setInterval(saveGame, 10000);
-    loadGame();
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { save(); window.location.href = 'index.html'; } });
+    setInterval(() => { state.score += (state.bizLps * state.globalMult / 10); updateUI(); }, 100);
+    setInterval(save, 5000);
+    load();
 </script>
 </body>
 </html>
