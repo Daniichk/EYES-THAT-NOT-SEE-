@@ -1,129 +1,258 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-adsense-account" content="ca-pub-5033520721992478">
-    <title>Neural Analytics Module</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="/_vercel/insights/script.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5033520721992478"
-     crossorigin="anonymous"></script>
+    <title>Llama Study & Clicker Pro</title>
+    <style>
+        body { background: #1a1a2e; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; overflow: hidden; user-select: none; }
+        
+        /* Экран "Математика" (Прикрытие) */
+        #study-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #ffffff; color: #333; z-index: 1000; padding: 100px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: left; box-sizing: border-box;
+        }
+        .formula { font-family: 'Times New Roman', serif; font-size: 28px; margin: 20px; color: #000; }
+
+        /* Игровое поле */
+        #game-container { position: relative; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: filter 0.5s; }
+        
+        /* Центральная Лама */
+        #llama-wrapper { 
+            position: relative; width: 180px; height: 180px; cursor: pointer; 
+            z-index: 10; font-size: 120px; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.05s;
+        }
+        #llama-wrapper:active { transform: scale(0.9); }
+
+        /* Орбитальные элементы */
+        .orbit-item { position: absolute; font-size: 35px; pointer-events: none; z-index: 5; transition: top 0.1s, left 0.1s; }
+
+        /* Интерфейс */
+        #stats { 
+            position: absolute; top: 20px; background: rgba(0,0,0,0.7); 
+            padding: 20px; border-radius: 15px; border: 2px solid #f1c40f; text-align: center;
+        }
+        .ui-panel { position: absolute; background: rgba(0,0,0,0.85); padding: 20px; border-radius: 12px; width: 240px; border: 1px solid #555; }
+        #casino { left: 20px; top: 20px; }
+        #shop { right: 20px; top: 20px; }
+
+        button { 
+            width: 100%; padding: 10px; margin: 8px 0; cursor: pointer; 
+            background: #27ae60; color: white; border: none; border-radius: 6px; 
+            font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background: #2ecc71; }
+        button:disabled { background: #7f8c8d; cursor: not-allowed; }
+
+        #roulette-visual { width: 100%; height: 20px; border: 2px solid gold; margin: 10px 0; background: #333; }
+
+        /* Золотая Лама */
+        .golden-llama {
+            position: fixed; font-size: 80px; cursor: pointer; z-index: 500;
+            filter: drop-shadow(0 0 15px gold); animation: float 2s infinite alternate;
+        }
+        @keyframes float { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+    </style>
 </head>
 <body>
-    <!-- Math Mask -->
-    <!-- НОВЫЙ ВАРИАНТ МАСКИРОВКИ -->
-<div id="math-ui">
-    <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px;">
-        <span style="font-weight: 800; color: #3b82f6; font-size: 1.2rem;">LMS: Mathematics Portal</span>
-        <span style="color: #64748b; font-size: 0.8rem;">Student ID: 29481-X</span>
-    </header>
 
-    <section>
-        <h1 style="font-size: 1.8rem; color: #1e293b; margin-bottom: 10px;">Topic 4.2: Quadratic Functions and Parabolas</h1>
-        <p style="color: #475569; font-size: 0.95rem;">Study the graph below and determine the roots of the equation using the discriminant method.</p>
-        
-        <!-- Имитация графика -->
-        <div style="width: 100%; height: 250px; background: white; border: 1px solid #cbd5e1; border-radius: 12px; margin: 20px 0; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-            <div style="position: absolute; width: 100%; height: 1px; background: #e2e8f0; top: 50%;"></div>
-            <div style="position: absolute; height: 100%; width: 1px; background: #e2e8f0; left: 50%;"></div>
-            <!-- Рисуем кривую (SVG) -->
-            <svg width="100%" height="100%" style="position: absolute;">
-                <path d="M 50 200 Q 225 50 400 200" fill="transparent" stroke="#3b82f6" stroke-width="3" />
-            </svg>
-            <span style="position: absolute; top: 10px; right: 10px; font-size: 0.7rem; color: #94a3b8;">Graph v2.4 (Live)</span>
-        </div>
-
-        <div class="formula">
-            <h2>Do you know what is calculus?</h2>
-            <p>I think that you do not know whta is it</p>
-        </div>
-    </section>
-
-    <footer style="margin-top: 40px; color: #94a3b8; font-size: 0.7rem; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-        © 2024 Education First Global. All rights reserved. | Press [ESC] for technical diagnostics.
-    </footer>
+<!-- Режим учебы -->
+<div id="study-screen">
+    <h1 style="color: #2c3e50;">Theoretical Physics & Advanced Calculus</h1>
+    <div class="formula">∮ E · dA = Q / ε₀</div>
+    <div class="formula">iℏ ∂/∂t Ψ(r,t) = [ -ℏ²/2m ∇² + V(r,t) ] Ψ(r,t)</div>
+    <div class="formula">L = T - V = ½m(ẋ² + ẏ² + ż²) - V(x,y,z)</div>
+    <p style="color: #7f8c8d; margin-top: 50px;">Press <b>ESC</b> to resume "research"...</p>
 </div>
 
-
-    <!-- Main Game -->
-    <div id="game-ui" class="hidden">
-        <div class="click-area" id="main-bg">
-            <div id="big-brain">🫠</div>
-            <div class="hud">
-                <h2 id="dim-label">CYBER CORE</h2>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="stat-card">
-                <div class="stat-val" id="score">0</div>
-                <div class="bps-label">+<span id="bps">0</span>/sec</div>
-            </div>
-
-            <button class="daily-btn" onclick="claimDaily()">🎁 DAILY BONUS</button>
-
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="shop">SHOP</button>
-                <button class="tab-btn" data-tab="skins">SKINS</button>
-                <button class="tab-btn" data-tab="dims">WORLDS</button>
-                <button class="tab-btn danger" onclick="toggleCasino(true)">🎰 GAMES</button>
-            </div>
-
-            <div id="tab-shop" class="tab-content"></div>
-            <div id="tab-skins" class="tab-content hidden"></div>
-            <div id="tab-dims" class="tab-content hidden"></div>
-        </div>
+<div id="game-container">
+    <div id="stats">
+        <h2 style="margin: 0; color: #f1c40f;">🦙 <span id="count">0</span></h2>
+        <small>LPS (в сек): <span id="lps">0</span></small><br>
+        <strong>Измерение: <span id="dim">1</span>/5</strong>
     </div>
 
-    <!-- Casino Overlay -->
-    <div id="casino-overlay" class="hidden">
-        <div class="modal">
-            <h2 id="cas-title">NEURAL CASINO</h2>
-            
-            <div id="cas-lobby">
-                <input type="number" id="bet-val" placeholder="Enter Bet...">
-                <div class="quick-bets">
-                    <button onclick="setBet(0.1)">10%</button>
-                    <button onclick="setBet(0.5)">50%</button>
-                    <button onclick="setBet(1)">ALL IN</button>
-                </div>
-                <div class="game-grid">
-                    <button onclick="enterGame('tower')">🏗️ TOWER</button>
-                    <button onclick="enterGame('roulette')">🎡 ROULETTE</button>
-                    <button onclick="enterGame('bj')">🃏 BLACKJACK</button>
-                </div>
-                <button class="exit-btn" onclick="toggleCasino(false)">EXIT</button>
-            </div>
-
-            <div id="cas-tower" class="hidden">
-                <div id="t-visual"></div>
-                <div class="mult-display" id="t-mult">x1.0</div>
-                <button class="cas-action success" onclick="towerBuild()">BUILD</button>
-                <button class="cas-action danger" onclick="towerCashOut()">CASH OUT</button>
-            </div>
-
-            <div id="cas-roulette" class="hidden">
-                <div class="r-wrap"><div id="r-track"></div><div class="r-pin"></div></div>
-                <div class="r-btns">
-                    <button class="r-red" onclick="spinR('red')">RED x2</button>
-                    <button class="r-black" onclick="spinR('black')">BLACK x2</button>
-                    <button class="r-green" onclick="spinR('green')">GREEN x14</button>
-                </div>
-            </div>
-
-            <div id="cas-bj" class="hidden">
-                <div class="bj-zone dealer">Dealer: <span id="bj-d-score">?</span><div id="bj-d-cards"></div></div>
-                <div class="bj-zone player">You: <span id="bj-p-score">0</span><div id="bj-p-cards"></div></div>
-                <div id="bj-ctrls">
-                    <button class="cas-action" onclick="bjAction('hit')">HIT</button>
-                    <button class="cas-action" onclick="bjAction('stand')">STAND</button>
-                </div>
-            </div>
+    <!-- Казино -->
+    <div id="casino" class="ui-panel">
+        <h3 style="margin-top: 0;">🎰 Казино</h3>
+        Ставка:
+        <div style="display: flex; gap: 5px;">
+            <button onclick="setBet(10)">10%</button>
+            <button onclick="setBet(50)">50%</button>
+            <button onclick="setBet(100)">MAX</button>
         </div>
+        <div id="roulette-visual"></div>
+        <button onclick="spin()" style="background: #e74c3c;">КРУТИТЬ</button>
     </div>
 
-    <script src="script.js"></script>
-    <script src="casino.js"></script>
+    <!-- Центральная кнопка -->
+    <div id="llama-wrapper" onclick="clickLlama()">🦙</div>
+
+    <!-- Магазин -->
+    <div id="shop" class="ui-panel">
+        <h3 style="margin-top: 0;">📦 Магазин</h3>
+        <button id="btn-cursor" onclick="buyUpgrade('cursor')">Курсор (10) [0]</button>
+        <button id="btn-farm" onclick="buyUpgrade('farm')">Ферма (100) [0]</button>
+        <button id="btn-dim" onclick="changeDimension()" style="background: #8e44ad;">След. Мир (1000)</button>
+        <hr>
+        <button onclick="resetGame()" style="background: #34495e; font-size: 10px;">Сброс данных</button>
+    </div>
+</div>
+
+<script>
+    // --- ПЕРЕМЕННЫЕ ---
+    let score = 0;
+    let lps = 0;
+    let dimension = 1;
+    let betPercent = 0;
+    let isGameActive = false;
+    let spacePressed = false;
+    let lastDaily = 0;
+
+    const upgrades = {
+        cursor: { count: 0, cost: 10, power: 0.1, emoji: '🖱️', radius: 130, speed: 0.05 },
+        farm: { count: 0, cost: 100, power: 1, emoji: '🏠', radius: 190, speed: 0.02 }
+    };
+
+    // --- ЛОГИКА ЭКРАНОВ (ESC) ---
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape') {
+            isGameActive = !isGameActive;
+            document.getElementById('study-screen').style.display = isGameActive ? 'none' : 'flex';
+        }
+    });
+
+    // --- КЛИКИ (Мышь + Пробел) ---
+    function clickLlama() {
+        if (!isGameActive) return;
+        score += dimension;
+        updateUI();
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !spacePressed && isGameActive) {
+            spacePressed = true;
+            clickLlama();
+        }
+    });
+    window.addEventListener('keyup', (e) => { if (e.code === 'Space') spacePressed = false; });
+
+    // --- МАГАЗИН ---
+    function buyUpgrade(id) {
+        let upg = upgrades[id];
+        if (score >= upg.cost) {
+            score -= upg.cost;
+            upg.count++;
+            lps += upg.power;
+            upg.cost = Math.floor(upg.cost * 1.15);
+            createOrbitElement(upg);
+            updateUI();
+        }
+    }
+
+    function createOrbitElement(upg) {
+        const el = document.createElement('div');
+        el.className = 'orbit-item';
+        el.innerText = upg.emoji;
+        document.getElementById('llama-wrapper').appendChild(el);
+        
+        let angle = Math.random() * Math.PI * 2;
+        let s = upg.speed * (0.8 + Math.random() * 0.4);
+
+        function animate() {
+            angle += s;
+            el.style.left = (Math.cos(angle) * upg.radius + 75) + 'px';
+            el.style.top = (Math.sin(angle) * upg.radius + 75) + 'px';
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // --- КАЗИНО ---
+    function setBet(p) { betPercent = p; }
+    function spin() {
+        if (betPercent === 0 || score <= 0) return;
+        let amount = Math.floor(score * (betPercent / 100));
+        let win = Math.random() > 0.65;
+        document.getElementById('roulette-visual').style.background = win ? '#2ecc71' : '#e74c3c';
+        score = win ? score + amount : score - amount;
+        updateUI();
+    }
+
+    // --- МИРЫ ---
+    function changeDimension() {
+        if (score >= 1000 && dimension < 5) {
+            score -= 1000;
+            dimension++;
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 50}deg)`;
+            updateUI();
+        }
+    }
+
+    // --- БОНУСЫ (Золотая лама + Награда) ---
+    function spawnGoldenLlama() {
+        if (!isGameActive) return;
+        const g = document.createElement('div');
+        g.className = 'golden-llama';
+        g.innerText = '✨🦙';
+        g.style.left = Math.random() * 80 + '%';
+        g.style.top = Math.random() * 80 + '%';
+        g.onclick = () => { score += 100; g.remove(); updateUI(); };
+        document.body.appendChild(g);
+        setTimeout(() => g.remove(), 8000);
+    }
+
+    function checkDaily() {
+        const now = Date.now();
+        if (now - lastDaily > 86400000) {
+            let reward = 500 * dimension;
+            score += reward;
+            lastDaily = now;
+            alert(`Ежедневный бонус: +${reward} лам!`);
+            updateUI();
+        }
+    }
+
+    // --- СОХРАНЕНИЕ ---
+    function save() {
+        const data = { score, dimension, lps, upgrades, lastDaily };
+        localStorage.setItem('llama_save', JSON.stringify(data));
+    }
+
+    function load() {
+        const saved = localStorage.getItem('llama_save');
+        if (saved) {
+            const d = JSON.parse(saved);
+            score = d.score; dimension = d.dimension; lps = d.lps;
+            lastDaily = d.lastDaily || 0;
+            Object.assign(upgrades, d.upgrades);
+            for(let k in upgrades) {
+                for(let i=0; i<upgrades[k].count; i++) createOrbitElement(upgrades[k]);
+            }
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 50}deg)`;
+        }
+        updateUI();
+        checkDaily();
+    }
+
+    function resetGame() { if(confirm("Сбросить всё?")) { localStorage.clear(); location.reload(); } }
+
+    function updateUI() {
+        document.getElementById('count').innerText = Math.floor(score);
+        document.getElementById('lps').innerText = lps.toFixed(1);
+        document.getElementById('dim').innerText = dimension;
+        document.getElementById('btn-cursor').innerText = `Курсор (${upgrades.cursor.cost}) [${upgrades.cursor.count}]`;
+        document.getElementById('btn-farm').innerText = `Ферма (${upgrades.farm.cost}) [${upgrades.farm.count}]`;
+    }
+
+    // ТАЙМЕРЫ
+    setInterval(() => { if(isGameActive) score += lps/10; updateUI(); }, 100);
+    setInterval(save, 5000);
+    setInterval(spawnGoldenLlama, 600000); // 10 минут
+
+    window.onload = load;
+</script>
 </body>
 </html>
