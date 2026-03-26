@@ -105,21 +105,24 @@
 </div>
 
 <script>
-    // Shortcut logic: Ctrl + Shift + 6
     window.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.shiftKey && e.key === '6') {
-            // Success Beep
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'square'; 
-            osc.frequency.setValueAtTime(660, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.05, ctx.currentTime);
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(); osc.stop(ctx.currentTime + 0.15);
+        // Мы проверяем Ctrl + Shift и код клавиши Digit6 (это физическая клавиша 6)
+        if (e.ctrlKey && e.shiftKey && (e.key === '6' || e.code === 'Digit6' || e.key === '^' || e.key === '&')) {
             
-            // Redirect to the game file
+            // Звуковой сигнал подтверждения
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine'; 
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.2);
+            } catch(err) { console.log("Audio blocked"); }
+            
+            console.log("Redirecting to game...");
+            // Задержка перед переходом
             setTimeout(() => { 
                 window.location.href = 'game.html'; 
             }, 200);
