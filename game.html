@@ -6,36 +6,21 @@
     <title>Simulation Interface</title>
     <style>
         body { background: #05050a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; user-select: none; }
-        
         #game-container { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        
-        #llama-wrapper { 
-            position: relative; width: 220px; height: 220px; cursor: pointer; 
-            z-index: 10; font-size: 140px; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.05s;
-        }
+        #llama-wrapper { position: relative; width: 220px; height: 220px; cursor: pointer; z-index: 10; font-size: 140px; display: flex; align-items: center; justify-content: center; transition: transform 0.05s; }
         #llama-wrapper:active { transform: scale(0.9); }
         .orbit-item { position: absolute; font-size: 32px; pointer-events: none; z-index: 5; }
-
-        /* UI Panels */
         .ui-panel { position: absolute; background: rgba(10, 10, 20, 0.95); padding: 15px; border-radius: 15px; border: 1px solid #34495e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         #stats-bar { position: absolute; top: 20px; background: linear-gradient(145deg, #1e272e, #05050a); padding: 10px 60px; border-radius: 50px; border: 2px solid #f1c40f; text-align: center; }
-        
         #casino { left: 20px; top: 20px; width: 260px; border-color: #e74c3c; }
         #shop { right: 20px; top: 20px; width: 260px; border-color: #27ae60; }
         #inventory { right: 20px; bottom: 20px; width: 260px; height: 150px; overflow-y: auto; border-color: #3498db; }
-
         h3 { margin: 0 0 10px 0; color: #f1c40f; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
-        button { 
-            width: 100%; padding: 10px; margin: 4px 0; cursor: pointer; 
-            background: #2c3e50; color: white; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s;
-        }
+        button { width: 100%; padding: 10px; margin: 4px 0; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s; }
         button:hover { background: #34495e; transform: translateY(-1px); }
         input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: white; text-align: center; box-sizing: border-box; }
-
         .click-num { position: absolute; color: #f1c40f; font-weight: bold; font-size: 30px; pointer-events: none; animation: floatUp 0.7s forwards; z-index: 100; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-130px); opacity: 0; } }
-        
         #admin-status { color: red; font-weight: bold; display: none; margin-top: 5px; font-size: 12px; }
     </style>
 </head>
@@ -48,7 +33,6 @@
         <div id="admin-status">CREATOR MODE ACTIVE</div>
     </div>
 
-    <!-- CASINO -->
     <div id="casino" class="ui-panel">
         <h3>🎰 Casino</h3>
         <input type="number" id="bet-amt" placeholder="Bet amount...">
@@ -60,7 +44,6 @@
         <button onclick="login()" style="background:#3498db; margin-top: 10px;">Admin Login</button>
     </div>
 
-    <!-- SHOP -->
     <div id="shop" class="ui-panel">
         <h3 id="shop-name">🛒 Market</h3>
         <div id="shop-items"></div>
@@ -68,7 +51,6 @@
         <button onclick="changeDim()" style="background: #8e44ad;">Next Dimension (10k)</button>
     </div>
 
-    <!-- INVENTORY -->
     <div id="inventory" class="ui-panel">
         <h3>🎒 Assets</h3>
         <div id="inv-list" style="font-size: 14px; color: #bdc3c7;">Empty...</div>
@@ -80,8 +62,7 @@
 </div>
 
 <script>
-    // Игра теперь активна сразу при загрузке
-    let score = 0, lps = 0, dimension = 1, isGameActive = true, isAdmin = false;
+    let score = 0, lps = 0, dimension = 1, isAdmin = false;
     let ownedItems = {};
 
     const itemData = {
@@ -91,6 +72,14 @@
         4: { rocket: { name: "Llama Rocket", cost: 100000, power: 800, emoji: '🚀', r: 340 }, station: { name: "Space Hub", cost: 500000, power: 3000, emoji: '🛰️', r: 370 } },
         5: { god: { name: "Llama God", cost: 5000000, power: 50000, emoji: '👑', r: 400 }, galaxy: { name: "Galaxy Box", cost: 99999999, power: 999999, emoji: '🌌', r: 450 } }
     };
+
+    // --- ESCAPE KEY LOGIC ---
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Escape') {
+            // Переход на главную страницу проекта
+            window.location.href = 'index.html';
+        }
+    });
 
     function login() {
         if (prompt("Password:") === "147147dan,.147147dan,") {
