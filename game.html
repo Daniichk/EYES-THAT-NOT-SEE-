@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LLAMA VANGUARD: INFINITY IMPERIUM</title>
+    <title>LLAMA VANGUARD: OMNIVERSE EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,108 +14,98 @@
             margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif;
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
             background-image: radial-gradient(circle at 50% 100%, #1a0033 0%, var(--bg) 80%);
+            transition: filter 0.2s;
         }
+        /* CRT & FX */
         body::before {
             content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
             z-index: 999; background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
-        header { padding: 20px; text-align: center; z-index: 100; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
+        header { padding: 15px; text-align: center; z-index: 100; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
         #score {
-            font-family: 'Orbitron'; font-size: 4rem; margin: 0; font-weight: 900;
+            font-family: 'Orbitron'; font-size: 3.5rem; margin: 0; font-weight: 900;
             background: linear-gradient(180deg, #fff, var(--neon));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px rgba(0,255,204,0.5));
+            filter: drop-shadow(0 0 15px rgba(0,255,204,0.4));
         }
         .main-grid {
             display: grid; grid-template-columns: 420px 1fr 420px; gap: 20px;
-            padding: 20px; height: calc(100vh - 160px); box-sizing: border-box; z-index: 10;
+            padding: 15px; height: calc(100vh - 150px); box-sizing: border-box; z-index: 10;
         }
-        .panel {
-            background: var(--glass); border: 1px solid var(--border); border-radius: 24px;
-            display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,1);
-        }
+        .panel { background: var(--glass); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
         .tab-nav { display: flex; background: rgba(0,0,0,0.6); border-bottom: 1px solid var(--border); }
-        .tab-btn {
-            flex: 1; padding: 15px; background: none; border: none; color: #555;
-            font-family: 'Orbitron'; font-weight: 900; font-size: 0.75rem; cursor: pointer; transition: 0.3s;
-        }
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #555; font-family: 'Orbitron'; font-weight: 900; font-size: 0.7rem; cursor: pointer; transition: 0.3s; }
         .tab-btn.active { color: var(--neon); background: rgba(0,255,204,0.1); box-shadow: inset 0 -3px 0 var(--neon); }
-        .tab-content { display: none; padding: 20px; overflow-y: auto; flex: 1; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; }
+        .tab-content.active { display: block; }
 
         #stage { display: flex; justify-content: center; align-items: center; position: relative; }
-        #llama-main { font-size: 180px; cursor: pointer; user-select: none; z-index: 10; transition: 0.1s; }
-        #llama-main:active { transform: scale(0.9); }
-        #aura { position: absolute; width: 450px; height: 450px; border-radius: 50%; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); opacity: 0.1; filter: blur(50px); animation: pulse 4s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.2); } }
+        #llama-main { font-size: 160px; cursor: pointer; user-select: none; z-index: 10; transition: transform 0.05s; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); }
+        #aura { position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, var(--neon) 0%, transparent 70%); opacity: 0.1; filter: blur(40px); }
 
-        .game-box { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 15px; margin-bottom: 15px; }
-        .btn {
-            background: var(--neon); color: #000; border: none; padding: 12px;
-            border-radius: 10px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
-            width: 100%; transition: 0.2s; text-transform: uppercase; margin-top: 8px;
-        }
-        .card {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px; padding: 12px; margin-bottom: 10px; display: flex; align-items: center; cursor: pointer; transition: 0.2s;
-        }
-        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.08); }
-        .card.locked { opacity: 0.25; filter: grayscale(1); pointer-events: none; }
-        .b-icon { font-size: 2rem; margin-right: 15px; }
+        .game-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; padding: 12px; margin-bottom: 10px; }
+        .btn { background: var(--neon); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; width: 100%; text-transform: uppercase; margin-top: 5px; font-size: 0.8rem; }
+        .card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; cursor: pointer; }
+        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.05); }
+        .card.locked { opacity: 0.2; pointer-events: none; }
+        .b-icon { font-size: 1.8rem; margin-right: 12px; }
         .b-info { flex: 1; }
-        .b-info b { display: block; font-family: 'Orbitron'; color: var(--neon); font-size: 0.85rem; }
-        .b-lvl { color: var(--gold); font-family: 'Orbitron'; font-size: 0.75rem; text-align: right; }
+        .b-info b { display: block; font-family: 'Orbitron'; color: var(--neon); font-size: 0.8rem; }
+        
+        /* Mines & Slots UI */
+        .mines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 10px 0; }
+        .mine-cell { background: #111; height: 40px; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #222; }
+        .slots-row { display: flex; justify-content: center; gap: 10px; margin: 10px 0; font-size: 2rem; }
+        .slot-item { background: #111; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid var(--border); }
 
-        /* Roulette Animation */
-        #roulette-display { height: 60px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 1.5rem; border: 2px solid var(--border); border-radius: 10px; margin: 10px 0; overflow: hidden; position: relative; }
-        .roulette-ball { width: 40px; height: 40px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 15px var(--gold); display: flex; align-items: center; justify-content: center; color: black; font-weight: 900; }
-
-        #notif {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.95); border: 2px solid var(--gold); padding: 15px 30px;
-            border-radius: 50px; z-index: 10000; transition: 0.5s; display: flex; align-items: center; gap: 15px;
-        }
-        #notif.show { top: 30px; }
-        .float-text { position: fixed; font-family: 'Orbitron'; font-weight: 900; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 1000; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-100px); } }
+        /* Animations */
+        @keyframes rage { 0% { transform: translate(0,0) scale(1); filter: hue-rotate(0deg); } 25% { transform: translate(5px,-5px) scale(1.02); filter: hue-rotate(90deg); } 50% { transform: translate(-5px,5px) scale(1.01); filter: hue-rotate(180deg); } 100% { transform: translate(0,0) scale(1); filter: hue-rotate(360deg); } }
+        .rage-mode { animation: rage 0.1s infinite; }
+        #notif { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); border: 2px solid var(--gold); padding: 12px 25px; border-radius: 50px; z-index: 10000; transition: 0.4s; display: flex; align-items: center; gap: 10px; }
+        #notif.show { top: 20px; }
     </style>
 </head>
-<body>
+<body id="game-body">
 
-<div id="notif"><span id="n-icon" style="font-size:2rem">🏆</span> <div style="font-family:'Orbitron'"><b id="n-title" style="color:var(--gold)">ACHIEVEMENT</b><br><span id="n-desc">Unlocked!</span></div></div>
+<div id="notif"><span id="n-icon">🏆</span> <div style="font-family:'Orbitron'"><b id="n-title" style="color:var(--gold)">ACHIEVEMENT</b><br><small id="n-desc">Unlocked!</small></div></div>
 
 <header>
-    <div style="font-family:'Orbitron'; font-size:0.7rem; color:#555; letter-spacing:2px;">STATUS: <span id="rank-name" style="color:var(--gold)">STREET RAT</span></div>
+    <div style="font-family:'Orbitron'; font-size:0.6rem; color:#444; letter-spacing:3px;">RANK: <span id="rank-name" style="color:var(--gold)">STREET RAT</span></div>
     <h1 id="score">0</h1>
-    <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--neon)">LPS: <span id="lps-val">0</span> | MULTI: x<span id="click-mult">1.0</span></div>
+    <div style="font-family:'Orbitron'; font-size:0.75rem; color:var(--neon)">
+        LPS: <span id="lps-val">0</span> | POWER: x<span id="click-mult">1.0</span> <span id="rage-bonus" style="color:var(--accent); display:none;">(+3.0 RAGE)</span>
+    </div>
 </header>
 
 <div class="main-grid">
     <div class="panel">
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('left', 't-casino')">🎰 CASINO</button>
-            <button class="tab-btn" onclick="switchTab('left', 't-items')">📱 GADGETS</button>
+            <button class="tab-btn" onclick="switchTab('left', 't-phones')">📱 GADGETS</button>
         </div>
         <div id="t-casino" class="tab-content active">
             <div class="game-box">
-                <b style="font-family:'Orbitron'; color:var(--accent)">🔴 CYBER ROULETTE</b>
-                <div id="roulette-display"><div class="roulette-ball" id="r-ball">?</div></div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                    <button class="btn" style="background:#ff0055; color:white;" onclick="playRoulette('red')">RED (x2)</button>
-                    <button class="btn" style="background:#333; color:white;" onclick="playRoulette('black')">BLACK (x2)</button>
-                </div>
-                <button class="btn" style="background:var(--gold);" onclick="playRoulette('green')">GREEN (x14)</button>
+                <b style="font-family:'Orbitron'; color:var(--gold)">🎰 NEON SLOTS</b>
+                <div class="slots-row"><div class="slot-item" id="sl1">💎</div><div class="slot-item" id="sl2">💎</div><div class="slot-item" id="sl3">💎</div></div>
+                <button class="btn" onclick="spinSlots()">SPIN (2,000)</button>
             </div>
-            <div class="game-box" id="crash-box">
-                <div style="display:flex; justify-content:space-between; font-family:'Orbitron';"><b>🚀 CRASH</b> <span id="crash-mult">1.00x</span></div>
-                <div style="height:4px; background:rgba(255,255,255,0.1); margin:10px 0; border-radius:2px;"><div id="crash-line" style="height:100%; width:0%; background:var(--neon); transition: 0.1s linear;"></div></div>
-                <button id="btn-crash" class="btn" onclick="startCrash()">BET 5,000</button>
-                <button id="btn-cashout" class="btn" style="display:none; background:var(--accent); color:white;" onclick="cashOut()">CASH OUT</button>
+            <div class="game-box">
+                <div style="display:flex; justify-content:space-between; font-family:'Orbitron';"><b>💣 MINES</b> <span id="m-mult">x1.0</span></div>
+                <div class="mines-grid" id="m-grid"></div>
+                <button id="m-start" class="btn" onclick="startMines()">STAKE 5,000</button>
+                <button id="m-cash" class="btn" style="display:none; background:var(--gold);" onclick="cashoutMines()">TAKE PROFIT</button>
+            </div>
+            <div class="game-box">
+                <b style="font-family:'Orbitron'; color:var(--accent)">🔴 ROULETTE</b>
+                <div id="r-res" style="text-align:center; font-family:'Orbitron'; padding:5px; border:1px solid var(--border); margin:5px 0;">?</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+                    <button class="btn" style="background:#ff0055; color:white;" onclick="playR('red')">RED</button>
+                    <button class="btn" style="background:#222; color:white;" onclick="playR('black')">BLACK</button>
+                </div>
             </div>
         </div>
-        <div id="t-items" class="tab-content"><div id="item-list"></div></div>
+        <div id="t-phones" class="tab-content"><div id="phone-list"></div></div>
     </div>
 
     <div id="stage">
@@ -126,173 +116,194 @@
     <div class="panel">
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('right', 't-biz')">🏢 EMPIRE</button>
+            <button class="tab-btn" onclick="switchTab('right', 't-lux')">🏰 LUXURY</button>
             <button class="tab-btn" onclick="switchTab('right', 't-skins')">🎭 SKINS</button>
-            <button class="tab-btn" onclick="switchTab('right', 't-assets')">🏰 LUXURY</button>
         </div>
         <div id="t-biz" class="tab-content active"><div id="biz-list"></div></div>
+        <div id="t-lux" class="tab-content"><div id="lux-list"></div></div>
         <div id="t-skins" class="tab-content"><div id="skin-list"></div></div>
-        <div id="t-assets" class="tab-content"><div id="asset-list"></div></div>
     </div>
 </div>
 
 <script>
     // --- DATABASE ---
-    const bizData = [
-        { id: 'b1', n: "Lemonade Stand", c: 1000, lps: 15, i: "🥤" },
-        { id: 'b2', n: "Cyber Cafe", c: 15000, lps: 250, i: "☕" },
-        { id: 'b3', n: "Crypto Mine", c: 250000, lps: 4500, i: "⛏️" },
-        { id: 'b4', n: "Stanford Lab", c: 5000000, lps: 85000, i: "🎓" },
-        { id: 'b5', n: "Moon Resort", c: 150000000, lps: 2000000, i: "🚀" },
-        { id: 'b6', n: "Galaxy Bank", c: 2000000000, lps: 50000000, i: "🏦" }
+    const phoneData = [
+        { id: 'p1', n: "Siemens A50", c: 400, p: 1, i: "📟" },
+        { id: 'p2', n: "Nokia 3310", c: 2500, p: 8, i: "📱" },
+        { id: 'p3', n: "iPhone 2G", c: 15000, p: 50, i: "📲" },
+        { id: 'p4', n: "Samsung S24 Ultra", c: 120000, p: 450, i: "🏙️" },
+        { id: 'p5', n: "Neural Link Phone", c: 1000000, p: 4000, i: "🧠" },
+        { id: 'p6', n: "Quantum Communicator", c: 25000000, p: 100000, i: "📡" },
+        { id: 'p7', n: "Black Hole Signal", c: 500000000, p: 2500000, i: "🕳️" }
     ];
 
-    const itemData = [
-        { id: 'i1', n: "Nokia 3310", c: 500, p: 1, i: "📱" },
-        { id: 'i2', n: "iPhone 15 Pro", c: 10000, p: 25, i: "📲" },
-        { id: 'i3', n: "Neural Phone", c: 200000, p: 600, i: "🧠" },
-        { id: 'i4', n: "Quantum Link", c: 5000000, p: 15000, i: "📡" }
+    const bizData = [
+        { id: 'b1', n: "Lemonade Stand", c: 1000, lps: 20, i: "🥤" },
+        { id: 'b2', n: "Cyber Cafe", c: 20000, lps: 350, i: "☕" },
+        { id: 'b3', n: "Crypto Farm", c: 300000, lps: 6000, i: "⛏️" },
+        { id: 'b4', n: "Stanford Lab", c: 8000000, lps: 120000, i: "🎓" },
+        { id: 'b5', n: "Mars Base", c: 200000000, lps: 4000000, i: "🚀" },
+        { id: 'b6', n: "Star System Bank", c: 5000000000, lps: 100000000, i: "🏦" }
     ];
 
     const luxuryData = [
-        { id: 'l1', n: "Tesla Model S", c: 100000, b: 1.1, i: "🏎️" },
-        { id: 'l2', n: "Cyber Truck", c: 500000, b: 1.25, i: "🛻" },
-        { id: 'l3', n: "Bugatti Chiron", c: 3000000, b: 1.5, i: "🚗" },
-        { id: 'l4', n: "Neon Penthouse", c: 15000000, b: 2.0, i: "🏙️" },
-        { id: 'l5', n: "Private Island", c: 250000000, b: 5.0, i: "🏝️" },
-        { id: 'l6', n: "Cyber Castle", c: 5000000000, b: 10.0, i: "🏰" }
+        { id: 'l1', n: "Tesla S", c: 100000, b: 1.1, i: "🏎️" },
+        { id: 'l2', n: "Cyber Truck", c: 800000, b: 1.3, i: "🛻" },
+        { id: 'l3', n: "G-Wagon Neon", c: 4000000, b: 1.6, i: "🚙" },
+        { id: 'l4', n: "Penthouse", c: 20000000, b: 2.2, i: "🏙️" },
+        { id: 'l5', n: "Private Island", c: 500000000, b: 6.0, i: "🏝️" },
+        { id: 'l6', n: "Cyber Castle", c: 10000000000, b: 15.0, i: "🏰" }
     ];
 
     const skinData = [
         { id: 's0', n: "Llama", c: 0, i: "🦙" },
-        { id: 's1', n: "Cool Cat", c: 50000, i: "🐱" },
-        { id: 's2', n: "Robo Llama", c: 500000, i: "🤖" },
-        { id: 's3', n: "Alien Boss", c: 10000000, i: "👽" },
-        { id: 's4', n: "Demon King", c: 500000000, i: "👹" },
-        { id: 's5', n: "Golden Idol", c: 5000000000, i: "🗿" }
+        { id: 's1', n: "Cat", c: 50000, i: "🐱" },
+        { id: 's2', n: "Robot", c: 1000000, i: "🤖" },
+        { id: 's3', n: "Demon", c: 100000000, i: "👹" },
+        { id: 's4', n: "Golden Idol", c: 5000000000, i: "🗿" }
     ];
 
     // --- STATE ---
     let state = {
-        score: 0, mult: 1, bizLps: 0, globalMult: 1, currentSkin: "🦙",
-        upgrades: {}, biz: {}, luxury: {}, skins: ['s0'],
-        stats: { wins: 0, spins: 0 }
+        score: 0, mult: 1, bizLps: 0, gMult: 1, curSkin: "🦙",
+        ups: {}, biz: {}, lux: {}, skins: ['s0'],
+        lastClick: 0, rage: 0
     };
 
-    // --- CORE LOGIC ---
-    function save() { localStorage.setItem('llama_v3_save', JSON.stringify(state)); }
+    // --- CORE ---
+    function save() { localStorage.setItem('llama_v4_save', JSON.stringify(state)); }
     function load() {
-        let s = localStorage.getItem('llama_v3_save');
+        let s = localStorage.getItem('llama_v4_save');
         if(s) { state = JSON.parse(s); recalculate(); updateUI(); }
     }
 
     function recalculate() {
-        state.mult = 1; state.bizLps = 0; state.globalMult = 1;
-        itemData.forEach(i => state.mult += (state.upgrades[i.id] || 0) * i.p);
+        state.mult = 1; state.bizLps = 0; state.gMult = 1;
+        phoneData.forEach(p => state.mult += (state.ups[p.id] || 0) * p.p);
         bizData.forEach(b => state.bizLps += (state.biz[b.id] || 0) * b.lps);
-        luxuryData.forEach(l => { if(state.luxury[l.id]) state.globalMult *= l.b; });
-        document.getElementById('llama-main').innerText = state.currentSkin;
+        luxuryData.forEach(l => { if(state.lux[l.id]) state.gMult *= l.b; });
+        document.getElementById('llama-main').innerText = state.curSkin;
     }
 
     function tap(e) {
-        let val = state.mult * state.globalMult;
-        state.score += val;
-        spawnText(e.clientX, e.clientY, `+${Math.floor(val)}`, 'var(--neon)');
+        let now = Date.now();
+        if(now - state.lastClick < 150) { 
+            state.rage = Math.min(state.rage + 0.1, 3); 
+        } else { 
+            state.rage = Math.max(state.rage - 0.5, 0); 
+        }
+        state.lastClick = now;
+
+        let totalPwr = (state.mult * state.gMult) + (state.rage > 1 ? (state.mult * state.rage) : 0);
+        state.score += totalPwr;
+
+        // Rage FX
+        if(state.rage >= 2) {
+            document.getElementById('game-body').classList.add('rage-mode');
+            document.getElementById('rage-bonus').style.display = 'inline';
+        } else {
+            document.getElementById('game-body').classList.remove('rage-mode');
+            document.getElementById('rage-bonus').style.display = 'none';
+        }
+
+        spawnText(e.clientX, e.clientY, `+${Math.floor(totalPwr)}`, state.rage >= 2 ? 'var(--accent)' : 'var(--neon)');
         updateUI();
     }
 
     function updateUI() {
         document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('lps-val').innerText = Math.floor(state.bizLps * state.globalMult).toLocaleString();
-        document.getElementById('click-mult').innerText = (state.mult * state.globalMult).toFixed(1);
-        renderLists();
+        document.getElementById('lps-val').innerText = Math.floor(state.bizLps * state.gMult).toLocaleString();
+        document.getElementById('click-mult').innerText = (state.mult * state.gMult).toFixed(1);
+        render();
     }
 
-    function renderLists() {
-        const render = (data, target, type) => {
-            document.getElementById(target).innerHTML = data.map(d => {
-                let lvl = (type === 'biz' ? state.biz[d.id] : (type === 'upg' ? state.upgrades[d.id] : 0)) || 0;
-                let cost = Math.floor(d.c * Math.pow(1.5, lvl));
-                let isOwned = (type === 'lux' && state.luxury[d.id]) || (type === 'skin' && state.skins.includes(d.id));
-                let locked = state.score < cost && !isOwned;
-                
-                return `<div class="card ${locked ? 'locked' : ''}" onclick="buy('${type}', '${d.id}')">
+    function render() {
+        const gen = (data, div, type) => {
+            document.getElementById(div).innerHTML = data.map(d => {
+                let lvl = (type === 'biz' ? state.biz[d.id] : (type === 'up' ? state.ups[d.id] : 0)) || 0;
+                let cost = Math.floor(d.c * Math.pow(1.6, lvl));
+                let owned = (type === 'lux' && state.lux[d.id]) || (type === 'skin' && state.skins.includes(d.id));
+                return `<div class="card ${state.score < cost && !owned ? 'locked' : ''}" onclick="buy('${type}','${d.id}')">
                     <div class="b-icon">${d.i}</div>
-                    <div class="b-info"><b>${d.n}</b><small>${isOwned ? 'OWNED' : 'Cost: ' + cost.toLocaleString()}</small></div>
+                    <div class="b-info"><b>${d.n}</b><small>${owned ? 'OWNED' : 'Cost: ' + cost.toLocaleString()}</small></div>
                     <div class="b-lvl">${lvl > 0 ? 'Lvl '+lvl : ''}</div>
                 </div>`;
             }).join('');
         };
-
-        render(bizData, 'biz-list', 'biz');
-        render(itemData, 'item-list', 'upg');
-        render(luxuryData, 'asset-list', 'lux');
-        render(skinData, 'skin-list', 'skin');
+        gen(phoneData, 'phone-list', 'up');
+        gen(bizData, 'biz-list', 'biz');
+        gen(luxuryData, 'lux-list', 'lux');
+        gen(skinData, 'skin-list', 'skin');
     }
 
     function buy(type, id) {
-        let d = [...bizData, ...itemData, ...luxuryData, ...skinData].find(x => x.id === id);
-        let lvl = (type === 'biz' ? state.biz[id] : (type === 'upg' ? state.upgrades[id] : 0)) || 0;
-        let cost = Math.floor(d.c * Math.pow(1.5, lvl));
-
+        let d = [...phoneData, ...bizData, ...luxuryData, ...skinData].find(x => x.id === id);
+        let lvl = (type === 'biz' ? state.biz[id] : (type === 'up' ? state.ups[id] : 0)) || 0;
+        let cost = Math.floor(d.c * Math.pow(1.6, lvl));
         if(state.score >= cost) {
-            if(type === 'lux') { if(state.luxury[id]) return; state.luxury[id] = true; state.score -= cost; }
-            else if(type === 'skin') { if(state.skins.includes(id)) { state.currentSkin = d.i; } else { state.skins.push(id); state.score -= cost; state.currentSkin = d.i; } }
+            if(type === 'lux' && !state.lux[id]) { state.lux[id] = true; state.score -= cost; }
+            else if(type === 'skin') { if(!state.skins.includes(id)) { state.skins.push(id); state.score -= cost; } state.curSkin = d.i; }
             else if(type === 'biz') { state.biz[id] = lvl + 1; state.score -= cost; }
-            else if(type === 'upg') { state.upgrades[id] = lvl + 1; state.score -= cost; }
+            else if(type === 'up') { state.ups[id] = lvl + 1; state.score -= cost; }
             recalculate(); save(); updateUI();
         }
     }
 
-    // --- CASINO ---
-    function playRoulette(bet) {
-        if(state.score < 10000) return;
-        state.score -= 10000;
-        const ball = document.getElementById('r-ball');
-        ball.innerText = "...";
-        setTimeout(() => {
-            let res = Math.floor(Math.random() * 37); // 0-36
-            let color = res === 0 ? 'green' : (res % 2 === 0 ? 'black' : 'red');
-            ball.innerText = res;
-            ball.parentElement.style.background = color === 'red' ? '#ff0055' : (color === 'black' ? '#222' : '#00ffcc');
-            if(bet === color) {
-                let win = color === 'green' ? 140000 : 20000;
-                state.score += win;
-                showNotif(`WINNER! +${win.toLocaleString()}`, '🎰');
+    // --- CASINO GAMES ---
+    // Slots
+    function spinSlots() {
+        if(state.score < 2000) return;
+        state.score -= 2000;
+        const syms = ['🍒', '🍋', '💎', '🦙', '7️⃣'];
+        let t = 0;
+        let iv = setInterval(() => {
+            document.getElementById('sl1').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('sl2').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('sl3').innerText = syms[Math.floor(Math.random()*5)];
+            if(++t > 12) {
+                clearInterval(iv);
+                let r = [syms[Math.floor(Math.random()*5)], syms[Math.floor(Math.random()*5)], syms[Math.floor(Math.random()*5)]];
+                if(Math.random() < 0.1) r = [r[0], r[0], r[0]]; // Lucky spin
+                document.getElementById('sl1').innerText = r[0]; document.getElementById('sl2').innerText = r[1]; document.getElementById('sl3').innerText = r[2];
+                if(r[0] === r[1] && r[1] === r[2]) { state.score += 50000; showNotif("JACKPOT! +50,000", "🎰"); }
+                updateUI();
             }
-            updateUI(); save();
-        }, 1000);
+        }, 60);
     }
 
-    let crashInt, cMult = 1.0, isCrashing = false;
-    function startCrash() {
-        if(state.score < 5000 || isCrashing) return;
-        state.score -= 5000; isCrashing = true; cMult = 1.0;
-        document.getElementById('btn-crash').style.display = 'none';
-        document.getElementById('btn-cashout').style.display = 'block';
-        let crashPoint = 1.0 + Math.pow(Math.random() * 8, 2) / 10;
-        crashInt = setInterval(() => {
-            cMult += 0.02 * (cMult * 0.5);
-            document.getElementById('crash-mult').innerText = cMult.toFixed(2) + "x";
-            document.getElementById('crash-line').style.width = Math.min((cMult / 10) * 100, 100) + "%";
-            if(cMult >= crashPoint) {
-                clearInterval(crashInt); isCrashing = false;
-                document.getElementById('btn-crash').style.display = 'block';
-                document.getElementById('btn-cashout').style.display = 'none';
-                document.getElementById('crash-mult').style.color = 'var(--accent)';
-                save();
-            }
-        }, 80);
+    // Mines
+    let mActive = false, mMult = 1.0, bIdx = -1;
+    function startMines() {
+        if(state.score < 5000 || mActive) return;
+        state.score -= 5000; mActive = true; mMult = 1.0; bIdx = Math.floor(Math.random()*9);
+        document.getElementById('m-start').style.display = 'none';
+        document.getElementById('m-cash').style.display = 'block';
+        document.getElementById('m-grid').innerHTML = Array.from({length:9}).map((_,i) => `<div class="mine-cell" onclick="hitMine(${i})">?</div>`).join('');
+        updateUI();
     }
-    function cashOut() {
-        if(!isCrashing) return; clearInterval(crashInt);
-        let win = 5000 * cMult; state.score += win; isCrashing = false;
-        document.getElementById('btn-crash').style.display = 'block';
-        document.getElementById('btn-cashout').style.display = 'none';
-        showNotif(`CASHED OUT: +${Math.floor(win).toLocaleString()}`, '🚀');
-        updateUI(); save();
+    function hitMine(i) {
+        if(!mActive) return;
+        let c = document.getElementById('m-grid').children[i];
+        if(i === bIdx) { c.innerText = '💣'; c.style.background = 'var(--accent)'; mActive = false; resetMines(); }
+        else { c.innerText = '💎'; c.style.background = 'rgba(0,255,204,0.2)'; mMult += 0.7; document.getElementById('m-mult').innerText = 'x' + mMult.toFixed(1); }
+    }
+    function cashoutMines() {
+        let win = 5000 * mMult; state.score += win; mActive = false; resetMines(); showNotif("WIN: +"+Math.floor(win), "💎"); updateUI();
+    }
+    function resetMines() { document.getElementById('m-start').style.display = 'block'; document.getElementById('m-cash').style.display = 'none'; }
+
+    // Roulette
+    function playR(bet) {
+        if(state.score < 5000) return;
+        state.score -= 5000;
+        let res = Math.floor(Math.random()*37);
+        let col = res === 0 ? 'green' : (res % 2 === 0 ? 'black' : 'red');
+        document.getElementById('r-res').innerText = res + " (" + col.toUpperCase() + ")";
+        if(bet === col) { state.score += 10000; showNotif("WIN!", "🔴"); }
+        updateUI();
     }
 
-    // --- HELPERS ---
+    // --- UTILS ---
     function switchTab(side, id) {
         const p = document.getElementById(id).parentElement;
         p.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -312,8 +323,11 @@
     }
 
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape') { save(); window.location.href = 'index.html'; } });
-    setInterval(() => { state.score += (state.bizLps * state.globalMult / 10); updateUI(); }, 100);
-    setInterval(save, 5000);
+    setInterval(() => { 
+        state.score += (state.bizLps * state.gMult / 10); 
+        if(state.rage > 0) state.rage = Math.max(state.rage - 0.02, 0);
+        updateUI(); 
+    }, 100);
     load();
 </script>
 </body>
