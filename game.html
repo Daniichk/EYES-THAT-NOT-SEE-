@@ -3,250 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
-    <title>LLAMA VANGUARD | ULTIMATE</title>
+    <title>LLAMA VANGUARD | ULTIMATE EDITION</title>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     <style>
         :root {
             --neon: #00ff87;
-            --neon-alt: #60efff;
+            --neon-glow: rgba(0, 255, 135, 0.4);
             --bg: #020205;
-            --glass: rgba(255, 255, 255, 0.03);
-            --glow: 0 0 20px rgba(0, 255, 135, 0.3);
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.1);
         }
+
+        /* ТЕМЫ */
+        body.theme-pink { --neon: #ff00cc; --neon-glow: rgba(255, 0, 204, 0.4); }
+        body.theme-ice { --neon: #00d4ff; --neon-glow: rgba(0, 212, 255, 0.4); }
+        body.theme-gold { --neon: #f1c40f; --neon-glow: rgba(241, 196, 15, 0.4); }
 
         body {
             margin: 0; background: var(--bg); color: white;
             font-family: 'Inter', sans-serif; overflow: hidden;
             height: 100vh; display: flex; justify-content: center; align-items: center;
+            transition: background 0.5s ease;
         }
 
-        /* --- ВЕРХНИЙ ИНТЕРФЕЙС --- */
+        #save-status {
+            position: fixed; top: 20px; right: 20px; font-size: 0.6rem;
+            letter-spacing: 2px; color: var(--neon); opacity: 0; transition: 0.5s;
+        }
+
+        /* HUD */
         #hud {
-            position: absolute; top: 40px; text-align: center; z-index: 100;
+            position: absolute; top: 50px; text-align: center; z-index: 100;
             pointer-events: none;
         }
         #score {
-            font-family: 'Orbitron', sans-serif; font-size: 5.5rem; margin: 0;
+            font-family: 'Orbitron', sans-serif; font-size: clamp(3rem, 10vw, 6rem); margin: 0;
             background: linear-gradient(to bottom, #fff, var(--neon));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(var(--glow));
+            filter: drop-shadow(0 0 15px var(--neon-glow));
         }
-        .multiplier { font-weight: 800; color: var(--neon-alt); letter-spacing: 2px; }
+        .stats-info { font-size: 0.8rem; font-weight: 800; color: var(--neon); letter-spacing: 2px; }
 
-        /* --- ЦЕНТРАЛЬНЫЙ ОБЪЕКТ --- */
+        /* CENTER STAGE */
         #stage {
             position: relative; width: 400px; height: 400px;
             display: flex; justify-content: center; align-items: center;
-            perspective: 1000px;
         }
         #llama-main {
             font-size: 180px; cursor: pointer; z-index: 10;
-            transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 0 30px rgba(0,255,135,0.2));
+            transition: transform 0.05s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
         }
-        #llama-main:active { transform: scale(0.8) rotate(-5deg); }
+        #llama-main:active { transform: scale(0.85); }
 
-        /* --- ОРБИТЫ (ОРБИТАЛЬНЫЕ КРУГИ) --- */
-        .orbit-ring {
-            position: absolute; border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 50%; pointer-events: none;
-        }
+        /* ORBITS */
         .satellite {
-            position: absolute; font-size: 24px;
-            animation: rotate var(--speed) linear infinite;
+            position: absolute; font-size: 30px; pointer-events: none;
+            animation: orbit var(--speed) linear infinite;
         }
-        @keyframes rotate {
+        @keyframes orbit {
             from { transform: rotate(0deg) translate(var(--radius)) rotate(0deg); }
             to { transform: rotate(360deg) translate(var(--radius)) rotate(-360deg); }
         }
 
-        /* --- ПАНЕЛИ МАГАЗИНА --- */
+        /* PANELS */
         .panel {
             position: absolute; background: var(--glass);
             backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 25px; border-radius: 35px; width: 320px;
-            max-height: 80vh; overflow-y: auto; z-index: 50;
+            border: 1px solid var(--border); padding: 25px; border-radius: 35px;
+            width: 300px; max-height: 75vh; overflow-y: auto; z-index: 50;
         }
-        #shop { right: 30px; }
-        #inventory { left: 30px; }
+        #shop { right: 25px; }
+        #milestones { left: 25px; }
 
         .card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            padding: 18px; border-radius: 22px; margin-bottom: 12px;
-            cursor: pointer; transition: 0.3s;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            padding: 15px; border-radius: 20px; margin-bottom: 12px;
+            cursor: pointer; transition: 0.2s;
         }
-        .card:hover { 
-            background: rgba(0, 255, 135, 0.08); border-color: var(--neon);
-            transform: translateX(-5px);
-        }
-        .card h4 { margin: 0; font-size: 1rem; }
-        .card p { margin: 5px 0 0; font-size: 0.75rem; color: var(--neon-alt); font-weight: 700; }
+        .card:hover { border-color: var(--neon); background: rgba(0, 255, 135, 0.05); }
+        .card.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
 
-        /* --- ЭФФЕКТЫ КЛИКА --- */
-        .click-ghost {
-            position: absolute; pointer-events: none; font-size: 100px;
-            animation: ghostOut 0.6s ease-out forwards; opacity: 0.5; z-index: 5;
-        }
-        @keyframes ghostOut {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(2.5); opacity: 0; }
-        }
-        .pop-num {
+        /* POP EFFECTS */
+        .pop {
             position: absolute; pointer-events: none; font-family: 'Orbitron';
-            font-weight: 900; animation: popUp 0.7s forwards; z-index: 1000;
+            font-weight: 900; animation: popAnim 0.7s ease-out forwards; z-index: 1000;
         }
-        @keyframes popUp {
-            0% { transform: translateY(0); opacity: 1; }
-            100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+        @keyframes popAnim {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -150px) scale(2); opacity: 0; }
         }
 
-        /* Frenzy Mode Effect */
-        body.frenzy { background: radial-gradient(circle, #200 0%, #020205 100%); }
+        /* SHAKE */
+        .shake { animation: shakeEffect 0.1s linear infinite; }
+        @keyframes shakeEffect {
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, -1px); }
+            100% { transform: translate(1px, 2px); }
+        }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
+
+<div id="save-status">SYNCING WITH CLOUD...</div>
 
 <div id="hud">
-    <div class="multiplier" id="mult-text">COMBO X1</div>
+    <div id="rank" style="background:var(--neon); color:black; padding:2px 12px; border-radius:5px; font-size:0.7rem; font-weight:900; display:inline-block; margin-bottom:10px;">NOOB</div>
     <h1 id="score">0</h1>
-    <div style="font-size: 0.7rem; letter-spacing: 3px; opacity: 0.5;">POWER PER SECOND: <span id="lps">0</span></div>
+    <div class="stats-info">LPS: <span id="lps-val">0.0</span> • CLICKS: <span id="click-val">0</span></div>
 </div>
 
-<div id="inventory" class="panel">
-    <h3 style="color: var(--neon-alt); font-size: 0.8rem; letter-spacing: 2px;">COLLECTIBLES</h3>
+<div id="milestones" class="panel">
+    <h3 style="font-size:0.8rem; letter-spacing:2px; color:var(--neon);">🏆 MILESTONES</h3>
     <div id="ach-list"></div>
 </div>
 
 <div id="stage">
-    <!-- Орбиты будут создаваться здесь -->
     <div id="llama-main" onclick="handleTap(event)">🦙</div>
 </div>
 
 <div id="shop" class="panel">
-    <h3 style="color: var(--neon); font-size: 0.8rem; letter-spacing: 2px;">UPGRADES</h3>
+    <h3 style="font-size:0.8rem; letter-spacing:2px; color:var(--neon);">⚡ UPGRADES</h3>
     <div id="shop-list"></div>
-    <button onclick="evolve()" style="width:100%; padding:15px; border-radius:20px; background:var(--neon); border:none; font-weight:800; margin-top:10px; cursor:pointer;">EVOLVE REALITY (10k)</button>
 </div>
 
 <script>
-    let score = 0, lps = 0, combo = 1, lastClick = 0, dimension = 1;
-    let currentEmoji = '🦙';
+    // --- ИГРОВОЕ СОСТОЯНИЕ ---
+    let state = {
+        score: 0,
+        lps: 0,
+        totalClicks: 0,
+        unlockedAch: [],
+        currentSkin: '🦙',
+        currentTheme: '',
+        upgradeLevels: [0, 0, 0, 0]
+    };
 
-    const items = [
-        { id: 'c1', n: 'Quantum Mouse', c: 20, p: 1, e: '⚡' },
-        { id: 'c2', n: 'Neural Link', c: 200, p: 8, e: '🧠' },
-        { id: 'c3', n: 'Star Server', c: 1500, p: 40, e: '🌌' },
-        { id: 'c4', n: 'Time Bender', c: 10000, p: 250, e: '⏳' }
+    const upgrades = [
+        { n: 'Auto-Clicker', c: 20, p: 0.5, e: '🖱️' },
+        { n: 'Viral Post', c: 250, p: 5, e: '📱' },
+        { n: 'AI Strategist', c: 2000, p: 40, e: '🤖' },
+        { n: 'Global Network', c: 15000, p: 300, e: '🌐' }
     ];
 
-    const skins = [
-        { r: 100, e: '🤖', n: 'Cybernetic' },
-        { r: 5000, e: '🥷', n: 'Shadow' },
-        { r: 50000, e: '👑', n: 'Overlord' }
+    const milestones = [
+        { id: 'm1', n: 'Cool Llama', req: 100, type: 'skin', val: '😎', desc: 'Reach 100' },
+        { id: 'm2', n: 'Pink Mode', req: 1000, type: 'theme', val: 'theme-pink', desc: '1k Points' },
+        { id: 'm3', n: 'Ninja Llama', req: 5000, type: 'skin', val: '🥷', desc: '5k Points' },
+        { id: 'm4', n: 'Ice World', req: 15000, type: 'theme', val: 'theme-ice', desc: '15k Points' },
+        { id: 'm5', n: 'God Skin', req: 100000, type: 'skin', val: '👑', desc: '100k Points' },
+        { id: 'm6', n: 'Gold Era', req: 500000, type: 'theme', val: 'theme-gold', desc: '500k Points' }
     ];
 
+    // --- КЛИКИ (МЫШЬ + ПРОБЕЛ) ---
     function handleTap(e) {
-        // Комбо логика
-        let now = Date.now();
-        if (now - lastClick < 300) combo = Math.min(combo + 0.1, 5);
-        else combo = 1;
-        lastClick = now;
-
-        let gain = dimension * Math.floor(combo);
-        score += gain;
-
-        // Визуальные эффекты
-        spawnEffect(e.clientX, e.clientY, `+${gain}`);
-        ghostLlama();
+        let isCrit = Math.random() > 0.96;
+        let gain = isCrit ? 10 : 1;
         
-        // Frenzy эффект
-        if (combo > 3) document.body.classList.add('frenzy');
-        else document.body.classList.remove('frenzy');
-
+        state.score += gain;
+        state.totalClicks++;
+        
+        spawnPop(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2, `+${gain}`, isCrit);
+        checkMilestones();
         updateUI();
-        checkSkins();
     }
 
-    function spawnEffect(x, y, txt) {
-        const n = document.createElement('div');
-        n.className = 'pop-num';
-        n.innerText = txt;
-        n.style.left = x + 'px'; n.style.top = y + 'px';
-        n.style.color = combo > 2 ? '#ff4d4d' : 'var(--neon)';
-        document.body.appendChild(n);
-        setTimeout(() => n.remove(), 700);
+    // Слушатель пробела
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            handleTap({});
+            document.getElementById('llama-main').style.transform = 'scale(0.85)';
+            setTimeout(() => document.getElementById('llama-main').style.transform = 'scale(1)', 50);
+        }
+        if (e.code === 'Escape') { save(); window.location.href = 'index.html'; }
+        if (e.ctrlKey && e.shiftKey && e.key === '6') { state.score += 100000; updateUI(); }
+    });
+
+    // --- ЭФФЕКТЫ ---
+    function spawnPop(x, y, txt, crit) {
+        const p = document.createElement('div');
+        p.className = 'pop';
+        p.innerText = txt;
+        p.style.left = x + 'px'; p.style.top = y + 'px';
+        if(crit) { p.style.color = '#ff4d4d'; p.style.fontSize = '4rem'; document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'), 100); }
+        else { p.style.color = 'var(--neon)'; }
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 700);
     }
 
-    function ghostLlama() {
-        const g = document.createElement('div');
-        g.className = 'click-ghost';
-        g.innerText = currentEmoji;
-        document.getElementById('stage').appendChild(g);
-        setTimeout(() => g.remove(), 600);
+    function createSat(emoji) {
+        const s = document.createElement('div');
+        s.className = 'satellite';
+        s.innerText = emoji;
+        s.style.setProperty('--radius', `${140 + Math.random()*80}px`);
+        s.style.setProperty('--speed', `${3 + Math.random()*10}s`);
+        document.getElementById('stage').appendChild(s);
     }
 
-    function createSatellite(emoji) {
-        const radius = 120 + (Math.random() * 80);
-        const speed = 3 + (Math.random() * 10);
-        const sat = document.createElement('div');
-        sat.className = 'satellite';
-        sat.innerText = emoji;
-        sat.style.setProperty('--radius', `${radius}px`);
-        sat.style.setProperty('--speed', `${speed}s`);
-        document.getElementById('stage').appendChild(sat);
-    }
-
-    function buy(idx) {
-        let it = items[idx];
-        if (score >= it.c) {
-            score -= it.c;
-            lps += it.p;
-            it.c *= 1.6;
-            createSatellite(it.e);
+    // --- МАГАЗИН И СОХРАНЕНИЯ ---
+    function buy(i) {
+        let u = upgrades[i];
+        if (state.score >= u.c) {
+            state.score -= u.c;
+            state.lps += u.p;
+            state.upgradeLevels[i]++;
+            u.c = Math.floor(u.c * 1.5);
+            createSat(u.e);
             renderShop();
             updateUI();
+            save();
         }
     }
 
-    function renderShop() {
-        document.getElementById('shop-list').innerHTML = items.map((it, i) => `
-            <div class="card" onclick="buy(${i})">
-                <h4>${it.e} ${it.n}</h4>
-                <p>COST: ${Math.floor(it.c)} | +${it.p} LPS</p>
-            </div>
-        `).join('');
-    }
-
-    function checkSkins() {
-        skins.forEach(s => {
-            if (score >= s.r && currentEmoji !== s.e) {
-                currentEmoji = s.e;
-                document.getElementById('llama-main').innerText = s.e;
-                document.getElementById('ach-list').innerHTML += `
-                    <div class="card" style="border-color:var(--neon-alt)">
-                        <h4>${s.e} UNLOCKED</h4>
-                        <p>${s.n} Form</p>
-                    </div>`;
+    function checkMilestones() {
+        milestones.forEach(m => {
+            if (state.score >= m.req && !state.unlockedAch.includes(m.id)) {
+                state.unlockedAch.push(m.id);
+                renderMilestones();
             }
         });
     }
 
-    function updateUI() {
-        document.getElementById('score').innerText = Math.floor(score).toLocaleString();
-        document.getElementById('lps').innerText = lps.toFixed(1);
-        document.getElementById('mult-text').innerText = `COMBO X${combo.toFixed(1)}`;
+    function applyReward(id) {
+        let m = milestones.find(x => x.id === id);
+        if (!state.unlockedAch.includes(id)) return;
+        if (m.type === 'skin') { state.currentSkin = m.val; document.getElementById('llama-main').innerText = m.val; }
+        else { state.currentTheme = m.val; document.body.className = m.val; }
+        save();
     }
 
-    // Секретный код
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Escape') window.location.href = 'index.html';
-        if (e.ctrlKey && e.shiftKey && e.key === '6') score += 100000;
-    });
+    function save() {
+        localStorage.setItem('llamaInfinitySave', JSON.stringify(state));
+        const status = document.getElementById('save-status');
+        status.style.opacity = 1;
+        setTimeout(() => status.style.opacity = 0, 1500);
+    }
 
-    setInterval(() => { score += lps/10; updateUI(); }, 100);
-    renderShop();
+    function load() {
+        const data = localStorage.getItem('llamaInfinitySave');
+        if (data) {
+            state = JSON.parse(data);
+            document.getElementById('llama-main').innerText = state.currentSkin;
+            document.body.className = state.currentTheme;
+            // Восстанавливаем спутники пропорционально LPS
+            for(let i=0; i<Math.min(state.lps, 50); i++) createSat('✨');
+        }
+    }
+
+    function renderShop() {
+        document.getElementById('shop-list').innerHTML = upgrades.map((u, i) => `
+            <div class="card" onclick="buy(${i})">
+                <div style="font-weight:800">${u.e} ${u.n}</div>
+                <div style="color:var(--neon); font-size:0.8rem">COST: ${Math.floor(u.c)} | +${u.p} LPS</div>
+            </div>
+        `).join('');
+    }
+
+    function renderMilestones() {
+        document.getElementById('ach-list').innerHTML = milestones.map(m => {
+            let unlocked = state.unlockedAch.includes(m.id);
+            return `
+                <div class="card ${unlocked ? '' : 'locked'}" onclick="applyReward('${m.id}')">
+                    <div style="font-weight:800">${unlocked ? '' : '🔒 '}${m.n}</div>
+                    <div style="font-size:0.7rem; opacity:0.6">${m.desc}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
+        document.getElementById('lps-val').innerText = state.lps.toFixed(1);
+        document.getElementById('click-val').innerText = state.totalClicks;
+        
+        let r = "NOOB";
+        if (state.score > 5000) r = "HUSTLER";
+        if (state.score > 50000) r = "CHAD";
+        if (state.score > 500000) r = "LEGEND";
+        document.getElementById('rank').innerText = r;
+    }
+
+    // Loop
+    setInterval(() => { state.score += state.lps / 10; updateUI(); }, 100);
+    setInterval(save, 20000);
+
+    window.onload = () => { load(); renderShop(); renderMilestones(); updateUI(); };
 </script>
 
 </body>
