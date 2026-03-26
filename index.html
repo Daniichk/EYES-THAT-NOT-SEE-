@@ -113,6 +113,35 @@
 </div>
 
 <script>
+    // --- ДОБАВЬ ЭТИ ПЕРЕМЕННЫЕ В НАЧАЛО <script> ---
+let currentUserEmail = "";
+let isAdmin = false;
+
+// --- ФУНКЦИЯ ЛОГИНА ---
+function login() {
+    let email = prompt("Enter your email to login:");
+    if (!email) return;
+
+    currentUserEmail = email.toLowerCase();
+    
+    // ПРОВЕРКА: Если почта совпадает с твоей, даем админку
+    if (currentUserEmail === "your-email@gmail.com") { // ЗАМЕНИ НА СВОЮ ПОЧТУ
+        isAdmin = true;
+        score = Infinity; // Даем бесконечные деньги
+        dimension = 5;    // Максимальное измерение
+        alert("Welcome, Creator! Infinity Llama Coins activated.");
+        document.getElementById('stats-bar').style.borderColor = "#ff0000"; // Красная рамка для админа
+    } else {
+        isAdmin = false;
+        alert("Logged in as: " + currentUserEmail);
+    }
+    updateUI();
+    save(); // Сохраняем состояние админа
+}
+
+// --- ДОБАВЬ КНОПКУ В HTML (в блок #stats-bar или #shop) ---
+// <button onclick="login()" style="background:#3498db; font-size:10px;">Login System</button>
+
     let score = 0, lps = 0, dimension = 1, isGameActive = false, spacePressed = false, lastDaily = 0;
     
     // Items vary by dimension
