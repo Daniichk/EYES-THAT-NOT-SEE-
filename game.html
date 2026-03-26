@@ -6,55 +6,84 @@
     <title>Simulation Interface</title>
     <style>
         body { background: #05050a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; user-select: none; }
-        #study-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fdfdfd; color: #1a1a1a; z-index: 2000; padding: 60px; display: flex; flex-direction: column; box-sizing: border-box; font-family: 'Cambria', serif; }
-        .math-header { border-bottom: 2px solid #333; margin-bottom: 20px; }
-        .formula { font-size: 22px; margin: 12px 0; background: #f0f0f0; padding: 10px; border-radius: 5px; }
+        
         #game-container { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        #llama-wrapper { position: relative; width: 220px; height: 220px; cursor: pointer; z-index: 10; font-size: 140px; display: flex; align-items: center; justify-content: center; transition: transform 0.05s; }
+        
+        #llama-wrapper { 
+            position: relative; width: 220px; height: 220px; cursor: pointer; 
+            z-index: 10; font-size: 140px; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.05s;
+        }
         #llama-wrapper:active { transform: scale(0.9); }
         .orbit-item { position: absolute; font-size: 32px; pointer-events: none; z-index: 5; }
+
+        /* UI Panels */
         .ui-panel { position: absolute; background: rgba(10, 10, 20, 0.95); padding: 15px; border-radius: 15px; border: 1px solid #34495e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         #stats-bar { position: absolute; top: 20px; background: linear-gradient(145deg, #1e272e, #05050a); padding: 10px 60px; border-radius: 50px; border: 2px solid #f1c40f; text-align: center; }
+        
         #casino { left: 20px; top: 20px; width: 260px; border-color: #e74c3c; }
         #shop { right: 20px; top: 20px; width: 260px; border-color: #27ae60; }
-        #inventory { right: 20px; bottom: 20px; width: 260px; height: 150px; overflow-y: auto; }
+        #inventory { right: 20px; bottom: 20px; width: 260px; height: 150px; overflow-y: auto; border-color: #3498db; }
+
         h3 { margin: 0 0 10px 0; color: #f1c40f; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
-        button { width: 100%; padding: 10px; margin: 4px 0; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s; }
+        button { 
+            width: 100%; padding: 10px; margin: 4px 0; cursor: pointer; 
+            background: #2c3e50; color: white; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s;
+        }
+        button:hover { background: #34495e; transform: translateY(-1px); }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: white; text-align: center; box-sizing: border-box; }
+
         .click-num { position: absolute; color: #f1c40f; font-weight: bold; font-size: 30px; pointer-events: none; animation: floatUp 0.7s forwards; z-index: 100; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-130px); opacity: 0; } }
+        
+        #admin-status { color: red; font-weight: bold; display: none; margin-top: 5px; font-size: 12px; }
     </style>
 </head>
 <body>
-<div id="study-screen">
-    <div class="math-header"><h1>Research Data Analysis</h1><p>Case #402</p></div>
-    <div class="formula">1. Schrödinger Equation: iℏ ∂/∂t Ψ(r,t) = [ -ℏ²/2m ∇² + V(r,t) ] Ψ(r,t)</div>
-    <div class="formula">2. Navier-Stokes: ρ(∂u/∂t + u·∇u) = -∇p + μ∇²u + f</div>
-    <div class="formula">Calculations in progress...</div>
-</div>
+
 <div id="game-container">
     <div id="stats-bar">
         <h2 style="margin: 0;">💰 <span id="count">0</span></h2>
         <small>LPS: <span id="lps">0</span> | DIMENSION: <span id="dim">1</span></small>
-        <div id="admin-status" style="color:red; font-weight:bold; display:none;">CREATOR MODE</div>
+        <div id="admin-status">CREATOR MODE ACTIVE</div>
     </div>
+
+    <!-- CASINO -->
     <div id="casino" class="ui-panel">
         <h3>🎰 Casino</h3>
         <input type="number" id="bet-amt" placeholder="Bet amount...">
         <button onclick="coinflip()" style="background: #d35400;">Flip Coin</button>
-        <button onclick="spin('red')" style="background:#e74c3c">Red</button>
-        <button onclick="login()" style="background:#3498db; margin-top: 5px;">Admin Login</button>
+        <div style="display: flex; gap: 5px;">
+            <button onclick="spin('red')" style="background:#e74c3c">Red</button>
+            <button onclick="spin('black')" style="background:#2c3e50">Black</button>
+        </div>
+        <button onclick="login()" style="background:#3498db; margin-top: 10px;">Admin Login</button>
     </div>
+
+    <!-- SHOP -->
     <div id="shop" class="ui-panel">
         <h3 id="shop-name">🛒 Market</h3>
         <div id="shop-items"></div>
-        <button onclick="changeDim()" style="background: #8e44ad; margin-top:10px;">Next Dimension</button>
+        <hr style="border:0.5px solid #333; margin: 10px 0;">
+        <button onclick="changeDim()" style="background: #8e44ad;">Next Dimension (10k)</button>
     </div>
-    <div id="inventory" class="ui-panel"><h3>🎒 Assets</h3><div id="inv-list">Empty...</div></div>
+
+    <!-- INVENTORY -->
+    <div id="inventory" class="ui-panel">
+        <h3>🎒 Assets</h3>
+        <div id="inv-list" style="font-size: 14px; color: #bdc3c7;">Empty...</div>
+    </div>
+
     <div id="llama-wrapper" onclick="clickLlama(event)">🦙</div>
+    
+    <button onclick="resetGame()" style="position:fixed; bottom:10px; left:10px; width:60px; font-size:8px; opacity:0.5;">Reset Data</button>
 </div>
+
 <script>
-    let score = 0, lps = 0, dimension = 1, isGameActive = false, lastDaily = 0, isAdmin = false;
+    // Игра теперь активна сразу при загрузке
+    let score = 0, lps = 0, dimension = 1, isGameActive = true, isAdmin = false;
     let ownedItems = {};
+
     const itemData = {
         1: { cursor: { name: "Basic Cursor", cost: 10, power: 0.1, emoji: '🖱️', r: 120 }, farm: { name: "Llama Pen", cost: 100, power: 1, emoji: '🚜', r: 180 } },
         2: { car: { name: "Llama Taxi", cost: 500, power: 5, emoji: '🚕', r: 220 }, bus: { name: "Llama Bus", cost: 2000, power: 15, emoji: '🚌', r: 250 } },
@@ -72,10 +101,7 @@
         }
     }
 
-    window.addEventListener('keydown', (e) => { if (e.code === 'Escape') { isGameActive = !isGameActive; document.getElementById('study-screen').style.display = isGameActive ? 'none' : 'flex'; } });
-
     function clickLlama(e) {
-        if (!isGameActive) return;
         if (!isAdmin) score += dimension;
         showNum(e.clientX, e.clientY);
         updateUI();
@@ -91,7 +117,8 @@
     function buy(id) {
         let it = itemData[dimension][id];
         if (isAdmin || score >= it.cost) {
-            if(!isAdmin) score -= it.cost; lps += it.power;
+            if (!isAdmin) score -= it.cost;
+            lps += it.power;
             ownedItems[id] = (ownedItems[id] || 0) + 1;
             it.cost = Math.floor(it.cost * 1.3);
             createOrbit(it); renderShop(); updateUI(); updateInv();
@@ -108,33 +135,58 @@
 
     function renderShop() {
         const container = document.getElementById('shop-items'); container.innerHTML = "";
+        document.getElementById('shop-name').innerText = "🛒 Market Dim " + dimension;
         for (let k in itemData[dimension]) {
             let it = itemData[dimension][k];
-            container.innerHTML += `<button onclick="buy('${k}')">${it.name} (${isAdmin ? '0' : it.cost})</button>`;
+            container.innerHTML += `<button onclick="buy('${k}')">${it.name} (${isAdmin ? 'FREE' : Math.floor(it.cost)})</button>`;
         }
+    }
+
+    function spin(choice) {
+        let amt = parseInt(document.getElementById('bet-amt').value);
+        if (isNaN(amt) || amt <= 0 || (!isAdmin && amt > score)) return;
+        let res = Math.random() > 0.5 ? "red" : "black";
+        if (choice === res) { if (!isAdmin) score += amt; alert("WIN! It was " + res); } 
+        else { if (!isAdmin) score -= amt; alert("LOST! It was " + res); }
+        updateUI();
+    }
+
+    function coinflip() {
+        let amt = parseInt(document.getElementById('bet-amt').value);
+        if (isNaN(amt) || amt <= 0 || (!isAdmin && amt > score)) return;
+        if (Math.random() > 0.5) { if (!isAdmin) score += amt; alert("WIN!"); } 
+        else { if (!isAdmin) score -= amt; alert("LOST!"); }
+        updateUI();
     }
 
     function changeDim() {
         if ((isAdmin || score >= 10000) && dimension < 5) {
-            if(!isAdmin) score -= 10000; dimension++;
-            document.getElementById('game-container').style.filter = `hue-rotate(${dimension*60}deg)`;
+            if (!isAdmin) score -= 10000;
+            dimension++;
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
             renderShop(); updateUI();
         }
     }
 
     function updateInv() {
-        let h = ""; for(let k in ownedItems) h += `<span>${k} x${ownedItems[k]} </span>`;
-        document.getElementById('inv-list').innerHTML = h;
+        let h = "";
+        for (let k in ownedItems) {
+            let emoji = "📦";
+            for(let d in itemData) if(itemData[d][k]) emoji = itemData[d][k].emoji;
+            h += `<span>${emoji} x${ownedItems[k]} </span>`;
+        }
+        document.getElementById('inv-list').innerHTML = h || "Empty...";
     }
 
     function updateUI() {
-        document.getElementById('count').innerText = isAdmin ? "∞" : Math.floor(score);
+        document.getElementById('count').innerText = isAdmin ? "INFINITY" : Math.floor(score).toLocaleString();
         document.getElementById('lps').innerText = lps.toFixed(1);
         document.getElementById('dim').innerText = dimension;
     }
 
-    setInterval(() => { if(isGameActive && !isAdmin) { score += lps/10; updateUI(); } }, 100);
-    window.onload = () => { renderShop(); updateUI(); };
+    setInterval(() => { if (!isAdmin) { score += lps / 10; updateUI(); } }, 100);
+    window.onload = () => { renderShop(); updateUI(); updateInv(); };
+    function resetGame() { localStorage.clear(); location.reload(); }
 </script>
 </body>
 </html>
