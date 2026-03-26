@@ -2,124 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Llama Empire: Grand Edition</title>
+    <title>Llama Empire: Multidimensional Tycoon</title>
     <style>
-        body { background: #0a0a12; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; user-select: none; }
+        body { background: #05050a; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; overflow: hidden; user-select: none; }
         
-        /* Anti-Teacher Screen */
+        /* Professional Math Overlay */
         #study-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #ffffff; color: #333; z-index: 1000; padding: 100px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: #fdfdfd; color: #1a1a1a; z-index: 2000; padding: 60px;
+            display: flex; flex-direction: column; box-sizing: border-box; font-family: 'Cambria', serif;
         }
-        .formula { font-family: 'Times New Roman', serif; font-size: 26px; margin: 8px; color: #000; }
+        .math-header { border-bottom: 2px solid #333; margin-bottom: 20px; }
+        .formula { font-size: 22px; margin: 12px 0; background: #f0f0f0; padding: 10px; border-radius: 5px; }
 
-        /* Main Game */
-        #game-container { position: relative; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* Game UI */
+        #game-container { position: relative; height: 100vh; display: flex; align-items: center; justify-content: center; }
         
         #llama-wrapper { 
-            position: relative; width: 180px; height: 180px; cursor: pointer; 
-            z-index: 10; font-size: 120px; display: flex; align-items: center; justify-content: center;
+            position: relative; width: 220px; height: 220px; cursor: pointer; 
+            z-index: 10; font-size: 140px; display: flex; align-items: center; justify-content: center;
             transition: transform 0.05s;
         }
         #llama-wrapper:active { transform: scale(0.9); }
+        .orbit-item { position: absolute; font-size: 32px; pointer-events: none; z-index: 5; }
 
-        .orbit-item { position: absolute; font-size: 30px; pointer-events: none; z-index: 5; }
-
-        /* Floating +Numbers */
-        .click-num {
-            position: absolute; color: #f1c40f; font-weight: bold; font-size: 28px;
-            pointer-events: none; animation: floatUp 0.7s ease-out forwards; z-index: 100;
-        }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-120px); opacity: 0; } }
-
-        /* UI Panels */
-        .ui-panel { position: absolute; background: rgba(0,0,0,0.85); padding: 15px; border-radius: 12px; width: 220px; border: 1px solid #444; }
-        #stats-bar { position: absolute; top: 20px; background: rgba(0,0,0,0.7); padding: 10px 40px; border-radius: 50px; border: 2px solid #f1c40f; text-align: center; }
+        /* Panels Design */
+        .ui-panel { position: absolute; background: rgba(10, 10, 20, 0.95); padding: 15px; border-radius: 15px; border: 1px solid #34495e; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #stats-bar { position: absolute; top: 20px; background: linear-gradient(145deg, #1e272e, #05050a); padding: 10px 60px; border-radius: 50px; border: 2px solid #f1c40f; text-align: center; }
         
-        #casino { left: 20px; top: 20px; }
-        #shop { right: 20px; top: 20px; max-height: 50vh; overflow-y: auto; }
-        #inventory { right: 20px; bottom: 20px; height: 30vh; overflow-y: auto; border-color: #3498db; }
+        #casino { left: 20px; top: 20px; width: 260px; border-color: #e74c3c; }
+        #shop { right: 20px; top: 20px; width: 260px; border-color: #27ae60; }
+        #inventory { right: 20px; bottom: 20px; width: 260px; height: 150px; overflow-y: auto; }
 
-        h3 { margin: 0 0 10px 0; color: #f1c40f; text-transform: uppercase; font-size: 13px; text-align: center; }
+        h3 { margin: 0 0 10px 0; color: #f1c40f; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
         button { 
-            width: 100%; padding: 7px; margin: 3px 0; cursor: pointer; 
-            background: #27ae60; color: white; border: none; border-radius: 4px; font-weight: bold;
+            width: 100%; padding: 10px; margin: 4px 0; cursor: pointer; 
+            background: #2c3e50; color: white; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s;
         }
-        button:hover { opacity: 0.9; }
-        input { width: 90%; padding: 5px; margin-bottom: 5px; border-radius: 4px; border: none; text-align: center; display: block; margin: 0 auto; }
+        button:hover { background: #34495e; transform: translateY(-1px); }
+        .btn-buy { background: #27ae60; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #444; background: #111; color: white; text-align: center; box-sizing: border-box; }
 
-        .btn-red { background: #e74c3c; } .btn-black { background: #2c3e50; } .btn-green { background: #2ecc71; }
-        #roulette-visual { width: 100%; height: 10px; border: 1px solid gold; margin: 8px 0; background: #222; }
+        /* Casino Visuals */
+        .casino-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+        #roulette-visual { width: 100%; height: 12px; border-radius: 10px; margin: 10px 0; background: #222; }
 
-        .inv-item { display: inline-block; font-size: 20px; margin: 2px; }
-        .golden-llama { position: fixed; font-size: 70px; cursor: pointer; z-index: 500; filter: drop-shadow(0 0 15px gold); animation: pulse 0.8s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .click-num { position: absolute; color: #f1c40f; font-weight: bold; font-size: 30px; pointer-events: none; animation: floatUp 0.7s forwards; z-index: 100; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-130px); opacity: 0; } }
+        
+        .golden-llama { position: fixed; font-size: 80px; cursor: pointer; z-index: 500; animation: pulse 0.5s infinite alternate; }
+        @keyframes pulse { from { transform: scale(1); filter: drop-shadow(0 0 5px gold); } to { transform: scale(1.2); filter: drop-shadow(0 0 20px gold); } }
     </style>
 </head>
 <body>
 
 <div id="study-screen">
-    <h1>Mathematical Physics: Analysis</h1>
-    <div class="formula">∇ · B = 0</div>
-    <div class="formula">x = (-b ± √(b² - 4ac)) / 2a</div>
-    <div class="formula">∫ sin(x) dx = -cos(x) + C</div>
-    <p><i>Focusing... Press <b>ESC</b> to return.</i></p>
+    <div class="math-header">
+        <h1>Analysis of Non-Linear Differential Equations</h1>
+        <p>Department of Mathematics | Case Study #402</p>
+    </div>
+    <div class="formula">1. Schrödinger Equation: iℏ ∂/∂t Ψ(r,t) = [ -ℏ²/2m ∇² + V(r,t) ] Ψ(r,t)</div>
+    <div class="formula">2. Navier-Stokes: ρ(∂u/∂t + u·∇u) = -∇p + μ∇²u + f</div>
+    <div class="formula">3. Riemann Hypothesis: ζ(s) = ∑ n⁻ˢ (Re(s) > 1)</div>
+    <div class="formula">4. Entropy: S = k ln W</div>
+    <p style="margin-top: 30px; color: #666;">Document encrypted. Press <b>ESC</b> to unlock access...</p>
 </div>
 
 <div id="game-container">
     <div id="stats-bar">
         <h2 style="margin: 0;">💰 <span id="count">0</span></h2>
-        <small>LPS: <span id="lps">0</span> | DIM: <span id="dim">1</span>/5</small>
+        <small>LPS: <span id="lps">0</span> | DIMENSION: <span id="dim">1</span></small>
     </div>
 
     <!-- CASINO -->
     <div id="casino" class="ui-panel">
-        <h3>🎰 Roulette</h3>
-        <input type="number" id="bet-input" placeholder="Amount">
-        <div style="display: flex; gap: 2px;">
-            <button onclick="setQ(10)">10%</button><button onclick="setQ(50)">50%</button><button onclick="setQ(100)">MAX</button>
-        </div>
+        <h3>🎰 Grand Casino</h3>
+        <input type="number" id="bet-amt" placeholder="Bet amount...">
+        
+        <small>Coinflip (50/50 - x2)</small>
+        <button onclick="coinflip()" style="background: #d35400;">Flip Coin</button>
+        
         <div id="roulette-visual"></div>
-        <div style="display: flex; gap: 2px;">
-            <button class="btn-red" onclick="spin('red')">R</button>
-            <button class="btn-black" onclick="spin('black')">B</button>
-            <button class="btn-green" onclick="spin('green')">G</button>
+        <div class="casino-grid">
+            <button style="background:#e74c3c" onclick="spin('red')">R</button>
+            <button style="background:#2c3e50" onclick="spin('black')">B</button>
+            <button style="background:#27ae60" onclick="spin('green')">G</button>
         </div>
-        <button id="daily-btn" onclick="claimDaily()" style="background: #f39c12; margin-top: 10px;">Daily Bonus</button>
+        
+        <button id="daily-btn" onclick="claimDaily()" style="background: #f39c12; margin-top: 15px;">Daily Bonus</button>
     </div>
 
     <!-- SHOP -->
     <div id="shop" class="ui-panel">
-        <h3>🛒 Market</h3>
-        <button id="btn-cursor" onclick="buy('cursor')">Cursor (10)</button>
-        <button id="btn-farm" onclick="buy('farm')">Farm (100)</button>
-        <button id="btn-car" onclick="buy('car')">Sport Car (500)</button>
-        <button id="btn-house" onclick="buy('house')">Villa (2500)</button>
-        <button id="btn-dim" onclick="changeDim()" style="background: #8e44ad;">Next Dim (10k)</button>
+        <h3 id="shop-name">🛒 Basic Market</h3>
+        <div id="shop-items"></div>
+        <hr style="border:0.5px solid #333; margin: 10px 0;">
+        <button id="btn-dim" onclick="changeDim()" style="background: #8e44ad;">Evolve Dimension (10k)</button>
     </div>
 
     <!-- INVENTORY -->
     <div id="inventory" class="ui-panel">
-        <h3>🎒 Inventory</h3>
-        <div id="inv-list"></div>
+        <h3>🎒 Your Assets</h3>
+        <div id="inv-list" style="font-size: 14px; color: #bdc3c7;">Empty...</div>
     </div>
 
     <div id="llama-wrapper" onclick="clickLlama(event)">🦙</div>
     
-    <button onclick="resetGame()" style="position:fixed; bottom:10px; left:10px; width:80px; font-size:9px; background:#333;">Reset</button>
+    <button onclick="resetGame()" style="position:fixed; bottom:10px; left:10px; width:60px; font-size:8px; opacity:0.5;">Reset</button>
 </div>
 
 <script>
     let score = 0, lps = 0, dimension = 1, isGameActive = false, spacePressed = false, lastDaily = 0;
     
-    const upgrades = {
-        cursor: { count: 0, cost: 10, power: 0.1, emoji: '🖱️', r: 120, s: 0.05 },
-        farm: { count: 0, cost: 100, power: 1, emoji: '🚜', r: 170, s: 0.02 },
-        car: { count: 0, cost: 500, power: 5, emoji: '🏎️', r: 230, s: 0.03 },
-        house: { count: 0, cost: 2500, power: 25, emoji: '🏰', r: 290, s: 0.015 }
+    // Items vary by dimension
+    const itemData = {
+        1: {
+            cursor: { name: "Basic Cursor", cost: 10, power: 0.1, emoji: '🖱️', r: 120 },
+            farm: { name: "Llama Pen", cost: 100, power: 1, emoji: '🚜', r: 180 }
+        },
+        2: {
+            car: { name: "Llama Taxi", cost: 500, power: 5, emoji: '🚕', r: 220 },
+            bus: { name: "Llama Bus", cost: 2000, power: 15, emoji: '🚌', r: 250 }
+        },
+        3: {
+            house: { name: "Small House", cost: 5000, power: 50, emoji: '🏠', r: 280 },
+            mansion: { name: "Mansion", cost: 20000, power: 150, emoji: '🏰', r: 310 }
+        },
+        4: {
+            rocket: { name: "Llama Rocket", cost: 100000, power: 800, emoji: '🚀', r: 340 },
+            station: { name: "Space Hub", cost: 500000, power: 3000, emoji: '🛰️', r: 370 }
+        },
+        5: {
+            god: { name: "Llama God", cost: 5000000, power: 50000, emoji: '👑', r: 400 },
+            galaxy: { name: "Galaxy Box", cost: 99999999, power: 999999, emoji: '🌌', r: 450 }
+        }
     };
 
+    let ownedItems = {}; // { itemKey: count }
+
+    // Toggle Math Screen
     window.addEventListener('keydown', (e) => {
         if (e.code === 'Escape') {
             isGameActive = !isGameActive;
@@ -142,56 +163,88 @@
         setTimeout(() => n.remove(), 700);
     }
 
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' && !spacePressed && isGameActive) {
-            spacePressed = true; clickLlama();
+    // Coinflip logic
+    function coinflip() {
+        let amt = parseInt(document.getElementById('bet-amt').value);
+        if (isNaN(amt) || amt <= 0 || amt > score) return;
+        if (Math.random() > 0.5) {
+            score += amt; alert("WIN! You doubled your coins!");
+        } else {
+            score -= amt; alert("LOST! Try again next time.");
         }
-    });
-    window.addEventListener('keyup', (e) => { if (e.code === 'Space') spacePressed = false; });
-
-    function buy(id) {
-        let u = upgrades[id];
-        if (score >= u.cost) {
-            score -= u.cost; u.count++; lps += u.power;
-            u.cost = Math.floor(u.cost * 1.3);
-            createOrbit(u); updateUI(); updateInv();
-        }
+        updateUI();
     }
 
-    function createOrbit(u) {
-        const el = document.createElement('div');
-        el.className = 'orbit-item'; el.innerText = u.emoji;
-        document.getElementById('llama-wrapper').appendChild(el);
-        let angle = Math.random() * 6.28, speed = u.s * (0.8 + Math.random() * 0.4);
-        function anim() {
-            angle += speed;
-            el.style.left = (Math.cos(angle) * u.r + 75) + 'px';
-            el.style.top = (Math.sin(angle) * u.r + 75) + 'px';
-            requestAnimationFrame(anim);
-        }
-        anim();
-    }
-
-    function setQ(p) { document.getElementById('bet-input').value = Math.floor(score * (p/100)); }
-    
+    // Roulette logic
     function spin(choice) {
-        let amt = parseInt(document.getElementById('bet-input').value);
+        let amt = parseInt(document.getElementById('bet-amt').value);
         if (isNaN(amt) || amt <= 0 || amt > score) return;
         let rand = Math.random() * 100, res = "";
         if (rand < 47) res = "red"; else if (rand < 94) res = "black"; else res = "green";
         document.getElementById('roulette-visual').style.background = (res==="red"?"#e74c3c":(res==="black"?"#2c3e50":"#2ecc71"));
         if (choice === res) {
-            let m = (choice === "green") ? 14 : 2;
-            score += amt * (m - 1); alert("WIN! Result: " + res.toUpperCase());
-        } else { score -= amt; alert("LOST! Result: " + res.toUpperCase()); }
+            let m = (res === "green") ? 14 : 2;
+            score += amt * (m - 1); alert("ROULETTE WIN: " + res.toUpperCase());
+        } else { score -= amt; alert("ROULETTE LOST: " + res.toUpperCase()); }
         updateUI();
+    }
+
+    function buy(id) {
+        let item = itemData[dimension][id];
+        if (score >= item.cost) {
+            score -= item.cost;
+            lps += item.power;
+            ownedItems[id] = (ownedItems[id] || 0) + 1;
+            item.cost = Math.floor(item.cost * 1.3);
+            createOrbit(item);
+            renderShop();
+            updateUI();
+            updateInv();
+        }
+    }
+
+    function createOrbit(item) {
+        const el = document.createElement('div');
+        el.className = 'orbit-item'; el.innerText = item.emoji;
+        document.getElementById('llama-wrapper').appendChild(el);
+        let angle = Math.random() * 6.28, speed = 0.02 + Math.random() * 0.03;
+        function anim() {
+            angle += speed;
+            el.style.left = (Math.cos(angle) * item.r + 90) + 'px';
+            el.style.top = (Math.sin(angle) * item.r + 90) + 'px';
+            requestAnimationFrame(anim);
+        }
+        anim();
+    }
+
+    function renderShop() {
+        const container = document.getElementById('shop-items');
+        const shopTitle = document.getElementById('shop-name');
+        container.innerHTML = "";
+        const currentItems = itemData[dimension];
+        shopTitle.innerText = "🛒 Dimension " + dimension + " Shop";
+        
+        for (let key in currentItems) {
+            let it = currentItems[key];
+            container.innerHTML += `<button class="btn-buy" onclick="buy('${key}')">${it.name} (${Math.floor(it.cost)})</button>`;
+        }
+    }
+
+    function changeDim() {
+        if (score >= 10000 && dimension < 5) {
+            score -= 10000;
+            dimension++;
+            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
+            renderShop();
+            updateUI();
+        }
     }
 
     function claimDaily() {
         if (Date.now() - lastDaily > 86400000) {
-            score += 1000 * dimension; lastDaily = Date.now();
+            score += 2000 * dimension; lastDaily = Date.now();
             alert("Daily Bonus Claimed!"); updateUI();
-        } else alert("Not ready yet!");
+        } else alert("Cooldown active!");
     }
 
     function spawnGolden() {
@@ -199,51 +252,44 @@
         const g = document.createElement('div');
         g.className = 'golden-llama'; g.innerText = '✨🦙';
         g.style.left = Math.random() * 80 + '%'; g.style.top = Math.random() * 80 + '%';
-        g.onclick = () => { score += 100; g.remove(); updateUI(); };
+        g.onclick = () => { score += 500; g.remove(); updateUI(); };
         document.body.appendChild(g);
-        setTimeout(() => g.remove(), 10000);
-    }
-
-    function changeDim() {
-        if (score >= 10000 && dimension < 5) {
-            score -= 10000; dimension++;
-            document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
-            updateUI();
-        }
+        setTimeout(() => g.remove(), 8000);
     }
 
     function updateInv() {
         const list = document.getElementById('inv-list');
         list.innerHTML = "";
-        for (let k in upgrades) {
-            if (upgrades[k].count > 0) {
-                list.innerHTML += `<div class="inv-item">${upgrades[k].emoji} x${upgrades[k].count}</div> `;
-            }
+        for (let k in ownedItems) {
+            let emoji = "";
+            for(let d in itemData) if(itemData[d][k]) emoji = itemData[d][k].emoji;
+            list.innerHTML += `<span>${emoji} x${ownedItems[k]}</span> `;
         }
     }
 
-    function save() { localStorage.setItem('llama_final_v5', JSON.stringify({ score, dimension, lps, upgrades, lastDaily })); }
+    function save() { localStorage.setItem('llama_v_multi', JSON.stringify({ score, dimension, lps, ownedItems, itemData, lastDaily })); }
     function load() {
-        const s = JSON.parse(localStorage.getItem('llama_final_v5'));
+        const s = JSON.parse(localStorage.getItem('llama_v_multi'));
         if (s) {
             score = s.score; dimension = s.dimension; lps = s.lps; lastDaily = s.lastDaily || 0;
-            Object.assign(upgrades, s.upgrades);
-            for(let k in upgrades) for(let i=0; i<upgrades[k].count; i++) createOrbit(upgrades[k]);
+            Object.assign(ownedItems, s.ownedItems);
+            Object.assign(itemData, s.itemData);
+            for(let k in ownedItems) {
+                let found;
+                for(let d in itemData) if(itemData[d][k]) found = itemData[d][k];
+                for(let i=0; i<ownedItems[k]; i++) createOrbit(found);
+            }
             document.getElementById('game-container').style.filter = `hue-rotate(${dimension * 60}deg)`;
         }
-        updateUI(); updateInv();
+        renderShop(); updateUI(); updateInv();
     }
 
-    function resetGame() { if(confirm("Reset all?")) { localStorage.clear(); location.reload(); } }
+    function resetGame() { if(confirm("Full Reset?")) { localStorage.clear(); location.reload(); } }
 
     function updateUI() {
-        document.getElementById('count').innerText = Math.floor(score);
+        document.getElementById('count').innerText = Math.floor(score).toLocaleString();
         document.getElementById('lps').innerText = lps.toFixed(1);
         document.getElementById('dim').innerText = dimension;
-        document.getElementById('btn-cursor').innerText = `Cursor (${upgrades.cursor.cost})`;
-        document.getElementById('btn-farm').innerText = `Farm (${upgrades.farm.cost})`;
-        document.getElementById('btn-car').innerText = `Car (${upgrades.car.cost})`;
-        document.getElementById('btn-house').innerText = `House (${upgrades.house.cost})`;
     }
 
     setInterval(() => { if(isGameActive) score += lps/10; updateUI(); }, 100);
