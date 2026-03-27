@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LLAMA VANGUARD: THE FINAL IMPERIUM</title>
+    <title>Research Data Analysis: Stanford Project</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,6 +15,13 @@
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
             background-image: radial-gradient(circle at 50% 100%, #1a0033 0%, var(--bg) 80%);
         }
+        
+        /* Эффект маскировки (Panic Mode) */
+        #panic-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 999999;
+        }
+
         /* Эффект помех при ярости */
         @keyframes shake {
             0% { transform: translate(0,0); }
@@ -74,6 +81,8 @@
     </style>
 </head>
 <body id="game-body">
+
+<div id="panic-overlay"></div>
 
 <div id="notif"><span id="n-icon">🏆</span> <div style="font-family:'Orbitron'"><b id="n-title" style="color:var(--gold)">INFO</b><br><small id="n-desc">Message</small></div></div>
 
@@ -135,6 +144,29 @@
 </div>
 
 <script>
+    // --- АЛГОРИТМ ПОЛНОЙ МАСКИРОВКИ ---
+    window.addEventListener('keydown', (e) => {
+        // Выход на прикрытие (Esc)
+        if (e.key === 'Escape') {
+            save();
+            window.location.replace('index.html'); // replace не оставляет страницы в истории "назад"
+        }
+        // Мгновенная белая страница (Ё / `)
+        if (e.key === '`') {
+            const overlay = document.getElementById('panic-overlay');
+            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+        }
+        // Блокировка инструментов разработчика
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67))) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Блокировка правой кнопки
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- ОРИГИНАЛЬНАЯ ЛОГИКА ИГРЫ ---
     const data = {
         phones: [
             { id: 'p1', n: "Siemens A50", c: 400, p: 1, i: "📟" },
@@ -197,17 +229,14 @@
 
         let clickVal = (state.mult * state.gMult);
         if(state.rage >= 2) {
-            clickVal += (state.mult * 3); // Яростный бонус
+            clickVal += (state.mult * 3);
             document.getElementById('game-body').classList.add('rage-active');
             document.getElementById('rage-text').style.display = 'inline';
         } else {
             document.getElementById('game-body').classList.remove('rage-active');
             document.getElementById('rage-text').style.display = 'none';
         }
-
         state.score += clickVal;
-        
-        // Починенный спавн текста (теперь четко по центру курсора)
         spawnText(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2, `+${Math.floor(clickVal)}`);
         updateUI();
     }
@@ -242,7 +271,6 @@
         let item = [...data.phones, ...data.biz, ...data.luxury, ...data.skins].find(x => x.id === id);
         let lvl = (type === 'biz' ? state.biz[id] : (type === 'up' ? state.ups[id] : 0)) || 0;
         let cost = Math.floor(item.c * Math.pow(1.65, lvl));
-
         if(state.score >= cost) {
             if(type === 'lux' && !state.lux[id]) { state.score -= cost; state.lux[id] = true; }
             else if(type === 'skin') { if(!state.skins.includes(id)) { state.score -= cost; state.skins.push(id); } state.curSkin = item.i; }
@@ -252,7 +280,6 @@
         }
     }
 
-    // Игры (Слоты, Мины, Рулетка)
     function playSlots() {
         if(state.score < 2000) return;
         state.score -= 2000;
@@ -265,7 +292,7 @@
             if(++t > 15) {
                 clearInterval(iv);
                 let res = [s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)]];
-                if(Math.random() < 0.1) res = [res[0], res[0], res[0]]; // Шанс на победу
+                if(Math.random() < 0.1) res = [res[0], res[0], res[0]];
                 document.getElementById('sl1').innerText = res[0]; document.getElementById('sl2').innerText = res[1]; document.getElementById('sl3').innerText = res[2];
                 if(res[0] === res[1] && res[1] === res[2]) { state.score += 60000; showNotif("JACKPOT! +60,000", "🎰"); }
                 updateUI();
@@ -321,7 +348,6 @@
         setTimeout(() => n.classList.remove('show'), 3000);
     }
 
-    window.addEventListener('keydown', (e) => { if(e.key === 'Escape') { save(); window.location.href = 'index.html'; } });
     setInterval(() => { state.score += (state.lps * state.gMult / 10); if(state.rage > 0) state.rage = Math.max(state.rage - 0.04, 0); updateUI(); }, 100);
     load();
 </script>
