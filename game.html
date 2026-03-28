@@ -3,298 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Research Data Analysis: Stanford Project</title>
+    <title>Stanford Neural Link: Project LLAMA [RETRO OS]</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon: #00ffcc; --accent: #ff0055; --gold: #ffd700; --bg: #050508;
-            --glass: rgba(15, 15, 25, 0.9); --border: rgba(0, 255, 204, 0.2);
+            --neon: #00ffcc; --accent: #ff0055; --gold: #ffd700; --bg: #020202;
+            --glass: rgba(10, 15, 10, 0.85); --border: rgba(0, 255, 204, 0.3);
+            --st-red: #8c1515;
+            --terminal-green: #33ff33;
         }
         body {
-            margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif;
+            margin: 0; background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif;
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
-            background-image: radial-gradient(circle at 50% 100%, #1a0033 0%, var(--bg) 80%);
-        }
-        
-        /* Эффект маскировки (Panic Mode) */
-        #panic-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 999999;
+            background-image: radial-gradient(circle at 50% 50%, #0a1510 0%, var(--bg) 90%);
         }
 
-        /* Эффект помех при ярости */
+        /* RETRO CRT SCANLINES EFFECT */
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px; z-index: 9999; pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Panic Mask */
+        #panic-overlay {
+            display: none; position: fixed; inset: 0; background: #000; z-index: 999999;
+            flex-direction: column; align-items: flex-start; justify-content: flex-start; color: var(--terminal-green);
+            font-family: 'Courier New', Courier, monospace; padding: 20px;
+        }
+
+        /* Rage Animation */
         @keyframes shake {
             0% { transform: translate(0,0); }
-            20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg); }
-            40% { transform: translate(5px, -5px); }
-            60% { transform: translate(-5px, -5px); filter: contrast(1.5); }
+            25% { transform: translate(-3px, 3px); filter: hue-rotate(15deg) contrast(1.5); }
+            50% { transform: translate(3px, -3px); }
             100% { transform: translate(0,0); }
         }
-        .rage-active { animation: shake 0.1s infinite; }
+        .rage-active { animation: shake 0.05s infinite; border: 2px solid var(--accent) !important; box-shadow: inset 0 0 50px rgba(255,0,85,0.3); }
 
-        header { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.4); }
+        header { 
+            padding: 15px; text-align: center; border-bottom: 2px solid var(--border); 
+            background: rgba(0,20,0,0.8); text-shadow: 0 0 5px var(--terminal-green);
+        }
         #score {
-            font-family: 'Orbitron'; font-size: 3.2rem; margin: 0; font-weight: 900;
-            background: linear-gradient(180deg, #fff, var(--neon));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 10px var(--neon));
+            font-family: 'Orbitron'; font-size: 3.5rem; margin: 0; font-weight: 900;
+            color: var(--neon); text-shadow: 0 0 10px var(--neon), 0 0 20px var(--neon);
         }
 
         .main-grid {
-            display: grid; grid-template-columns: 400px 1fr 400px; gap: 15px;
+            display: grid; grid-template-columns: 380px 1fr 380px; gap: 15px;
             padding: 15px; height: calc(100vh - 140px); box-sizing: border-box;
+            position: relative; z-index: 10;
         }
 
-        .panel { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
-        .tab-nav { display: flex; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border); }
-        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #666; font-family: 'Orbitron'; font-size: 0.65rem; cursor: pointer; transition: 0.3s; font-weight: 900; }
-        .tab-btn.active { color: var(--neon); background: rgba(0,255,204,0.1); box-shadow: inset 0 -2px 0 var(--neon); }
+        .panel { 
+            background: var(--glass); border: 2px solid var(--border); border-radius: 8px; 
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,255,204,0.05);
+        }
+        .tab-nav { display: flex; background: #000; border-bottom: 2px solid var(--border); }
+        .tab-btn { 
+            flex: 1; padding: 12px; background: none; border: none; color: #447744; 
+            font-family: 'Orbitron'; font-size: 0.65rem; cursor: pointer; transition: 0.2s; 
+            font-weight: 900; text-transform: uppercase;
+        }
+        .tab-btn.active { color: var(--neon); background: rgba(0,255,204,0.15); box-shadow: inset 0 -3px 0 var(--neon); text-shadow: 0 0 5px var(--neon); }
         
-        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; }
+        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; scrollbar-width: none; }
         .tab-content.active { display: block; }
 
-        #stage { display: flex; justify-content: center; align-items: center; position: relative; }
-        #llama-main { font-size: 150px; cursor: pointer; user-select: none; transition: transform 0.05s; z-index: 5; }
-        #llama-main:active { transform: scale(0.9); }
+        /* Stage & Llama */
+        #stage { display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; }
+        #llama-main { 
+            font-size: 160px; cursor: pointer; user-select: none; transition: transform 0.05s; z-index: 5;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.3));
+        }
+        #llama-main:active { transform: scale(0.9); filter: brightness(1.5) drop-shadow(0 0 40px var(--neon)); }
 
-        .game-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 12px; }
-        .btn { background: var(--neon); color: #000; border: none; padding: 10px; border-radius: 6px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; width: 100%; font-size: 0.75rem; margin-top: 5px; }
-        
-        .card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; cursor: pointer; transition: 0.2s; }
-        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.05); }
-        .card.locked { opacity: 0.2; pointer-events: none; }
-        .b-icon { font-size: 1.8rem; margin-right: 12px; }
+        /* Cards Design */
+        .card { 
+            background: #050a08; border: 1px solid rgba(0,255,204,0.2); 
+            border-radius: 6px; padding: 10px; margin-bottom: 8px; display: flex; 
+            align-items: center; cursor: pointer; transition: 0.1s;
+        }
+        .card:hover { border-color: var(--neon); background: rgba(0,255,204,0.1); transform: translateX(3px); }
+        .card.locked { opacity: 0.3; filter: grayscale(1); pointer-events: none; border-color: #333; }
+        .b-icon { font-size: 1.8rem; margin-right: 12px; width: 35px; text-align: center; }
         .b-info { flex: 1; }
         .b-info b { display: block; font-family: 'Orbitron'; color: var(--neon); font-size: 0.8rem; }
-        .b-lvl { color: var(--gold); font-family: 'Orbitron'; font-size: 0.7rem; }
+        .b-info small { color: #5aa; font-size: 0.7rem; font-family: 'Courier New', Courier, monospace; }
+        .b-lvl { color: var(--gold); font-family: 'Orbitron'; font-size: 0.8rem; font-weight: 900; }
 
-        /* Игры */
-        .mines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
-        .mine-cell { background: #111; height: 45px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #222; font-size: 1.2rem; }
+        /* Casino Styles */
+        .game-box { background: rgba(0,0,0,0.5); border: 1px dashed var(--border); border-radius: 8px; padding: 10px; margin-bottom: 15px; }
+        .btn { background: var(--neon); color: #000; border: none; padding: 10px; border-radius: 4px; font-weight: 900; font-family: 'Orbitron'; cursor: pointer; width: 100%; font-size: 0.75rem; margin-top: 5px; text-transform: uppercase; transition: 0.2s; }
+        .btn:hover { filter: brightness(1.2); }
+        .btn:active { transform: scale(0.95); }
+        
         .slots-row { display: flex; justify-content: center; gap: 8px; margin: 10px 0; }
-        .slot-item { background: #000; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1px solid var(--border); font-size: 1.8rem; }
+        .slot-item { background: #000; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid var(--border); font-size: 1.8rem; text-shadow: none; }
+        
+        .mines-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin: 10px 0; }
+        .mine-cell { background: #0a0a0a; height: 45px; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #222; font-size: 1.2rem; }
+        .mine-cell:hover { background: #111; border-color: var(--neon); }
 
-        #notif { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: #000; border: 2px solid var(--gold); padding: 12px 25px; border-radius: 50px; z-index: 10000; transition: 0.4s; display: flex; align-items: center; gap: 10px; }
+        /* Floating Nav Info */
+        .nav-hint { 
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            font-family: 'Orbitron'; font-size: 0.6rem; color: #383; letter-spacing: 2px;
+            text-shadow: 0 0 3px #0f0; z-index: 10;
+        }
+
+        #notif { 
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%); 
+            background: #000; border: 2px solid var(--gold); padding: 12px 25px; 
+            border-radius: 8px; z-index: 10000; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 15px; box-shadow: 0 0 20px rgba(255,215,0,0.3);
+            font-family: 'Orbitron';
+        }
         #notif.show { top: 20px; }
-        .float-text { position: fixed; font-family: 'Orbitron'; font-weight: 900; pointer-events: none; animation: floatUp 0.8s forwards; z-index: 1000; }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-80px); } }
+        
+        .float-text { position: fixed; font-family: 'Orbitron'; font-weight: 900; pointer-events: none; animation: floatUp 0.6s ease-out forwards; z-index: 1000; font-size: 1.2rem; text-shadow: 0 0 5px var(--neon); }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1.2); } 100% { opacity: 0; transform: translateY(-80px) scale(0.8); } }
     </style>
 </head>
 <body id="game-body">
 
-<div id="panic-overlay"></div>
+<div class="scanlines"></div>
 
-<div id="notif"><span id="n-icon">🏆</span> <div style="font-family:'Orbitron'"><b id="n-title" style="color:var(--gold)">INFO</b><br><small id="n-desc">Message</small></div></div>
+<div id="panic-overlay">
+    <h2>STANFORD OS v1.0.4</h2>
+    <p>> Root access required.</p>
+    <p>> Terminal locked. Input key:</p>
+    <input type="text" id="panic-input" style="background:transparent; border:none; border-bottom:1px solid #3f3; color:#3f3; outline:none; font-family:monospace; font-size:1.2rem;" autofocus autocomplete="off">
+</div>
+
+<div id="notif"><span id="n-icon" style="font-size:1.5rem">🏆</span> <div><b id="n-title" style="color:var(--gold)">ACHIEVEMENT</b><br><small id="n-desc" style="color:#aaa;">Milestone reached</small></div></div>
 
 <header>
-    <div style="font-family:'Orbitron'; font-size:0.6rem; color:#444;">RANK: <span id="rank-name" style="color:var(--gold)">CITIZEN</span></div>
+    <div style="font-family:'Orbitron'; font-size:0.6rem; color:#6a6; letter-spacing: 3px;">USER: <span id="rank-name" style="color:var(--gold)">STAGIERE</span></div>
     <h1 id="score">0</h1>
-    <div style="font-family:'Orbitron'; font-size:0.75rem; color:var(--neon)">
-        LPS: <span id="lps-val">0</span> | CLICK: x<span id="click-val">1.0</span> <span id="rage-text" style="color:var(--accent); display:none;">(RAGE x3!)</span>
+    <div style="font-family:'Orbitron'; font-size:0.8rem; color:var(--neon)">
+        LPS: <span id="lps-val">0</span> | PWR: x<span id="click-val">1.0</span>
+        <span id="rage-ui" style="color:var(--accent); display:none; margin-left:10px; text-shadow: 0 0 5px red;">[ OVERLOAD ]</span>
     </div>
 </header>
 
 <div class="main-grid">
     <div class="panel">
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="tab('left', 't-casino')">🎰 CASINO</button>
-            <button class="tab-btn" onclick="tab('left', 't-phones')">📱 PHONES</button>
+            <button class="tab-btn active" onclick="tab('L', 't-tree')">🌳 TREE</button>
+            <button class="tab-btn" onclick="tab('L', 't-legacy')">✨ ASCEND</button>
+            <button class="tab-btn" onclick="tab('L', 't-casino')">🎰 RISK</button>
         </div>
         
-        <div id="t-casino" class="tab-content active">
+        <div id="t-tree" class="tab-content active"><div id="tree-list"></div></div>
+        
+        <div id="t-legacy" class="tab-content">
+            <h2 style="color:var(--gold); font-family:'Orbitron';">Legacy Protocol</h2>
+            <p style="font-size:0.8rem; color:#888;">Сбросьте систему. Вы получите <b>Золотое Руно</b>. Каждый уровень даёт +100% к силе клика навсегда.</p>
+            <div id="leg-avail" style="font-size:1.2rem; color:var(--neon); margin:20px 0; font-family:'Orbitron'">Available: +0</div>
+            <button class="btn" style="background:var(--gold); color:black;" onclick="prestige()">ASCEND NOW</button>
+        </div>
+        
+        <div id="t-casino" class="tab-content">
+            <p style="color:var(--gold); font-size:0.7rem; font-family:'Orbitron';">UNAUTHORIZED GAMBLING PORTAL</p>
+            
             <div class="game-box">
-                <b style="color:var(--gold)">🎰 SLOTS</b>
+                <b style="color:var(--gold); font-family:'Orbitron';">🎰 NEURAL SLOTS</b>
                 <div class="slots-row"><div class="slot-item" id="sl1">💎</div><div class="slot-item" id="sl2">💎</div><div class="slot-item" id="sl3">💎</div></div>
-                <button class="btn" onclick="playSlots()">SPIN (2,000)</button>
+                <button class="btn" onclick="playSlots()">SPIN (-2,000)</button>
             </div>
+            
             <div class="game-box">
-                <div style="display:flex; justify-content:space-between"><b>💣 MINES</b> <span id="m-mult" style="color:var(--neon)">x1.0</span></div>
+                <div style="display:flex; justify-content:space-between; font-family:'Orbitron';"><b>💣 DATA MINES</b> <span id="m-mult" style="color:var(--neon)">x1.0</span></div>
                 <div class="mines-grid" id="m-grid"></div>
-                <button id="m-start" class="btn" onclick="startMines()">STAKE 5,000</button>
+                <button id="m-start" class="btn" onclick="startMines()">STAKE (-5,000)</button>
                 <button id="m-cash" class="btn" style="display:none; background:var(--gold)" onclick="cashMines()">CASH OUT</button>
             </div>
+            
             <div class="game-box">
-                <b>🔴 ROULETTE</b>
-                <div id="r-res" style="text-align:center; padding:10px; border:1px solid var(--border); margin:5px 0; font-family:'Orbitron';">READY</div>
+                <b style="font-family:'Orbitron';">🔴 ROULETTE</b>
+                <div id="r-res" style="text-align:center; padding:10px; border:1px solid var(--border); margin:5px 0; font-family:'Orbitron'; background:#000;">READY</div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
                     <button class="btn" style="background:#ff0055; color:white" onclick="playRoulette('red')">RED</button>
-                    <button class="btn" style="background:#333; color:white" onclick="playRoulette('black')">BLACK</button>
+                    <button class="btn" style="background:#222; color:white; border: 1px solid #444;" onclick="playRoulette('black')">BLACK</button>
                 </div>
             </div>
         </div>
-        
-        <div id="t-phones" class="tab-content"><div id="phone-list"></div></div>
     </div>
 
     <div id="stage">
         <div id="llama-main" onclick="tap(event)">🦙</div>
+        <div style="margin-top:30px; font-family:'Orbitron'; font-size:0.7rem; color:#4a4;" id="skin-label">UNIT: ALPHACA-01</div>
     </div>
 
     <div class="panel">
         <div class="tab-nav">
-            <button class="tab-btn active" onclick="tab('right', 't-biz')">🏢 BIZ</button>
-            <button class="tab-btn" onclick="tab('right', 't-lux')">🏰 LUX</button>
-            <button class="tab-btn" onclick="tab('right', 't-skins')">🎭 SKINS</button>
+            <button class="tab-btn active" onclick="tab('R', 't-biz')">🏢 BIZ</button>
+            <button class="tab-btn" onclick="tab('R', 't-lux')">💎 LUX</button>
+            <button class="tab-btn" onclick="tab('R', 't-skins')">🎭 SKIN</button>
         </div>
-        
         <div id="t-biz" class="tab-content active"><div id="biz-list"></div></div>
         <div id="t-lux" class="tab-content"><div id="lux-list"></div></div>
         <div id="t-skins" class="tab-content"><div id="skin-list"></div></div>
     </div>
 </div>
 
+<div class="nav-hint">PRESS [ SPACE ] TO CLICK | [ ← ] [ → ] TO NAVIGATE SECTORS</div>
+
 <script>
-    // --- АЛГОРИТМ ПОЛНОЙ МАСКИРОВКИ ---
-    window.addEventListener('keydown', (e) => {
-        // Выход на прикрытие (Esc)
-        if (e.key === 'Escape') {
-            save();
-            window.location.replace('index.html'); // replace не оставляет страницы в истории "назад"
-        }
-        // Мгновенная белая страница (Ё / `)
-        if (e.key === '`') {
-            const overlay = document.getElementById('panic-overlay');
-            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
-        }
-        // Блокировка инструментов разработчика
-        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67))) {
-            e.preventDefault();
-            return false;
-        }
-    });
-
-    // Блокировка правой кнопки
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // --- ОРИГИНАЛЬНАЯ ЛОГИКА ИГРЫ ---
-    const data = {
-        phones: [
-            { id: 'p1', n: "Siemens A50", c: 400, p: 1, i: "📟" },
-            { id: 'p2', n: "Nokia 3310", c: 3000, p: 10, i: "📱" },
-            { id: 'p3', n: "iPhone 2G", c: 20000, p: 60, i: "📲" },
-            { id: 'p4', n: "Samsung Ultra", c: 150000, p: 500, i: "🏙️" },
-            { id: 'p5', n: "Neural Phone", c: 1200000, p: 4500, i: "🧠" },
-            { id: 'p6', n: "Quantum Link", c: 30000000, p: 120000, i: "📡" },
-            { id: 'p7', n: "Void Signal", c: 600000000, p: 3000000, i: "🕳️" }
-        ],
+    // --- DATABASE (30 BIZ, 20 LUX, 30 SKINS) ---
+    const DB = {
         biz: [
-            { id: 'b1', n: "Lemonade", c: 1200, lps: 25, i: "🥤" },
-            { id: 'b2', n: "Cyber Cafe", c: 25000, lps: 400, i: "☕" },
-            { id: 'b3', n: "Crypto Farm", c: 350000, lps: 7000, i: "⛏️" },
-            { id: 'b4', n: "Stanford Lab", c: 10000000, lps: 150000, i: "🎓" },
-            { id: 'b5', n: "Mars Base", c: 250000000, lps: 5000000, i: "🚀" },
-            { id: 'b6', n: "Star Bank", c: 6000000000, lps: 120000000, i: "🏦" }
+            {n:"Cheat Sheet Sales", i:"📝", c:15, lps:2},
+            {n:"Coffee Delivery", i:"☕", c:150, lps:8},
+            {n:"Homework Bot", i:"🤖", c:1200, lps:45},
+            {n:"Campus Kiosk", i:"🏪", c:8500, lps:180},
+            {n:"Dorm Laundry", i:"🧺", c:45000, lps:750},
+            {n:"Vending Machine", i:"🥤", c:180000, lps:2200},
+            {n:"Cyber Cafe", i:"💻", c:650000, lps:6800},
+            {n:"Crypto Mining", i:"⛏️", c:2.5e6, lps:24000},
+            {n:"App Startup", i:"📱", c:12e6, lps:95000},
+            {n:"AI Research Lab", i:"🔬", c:85e6, lps:450000},
+            {n:"Stock Agency", i:"📈", c:450e6, lps:2.1e6},
+            {n:"Stanford Hub", i:"🏛️", c:2e9, lps:12e6},
+            {n:"Robotics Plant", i:"🦾", c:15e9, lps:85e6},
+            {n:"Sat-Link Tower", i:"📡", c:95e9, lps:480e6},
+            {n:"Bio-Eng Center", i:"🧬", c:600e9, lps:2.8e9},
+            {n:"Fusion Reactor", i:"☢️", c:4.5e12, lps:18e9},
+            {n:"Global Bank", i:"🏦", c:35e12, lps:140e9},
+            {n:"Moon Drilling", i:"🌑", c:280e12, lps:950e9},
+            {n:"Mars Colony", i:"🚀", c:2.1e15, lps:8.5e12},
+            {n:"Asteroid Mining", i:"☄️", c:18e15, lps:65e12},
+            {n:"Dyson Swarm", i:"☀️", c:150e15, lps:480e12},
+            {n:"Galaxy Trade", i:"🌌", c:1.2e18, lps:3.5e15},
+            {n:"Wormhole Hub", i:"🕳️", c:15e18, lps:42e15},
+            {n:"Time Agency", i:"⏳", c:180e18, lps:550e15},
+            {n:"Dimension Lab", i:"🔮", c:1.5e21, lps:4.1e18},
+            {n:"Void Harvester", i:"🌑", c:12e21, lps:38e18},
+            {n:"Matrix Server", i:"💾", c:95e21, lps:290e18},
+            {n:"God Protocol", i:"✨", c:1.5e24, lps:4.5e21},
+            {n:"Reality Editor", i:"🎨", c:18e24, lps:52e21},
+            {n:"Singularity", i:"👁️", c:150e24, lps:480e21}
         ],
-        luxury: [
-            { id: 'l1', n: "Tesla S", c: 120000, b: 1.1, i: "🏎️" },
-            { id: 'l2', n: "Cyber Truck", c: 900000, b: 1.3, i: "🛻" },
-            { id: 'l3', n: "G-Wagon Neon", c: 5000000, b: 1.7, i: "🚙" },
-            { id: 'l4', n: "Penthouse", c: 25000000, b: 2.5, i: "🏙️" },
-            { id: 'l5', n: "Island", c: 600000000, b: 6.5, i: "🏝️" },
-            { id: 'l6', n: "Castle", c: 15000000000, b: 20.0, i: "🏰" }
+        lux: [
+            {n:"Golden Watch", i:"⌚", c:50000},
+            {n:"Designer Suit", i:"👔", c:250000},
+            {n:"Supercar", i:"🏎️", c:1.5e6},
+            {n:"Luxury Jet", i:"🛩️", c:25e6},
+            {n:"Ocean Villa", i:"🏖️", c:180e6},
+            {n:"Skyscraper", i:"🏙️", c:1.2e9},
+            {n:"Private Island", i:"🏝️", c:8.5e9},
+            {n:"Space Yacht", i:"🛸", c:45e9},
+            {n:"Diamond Palace", i:"💎", c:280e9},
+            {n:"Moon Estate", i:"🌑", c:1.5e12},
+            {n:"Mars Valley", i:"🚀", c:12e12},
+            {n:"Private Star", i:"⭐", c:180e12},
+            {n:"Golden Fleet", i:"🚢", c:1.2e15},
+            {n:"Army Group", i:"🪖", c:15e15},
+            {n:"Nation State", i:"🗺️", c:250e15},
+            {n:"Orbital Ring", i:"💍", c:1.8e18},
+            {n:"Planetary Core", i:"🌎", c:15e18},
+            {n:"Nebula Cloud", i:"☁️", c:120e18},
+            {n:"Galaxy Core", i:"🌀", c:1.5e21},
+            {n:"The Universe", i:"🌌", c:100e21}
         ],
-        skins: [
-            { id: 's0', n: "Llama", c: 0, i: "🦙" },
-            { id: 's1', n: "Cat", c: 100000, i: "🐱" },
-            { id: 's2', n: "Robot", c: 2000000, i: "🤖" },
-            { id: 's3', n: "Demon", c: 200000000, i: "👹" },
-            { id: 's4', n: "Golden Idol", c: 8000000000, i: "🗿" }
-        ]
+        skins: ["🦙","🐱","🐶","🦊","🦁","🐯","🐮","🐽","🐨","🐻","🐼","🦄","🦖","🐲","👾","🤖","👻","🤡","🗿","👽","🧙","🧞","💂","👩‍🔬","🦸","👑","💎","🌈","🔥","⚡"]
     };
 
     let state = {
-        score: 0, ups: {}, biz: {}, lux: {}, skins: ['s0'], curSkin: "🦙",
-        mult: 1, lps: 0, gMult: 1, rage: 0, lastClick: 0
+        cash: 0, total: 0,
+        biz: {}, lux: [], ach: [],
+        skin: "🦙", legacy: 0,
+        rage: 0, lastClick: 0
     };
 
-    function save() { localStorage.setItem('llama_v_final_all', JSON.stringify(state)); }
-    function load() {
-        let s = localStorage.getItem('llama_v_final_all');
-        if(s) { state = JSON.parse(s); recalc(); updateUI(); }
+    // --- NAVIGATION & HOTKEYS ---
+    window.addEventListener('keydown', (e) => {
+        // Убрали баг с зажатием: срабатывает только 1 раз при нажатии
+        if(e.code === 'Space') {
+            e.preventDefault();
+            if(e.repeat) return; 
+            
+            // Центр экрана для текста при клике пробелом
+            let rect = document.getElementById('llama-main').getBoundingClientRect();
+            tap({ clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 });
+        }
+        
+        if(e.key === 'ArrowRight') window.location.href = 'corp.html';
+        if(e.key === 'ArrowLeft') window.location.href = 'country.html';
+        if(e.key === '`') { document.getElementById('panic-overlay').style.display = 'flex'; document.getElementById('panic-input').focus(); }
+    });
+
+    document.getElementById('panic-input').addEventListener('input', (e) => {
+        if(e.target.value.toLowerCase() === 'llama') {
+            document.getElementById('panic-overlay').style.display = 'none';
+            e.target.value = '';
+        }
+    });
+
+    // --- GAME ENGINE ---
+    function init() {
+        let saved = localStorage.getItem('stanford_v5_save');
+        if(saved) state = Object.assign(state, JSON.parse(saved));
+        renderAll();
+        setInterval(tick, 100);
     }
 
-    function recalc() {
-        state.mult = 1; state.lps = 0; state.gMult = 1;
-        data.phones.forEach(p => state.mult += (state.ups[p.id] || 0) * p.p);
-        data.biz.forEach(b => state.lps += (state.biz[b.id] || 0) * b.lps);
-        data.luxury.forEach(l => { if(state.lux[l.id]) state.gMult *= l.b; });
-        document.getElementById('llama-main').innerText = state.curSkin;
+    function tick() {
+        let lps = getLPS();
+        state.cash += lps/10; state.total += lps/10;
+        if(state.rage > 0) {
+            state.rage = Math.max(0, state.rage - 0.05);
+            if(state.rage < 2) stopRage();
+        }
+        updateUI();
     }
 
     function tap(e) {
         let now = Date.now();
-        if(now - state.lastClick < 150) state.rage = Math.min(state.rage + 0.1, 3);
-        else state.rage = Math.max(state.rage - 0.5, 0);
+        if(now - state.lastClick < 150) state.rage += 0.2;
+        else state.rage = Math.max(0, state.rage - 0.3);
         state.lastClick = now;
 
-        let clickVal = (state.mult * state.gMult);
-        if(state.rage >= 2) {
-            clickVal += (state.mult * 3);
-            document.getElementById('game-body').classList.add('rage-active');
-            document.getElementById('rage-text').style.display = 'inline';
-        } else {
-            document.getElementById('game-body').classList.remove('rage-active');
-            document.getElementById('rage-text').style.display = 'none';
+        let bonus = 1 + (state.ach.length * 0.05);
+        let clickVal = (1 + state.legacy) * bonus;
+        
+        if(state.rage >= 2.5) {
+            clickVal *= 5;
+            startRage();
         }
-        state.score += clickVal;
-        spawnText(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2, `+${Math.floor(clickVal)}`);
+
+        state.cash += clickVal; state.total += clickVal;
+        spawnText(e.clientX, e.clientY, `+${format(clickVal)}`);
+        
+        // Анимация масштаба
+        let img = document.getElementById('llama-main');
+        img.style.transform = 'scale(0.9)';
+        setTimeout(() => img.style.transform = 'scale(1)', 50);
+        
         updateUI();
     }
 
+    function startRage() {
+        document.getElementById('game-body').classList.add('rage-active');
+        document.getElementById('rage-ui').style.display = 'inline';
+    }
+    function stopRage() {
+        document.getElementById('game-body').classList.remove('rage-active');
+        document.getElementById('rage-ui').style.display = 'none';
+    }
+
+    function getLPS() {
+        let inc = 0;
+        DB.biz.forEach((b, i) => inc += (state.biz['b'+i] || 0) * b.lps);
+        return inc * (1 + (state.ach.length * 0.05));
+    }
+
     function updateUI() {
-        document.getElementById('score').innerText = Math.floor(state.score).toLocaleString();
-        document.getElementById('lps-val').innerText = Math.floor(state.lps * state.gMult).toLocaleString();
-        document.getElementById('click-val').innerText = (state.mult * state.gMult).toFixed(1);
-        renderAll();
+        document.getElementById('score').innerText = format(state.cash);
+        document.getElementById('lps-val').innerText = format(getLPS());
+        document.getElementById('click-val').innerText = (1 + state.legacy).toFixed(1);
+        document.getElementById('llama-main').innerText = state.skin;
+        
+        let leg = Math.max(0, Math.floor(Math.log10(state.total / 1e6)));
+        document.getElementById('leg-avail').innerText = `Available: +${leg}`;
+        save();
     }
 
+    // --- RENDERING ---
     function renderAll() {
-        const draw = (list, target, type) => {
-            document.getElementById(target).innerHTML = list.map(d => {
-                let lvl = (type === 'biz' ? state.biz[d.id] : (type === 'up' ? state.ups[d.id] : 0)) || 0;
-                let cost = Math.floor(d.c * Math.pow(1.65, lvl));
-                let owned = (type === 'lux' && state.lux[d.id]) || (type === 'skin' && state.skins.includes(d.id));
-                return `<div class="card ${state.score < cost && !owned ? 'locked' : ''}" onclick="buy('${type}','${d.id}')">
-                    <div class="b-icon">${d.i}</div>
-                    <div class="b-info"><b>${d.n}</b><small>${owned ? 'OWNED' : 'Cost: '+cost.toLocaleString()}</small></div>
-                    <div class="b-lvl">${lvl > 0 ? 'Lv '+lvl : ''}</div>
-                </div>`;
-            }).join('');
-        };
-        draw(data.phones, 'phone-list', 'up');
-        draw(data.biz, 'biz-list', 'biz');
-        draw(data.luxury, 'lux-list', 'lux');
-        draw(data.skins, 'skin-list', 'skin');
+        renderBiz(); renderLux(); renderSkins(); renderTree();
     }
 
-    function buy(type, id) {
-        let item = [...data.phones, ...data.biz, ...data.luxury, ...data.skins].find(x => x.id === id);
-        let lvl = (type === 'biz' ? state.biz[id] : (type === 'up' ? state.ups[id] : 0)) || 0;
-        let cost = Math.floor(item.c * Math.pow(1.65, lvl));
-        if(state.score >= cost) {
-            if(type === 'lux' && !state.lux[id]) { state.score -= cost; state.lux[id] = true; }
-            else if(type === 'skin') { if(!state.skins.includes(id)) { state.score -= cost; state.skins.push(id); } state.curSkin = item.i; }
-            else if(type === 'biz') { state.score -= cost; state.biz[id] = lvl + 1; }
-            else if(type === 'up') { state.score -= cost; state.ups[id] = lvl + 1; }
-            recalc(); save(); updateUI();
+    function renderBiz() {
+        const list = document.getElementById('biz-list');
+        list.innerHTML = DB.biz.map((b, i) => {
+            let lvl = state.biz['b'+i] || 0;
+            let cost = Math.floor(b.c * Math.pow(1.5, lvl));
+            let locked = (b.c > 1e12 && state.total < b.c / 5);
+            return `<div class="card ${state.cash < cost || locked ? 'locked' : ''}" onclick="buyBiz(${i}, ${cost})">
+                <div class="b-icon">${locked ? '🔒' : b.i}</div>
+                <div class="b-info"><b>${locked ? 'CLASSIFIED' : b.n}</b><small>Cost: ${format(cost)}</small></div>
+                <div class="b-lvl">Lv ${lvl}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderLux() {
+        const list = document.getElementById('lux-list');
+        list.innerHTML = DB.lux.map((l, i) => {
+            let owned = state.lux.includes(i);
+            return `<div class="card ${state.cash < l.c && !owned ? 'locked' : ''}" onclick="buyLux(${i}, ${l.c})">
+                <div class="b-icon">${l.i}</div>
+                <div class="b-info"><b>${l.n}</b><small>Cost: ${format(l.c)}</small></div>
+                <div class="b-lvl" style="color:${owned ? 'var(--neon)' : 'var(--gold)'}">${owned ? 'OWNED ✓' : ''}</div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderSkins() {
+        const list = document.getElementById('skin-list');
+        list.innerHTML = DB.skins.map((s, i) => `
+            <div class="card" onclick="setSkin('${s}', ${i * 1e6})">
+                <div class="b-icon">${s}</div>
+                <div class="b-info"><b>Skin Code: 0x0${i}</b><small>Unlock: ${format(i * 1e6)} total</small></div>
+            </div>
+        `).join('');
+    }
+
+    function renderTree() {
+        const tree = document.getElementById('tree-list');
+        tree.innerHTML = `<div class="card"><b>Total Research Path</b><br><small>Unlock achievements by earning more</small></div>` + 
+        [1e3, 1e6, 1e9, 1e12, 1e15, 1e18, 1e21, 1e24].map(req => `
+            <div class="card ${state.total >= req ? '' : 'locked'}">🏆 Milestone: ${format(req)}</div>
+        `).join('');
+    }
+
+    // --- ACTIONS ---
+    window.buyBiz = (idx, c) => { if(state.cash >= c) { state.cash -= c; state.biz['b'+idx] = (state.biz['b'+idx] || 0) + 1; renderBiz(); }};
+    window.buyLux = (idx, c) => { if(state.cash >= c && !state.lux.includes(idx)) { state.cash -= c; state.lux.push(idx); renderLux(); }};
+    window.setSkin = (s, req) => { if(state.total >= req) { state.skin = s; updateUI(); }};
+    
+    window.prestige = () => {
+        let leg = Math.max(0, Math.floor(Math.log10(state.total / 1e6)));
+        if(leg > 0 && confirm("WARNING: Ascension will format C: drive (Reset Biz/Cash). Power remains. Continue?")) {
+            state.legacy += leg; state.cash = 0; state.total = 0; state.biz = {}; state.lux = [];
+            save(); location.reload();
         }
-    }
+    };
 
+    // --- CASINO LOGIC (FIXED) ---
     function playSlots() {
-        if(state.score < 2000) return;
-        state.score -= 2000;
-        const s = ['🍒','💎','🦙','7️⃣','🍋'];
+        if(state.cash < 2000) return; // FIX: Protect against negative money
+        state.cash -= 2000;
+        updateUI();
+        const syms = ["🦙","💎","7️⃣","🍒","🔥"];
         let t = 0;
         let iv = setInterval(() => {
-            document.getElementById('sl1').innerText = s[Math.floor(Math.random()*5)];
-            document.getElementById('sl2').innerText = s[Math.floor(Math.random()*5)];
-            document.getElementById('sl3').innerText = s[Math.floor(Math.random()*5)];
+            document.getElementById('sl1').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('sl2').innerText = syms[Math.floor(Math.random()*5)];
+            document.getElementById('sl3').innerText = syms[Math.floor(Math.random()*5)];
             if(++t > 15) {
                 clearInterval(iv);
-                let res = [s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)], s[Math.floor(Math.random()*5)]];
-                if(Math.random() < 0.1) res = [res[0], res[0], res[0]];
-                document.getElementById('sl1').innerText = res[0]; document.getElementById('sl2').innerText = res[1]; document.getElementById('sl3').innerText = res[2];
-                if(res[0] === res[1] && res[1] === res[2]) { state.score += 60000; showNotif("JACKPOT! +60,000", "🎰"); }
+                let res = [syms[Math.floor(Math.random()*5)], syms[Math.floor(Math.random()*5)], syms[Math.floor(Math.random()*5)]];
+                // 10% шанс на джекпот
+                if(Math.random() < 0.1) res = [res[0], res[0], res[0]]; 
+                document.getElementById('sl1').innerText = res[0]; 
+                document.getElementById('sl2').innerText = res[1]; 
+                document.getElementById('sl3').innerText = res[2];
+                if(res[0] === res[1] && res[1] === res[2]) { 
+                    state.cash += 60000; 
+                    showNotif("JACKPOT! +60,000", "🎰"); 
+                }
                 updateUI();
             }
         }, 50);
@@ -302,54 +465,95 @@
 
     let mActive = false, mMult = 1.0, bomb = -1;
     function startMines() {
-        if(state.score < 5000 || mActive) return;
-        state.score -= 5000; mActive = true; mMult = 1.0; bomb = Math.floor(Math.random()*9);
+        if(state.cash < 5000 || mActive) return; // FIX
+        state.cash -= 5000; mActive = true; mMult = 1.0; bomb = Math.floor(Math.random()*9);
         document.getElementById('m-start').style.display = 'none';
         document.getElementById('m-cash').style.display = 'block';
-        document.getElementById('m-grid').innerHTML = Array.from({length:9}).map((_,i) => `<div class="mine-cell" onclick="hit(${i})">?</div>`).join('');
+        document.getElementById('m-mult').innerText = 'x1.0';
+        document.getElementById('m-grid').innerHTML = Array.from({length:9}).map((_,i) => `<div class="mine-cell" onclick="hitMine(${i})">❓</div>`).join('');
         updateUI();
     }
-    function hit(i) {
+    
+    window.hitMine = function(i) {
         if(!mActive) return;
         let c = document.getElementById('m-grid').children[i];
-        if(i === bomb) { c.innerText = '💣'; c.style.color = 'var(--accent)'; mActive = false; setTimeout(() => { document.getElementById('m-start').style.display = 'block'; document.getElementById('m-cash').style.display = 'none'; }, 1000); }
-        else { c.innerText = '💎'; c.style.color = 'var(--neon)'; mMult += 0.9; document.getElementById('m-mult').innerText = 'x'+mMult.toFixed(1); }
+        if(c.innerText !== '❓') return; // Защита от двойного клика
+        
+        if(i === bomb) { 
+            c.innerText = '💣'; 
+            c.style.background = 'var(--accent)';
+            mActive = false; 
+            showNotif("SYSTEM CRASH!", "💥");
+            setTimeout(() => { 
+                document.getElementById('m-start').style.display = 'block'; 
+                document.getElementById('m-cash').style.display = 'none'; 
+                document.getElementById('m-grid').innerHTML = '';
+            }, 1500); 
+        } else { 
+            c.innerText = '💎'; 
+            mMult += 0.5; 
+            document.getElementById('m-mult').innerText = 'x'+mMult.toFixed(1); 
+        }
     }
-    function cashMines() { state.score += 5000 * mMult; mActive = false; showNotif("WIN!", "💎"); document.getElementById('m-start').style.display = 'block'; document.getElementById('m-cash').style.display = 'none'; updateUI(); }
+    
+    function cashMines() { 
+        if(!mActive) return;
+        state.cash += 5000 * mMult; 
+        mActive = false; 
+        showNotif("SAFE! +" + format(5000 * mMult), "💎"); 
+        document.getElementById('m-start').style.display = 'block'; 
+        document.getElementById('m-cash').style.display = 'none'; 
+        document.getElementById('m-grid').innerHTML = '';
+        updateUI(); 
+    }
 
     function playRoulette(bet) {
-        if(state.score < 5000) return;
-        state.score -= 5000;
+        if(state.cash < 5000) return; // FIX
+        state.cash -= 5000;
+        updateUI();
         let d = document.getElementById('r-res'); d.innerText = "SPINNING...";
         setTimeout(() => {
             let n = Math.floor(Math.random()*37);
             let c = n === 0 ? 'green' : (n%2 === 0 ? 'black' : 'red');
             d.innerText = n + " (" + c.toUpperCase() + ")";
-            if(bet === c) { state.score += 10000; showNotif("WIN!", "🔴"); }
+            d.style.color = c === 'red' ? '#ff0055' : (c === 'green' ? '#00ffcc' : 'white');
+            if(bet === c) { 
+                state.cash += 10000; 
+                showNotif("WIN! +10,000", "🔴"); 
+            }
             updateUI();
         }, 800);
     }
 
+    // --- UTILS ---
+    function format(n) {
+        if(n < 1000) return Math.floor(n);
+        let e = Math.floor(Math.log10(n)/3);
+        let s = ["","K","M","B","T","Q","Qi","Sx","Sp","Oc","No","Dc"];
+        return (n/Math.pow(1000,e)).toFixed(2) + s[e];
+    }
     function tab(side, id) {
         const p = document.getElementById(id).parentElement;
-        p.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         p.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        p.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
-    function spawnText(x, y, txt) {
+    function spawnText(x, y, t) {
         const d = document.createElement('div'); d.className = 'float-text'; d.style.left = x+'px'; d.style.top = y+'px';
-        d.style.color = state.rage >= 2 ? 'var(--accent)' : 'var(--neon)'; d.innerText = txt; document.body.appendChild(d);
-        setTimeout(() => d.remove(), 800);
+        d.style.color = state.rage >= 2.5 ? 'var(--accent)' : 'var(--neon)'; d.innerText = t; document.body.appendChild(d);
+        setTimeout(() => d.remove(), 600);
     }
     function showNotif(t, i) {
-        document.getElementById('n-title').innerText = t; document.getElementById('n-icon').innerText = i;
+        document.getElementById('n-title').innerText = t; 
+        document.getElementById('n-desc').innerText = ''; 
+        document.getElementById('n-icon').innerText = i;
         const n = document.getElementById('notif'); n.classList.add('show');
         setTimeout(() => n.classList.remove('show'), 3000);
     }
+    function save() { localStorage.setItem('stanford_v5_save', JSON.stringify(state)); }
 
-    setInterval(() => { state.score += (state.lps * state.gMult / 10); if(state.rage > 0) state.rage = Math.max(state.rage - 0.04, 0); updateUI(); }, 100);
-    load();
+    init();
 </script>
 </body>
 </html>
