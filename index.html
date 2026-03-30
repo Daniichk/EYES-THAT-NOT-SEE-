@@ -240,6 +240,14 @@
         overlay.style.opacity = '0';
         setTimeout(() => overlay.style.display = 'none', 500);
     }
+    document.addEventListener('keydown', function(event) {
+  // Проверяем: зажат Ctrl, зажат Shift и нажата клавиша '6' (код 54)
+      if (event.ctrlKey && event.shiftKey && event.code === 'Digit6') {
+        event.preventDefault(); // Отменяем стандартное действие браузера, если оно есть
+        window.location.href = 'game.html'; // Укажите здесь путь к нужному файлу
+    }
+});
+
 </script>
 
 </body>
